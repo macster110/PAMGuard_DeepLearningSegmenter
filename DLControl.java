@@ -16,9 +16,12 @@ import PamController.SettingsPane;
 import PamView.PamSidePanel;
 import PamguardMVC.PamRawDataBlock;
 import pamViewFX.fxNodes.pamDialogFX.PamDialogFX2AWT;
+import rawDeepLearningClassifer.deepLearningClassification.DLClassiferModel;
+import rawDeepLearningClassifer.deepLearningClassification.DLClassifyProcess;
 import rawDeepLearningClassifer.layoutFX.DLSidePanelSwing;
 import rawDeepLearningClassifer.layoutFX.RawDLSettingsPane;
 import rawDeepLearningClassifer.orcaSpot.OrcaSpotClassifier;
+import rawDeepLearningClassifer.segmenter.SegmenterProcess;
 
 /**
  * Module which uses an external deep learning classifier to identify any data unit

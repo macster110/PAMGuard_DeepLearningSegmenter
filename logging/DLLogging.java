@@ -9,7 +9,7 @@ import generalDatabase.PamTableItem;
 import generalDatabase.SQLLogging;
 import generalDatabase.SQLTypes;
 import rawDeepLearningClassifer.DLControl;
-import rawDeepLearningClassifer.DLDataUnit;
+import rawDeepLearningClassifer.deepLearningClassification.DLDataUnit;
 
 /**
  * Saves the classified DL data units to a database. 

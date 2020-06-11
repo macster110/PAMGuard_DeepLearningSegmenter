@@ -1,6 +1,6 @@
 package rawDeepLearningClassifer.orcaSpot;
 
-import rawDeepLearningClassifer.ModelResult;
+import rawDeepLearningClassifer.deepLearningClassification.ModelResult;
 
 /**
  * Stores results from an OrcaSpot classification 

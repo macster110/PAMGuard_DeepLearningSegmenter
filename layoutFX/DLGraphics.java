@@ -15,7 +15,7 @@ import PamView.PamSymbolType;
 import PamguardMVC.PamDataBlock;
 import PamguardMVC.PamDataUnit;
 import Spectrogram.SpectrogramProjector;
-import rawDeepLearningClassifer.DLDataUnit;
+import rawDeepLearningClassifer.deepLearningClassification.DLDataUnit;
 
 /**
  * The detection graphics

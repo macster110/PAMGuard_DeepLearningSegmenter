@@ -21,9 +21,9 @@ import pamViewFX.fxNodes.PamSpinner;
 import pamViewFX.fxNodes.PamVBox;
 import pamViewFX.fxNodes.pamDialogFX.PamDialogFX;
 import pamViewFX.fxNodes.utilityPanes.GroupedSourcePaneFX;
-import rawDeepLearningClassifer.DLClassiferModel;
 import rawDeepLearningClassifer.DLControl;
 import rawDeepLearningClassifer.RawDLParams;
+import rawDeepLearningClassifer.deepLearningClassification.DLClassiferModel;
 
 /**
  * The settings pane. 

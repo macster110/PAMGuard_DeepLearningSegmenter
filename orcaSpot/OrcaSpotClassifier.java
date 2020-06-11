@@ -9,12 +9,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import PamController.PamControlledUnitSettings;
 import PamController.PamSettingManager;
 import PamController.PamSettings;
-import rawDeepLearningClassifer.DLClassiferModel;
 import rawDeepLearningClassifer.DLControl;
-import rawDeepLearningClassifer.DLDataUnit;
-import rawDeepLearningClassifer.ModelResult;
-import rawDeepLearningClassifer.SegmenterProcess.GroupedRawData;
+import rawDeepLearningClassifer.deepLearningClassification.DLClassiferModel;
+import rawDeepLearningClassifer.deepLearningClassification.DLDataUnit;
+import rawDeepLearningClassifer.deepLearningClassification.ModelResult;
 import rawDeepLearningClassifer.layoutFX.DLCLassiferModelUI;
+import rawDeepLearningClassifer.segmenter.SegmenterProcess.GroupedRawData;
 
 /**
  * Calls python.exe to run a python script and then returns a result. 
