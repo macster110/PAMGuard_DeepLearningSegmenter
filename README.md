@@ -1,2 +1,36 @@
 # PAMGuard_DeepLearningSegmenter
-A module which allows deep learning algorithms that use segmented raw acoustic data to be deployed in PAMGuard. 
+The Deep Learning Segment PAMGuard module acquires incoming chunks of raw sound data and sends to a deep learning model for classification in real time. Results become part of the PAMGuard processing chain and so can be further classified, saved as raw wav clips, localised, annotated etc. 
+
+## Introduction 
+[PAMGuard](https://www.pamguard.org/) is a bioacoustics toolbox for the detection, classification and localisation of soniferous species both in real time and post processing sound files. It's primarily focused cetaceans (whales, dolphins, river dolphins, porpoises) and bats however can be used with any vocalising animal. The modular structure of PAMGuard allows users to create processing chains for detection,  classification and localisation algorithms combined with a comprehensive data management system. This, alongside interactive data visualisation tools, allows users to analyse and then visualise and navigate through months and years of acoustic recordings. 
+
+So far PAMGuard has mainly used more traditional detection and classification algorithms (e.g. energy detectors) and some machine learning approaches (e.g. whistle classifier, ROCCA), however, has yet to fully integrate deep learning. The powerful data visualisation tools and real time capability of PAMGuard mean it is an ideal platform to integrate deep learning classifiers. Such algorithms to enhance classification, and be used in conservation application such as real time mitigation. This plugin module provides a framework to integrate deep learning classifiers of continuous raw sound or spectrogram data. The first algorithm integrated is OrcaSpot, designed to detect and classify the call type of Orcas.
+
+
+## Deep Learning Segmenter
+The module is fairly straightforward to use. Go to _ _ File ->Add Modules -> Classifiers -> Deep Learning Segmener _ _. This will add the module to the PAMGuard data model. Once the module has been added to the data model go to  _ _Settings -> Deep Learning Segmenter _ _ to open the module settings. Select the channels, window length, hop size and deep leanring model and you are ready to start analysing data. A PAMGuard settings files which simulates and localises simulated dolphin whistles using the OrcaSpot model is located in the resources folder. 
+
+<center><img src="resources/OrcaSpot_help1.png" width="1024"></center>
+An example of OrcaSpot working on some simulated data and explanations of the various GUI components. Here the output from the algorithm is being sent to a beam former which provides a bearing to the detected Orca call. 
+
+## Installing the Plugin
+Installing the PAMGuard plugin is straightforward and detailed on the [PAMGuard website](https://www.pamguard.org/66_CreatingExternalPlug-ins.html). The jar file is located in the resources folder. 
+
+## Deep Learning Models
+### OrcaSpot
+[ORCA-SPOT](https://github.com/ChristianBergler/ORCA-SPOT) is a deep learning based algorithm which was initially designed for killer whale sound detection in noise heavy underwater recordings. 
+
+Settings up OrcaSpot to work is not trivial and requires some command line coding. 
+
+//TODO - descriptioon of OrcaSpot installation
+
+## Development Environment
+The best way to develop a PAMGuard external plugin is to download the PAMGuard project [(instruction here for Eclipse)](https://www.pamguard.org/15_SourceCode.html) and  copy and past this repository in as a package in the main src folder. Then, in PamModel.java around line 753 in the classifiers group add
+
+```Java
+		mi = PamModuleInfo.registerControlledUnit("rawDeepLearningClassifer.DLControl", "Deep Learning Segmenter");
+		mi.addDependency(new PamDependency(RawDataUnit.class, "Acquisition.AcquisitionControl"));
+		mi.setToolTipText("Classifies sections of raw acoustic data based on an imported deep learning classifier");
+		mi.setModulesMenuGroup(classifierGroup);
+```
+Adding a new DeepLearning model requires a new class satisfying the interface ```DLClassifierModel``` in the _ deepLearningClassiifcation _ package. This then needs to be added to an array (```ArrayList<DLClassiferModel> dlModels```) in ```DLControl```.
