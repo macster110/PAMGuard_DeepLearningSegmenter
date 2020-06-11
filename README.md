@@ -46,3 +46,10 @@ The best way to develop a PAMGuard external plugin is to download the PAMGuard p
 		mi.setModulesMenuGroup(classifierGroup);
 ```
 Adding a new DeepLearning model requires a new class satisfying the interface ```DLClassifierModel``` in the _ deepLearningClassiifcation _ package. This then needs to be added to an array (```ArrayList<DLClassiferModel> dlModels```) in ```DLControl```.
+
+## Missing Features
+* Viewer mode support is limited. 
+* The segmenter may not work properly for hop sizes that less than 1/100 the sample rate - this will be fixed soon.  
+* Add more models. 
+
+
