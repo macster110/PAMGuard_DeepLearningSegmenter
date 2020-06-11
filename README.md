@@ -22,7 +22,28 @@ Installing the PAMGuard plugin is straightforward and detailed on the [PAMGuard 
 
 Settings up OrcaSpot to work is not trivial and requires some command line coding. 
 
-//TODO - descriptioon of OrcaSpot installation
+TODO
+You will need
+
+ *  Python and Anaconda or similar installed
+ * <li>Cuda installed from Nvidea.</li>
+ * <li>Cuda support for Pytorch installed.</li>
+ * <b> To set up the python environment properly</b>
+ * <ul>
+ * <li>Open command prompt or Anaconda prompt if is using Anaconda.
+ * <li>Type python -m venv C:\Your\Enviroment\Path\Here for Example python -m
+ * venv C:\Users\Hauec\Desktop\Segmenter\pytorch\my-venv. This creates a Folder
+ * called my-venv in the PyTorch Folder inside of the Segmenter.</li>
+ * <li>Next you need to activate your Virtual environment. Inside of
+ * my-venv\Scripts should see a windows batch called activate.bat. cd to it and
+ * run it in CMD. You'll know that it is active via the (my-venv) precommand.
+ * </li>
+ * <li>Once that is done, run setup_pytorch.bat from the PyTorch folder. It
+ * should automatically install Pytorch, PyVision, and all of the required
+ * dependencies. With the exception of pywin32 and pypiwin32. Both of them need
+ * to installed manually through pip. e.g. pip install pywin32, pypiwin32</li>
+ * </ul>
+ * 
 
 ## Development Environment
 The best way to develop a PAMGuard external plugin is to download the PAMGuard project [(instruction here for Eclipse)](https://www.pamguard.org/15_SourceCode.html) and  copy and past this repository in as a package in the main src folder. Then, in PamModel.java around line 753 in the classifiers group add
