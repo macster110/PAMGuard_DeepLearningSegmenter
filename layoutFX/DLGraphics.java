@@ -24,29 +24,34 @@ import rawDeepLearningClassifer.deepLearningClassification.DLDataUnit;
  */
 public class DLGraphics extends PamDetectionOverlayGraphics {
 
-	public Stroke dashed = new BasicStroke(4, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{9}, 0);
-	
-//	public Stroke dashed = new BasicStroke(4); 
+	public Stroke dashed = new BasicStroke(2, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{9}, 0);
 
-	public Stroke normal = new BasicStroke(3); 
+	//	public Stroke dashed = new BasicStroke(4); 
 
-	public int alpha = 127; // 50% transparent
+	public Stroke normal = new BasicStroke(2); 
 
-	public static Color detColor = Color.CYAN; 
+	public int alpha = 64; // 25% transparent
+
+	public Color detColor = Color.CYAN; 
 
 	private PamSymbol defaultSymbol = new PamSymbol(PamSymbolType.SYMBOL_DIAMOND, 10, 12, false,
-			detColor, detColor); 
+			detColor, detColor ); 
 
-	
+
 	public DLGraphics(PamDataBlock parentDataBlock) {
-		super(parentDataBlock, getDLDefaultSymbol(detColor));
-		// TODO Auto-generated constructor stub
+		super(parentDataBlock,null);
+		//		this.setDefaultSymbol(defaultSymbol);
+		setLineColor(detColor); 
+		setLocColour(detColor);
 	}
-	
-	private static PamSymbol getDLDefaultSymbol(Color detColor) {
-			return  new PamSymbol(PamSymbolType.SYMBOL_DIAMOND, 10, 12, false,
-					detColor, detColor); 
+
+	/**
+	 * Override to forget all symbol chooser stuff. 
+	 */
+	public PamSymbol getPamSymbol(PamDataUnit pamDataUnit, GeneralProjector projector) {
+		return this.defaultSymbol; 
 	}
+
 
 
 	@Override
@@ -77,12 +82,12 @@ public class DLGraphics extends PamDetectionOverlayGraphics {
 
 		//creates a copy of the Graphics instance
 		Graphics2D g2d = (Graphics2D) g.create();
-		
-//		System.out.println("New OrcaSpotDatauNit draw: " + topLeft.x + "  " + botRight.x 
-//				+ " " + topLeft.y + "  " + botRight.y + " Frequency: " + frequency[0] + " " + frequency[1]); 
+
+		//		System.out.println("New OrcaSpotDatauNit draw: " + topLeft.x + "  " + botRight.x 
+		//				+ " " + topLeft.y + "  " + botRight.y + " Frequency: " + frequency[0] + " " + frequency[1]); 
 
 		//do not paint unles sit's passed binary classiifcation 
-		if (pamDetection.getModelResult().isClassification()) {
+		if (pamDetection.getModelResult().isBinaryClassification()) {
 			//set the stroke of the copy, not the original 
 			g2d.setStroke(normal);
 		}
@@ -90,20 +95,26 @@ public class DLGraphics extends PamDetectionOverlayGraphics {
 			g2d.setStroke(dashed);
 		}
 
-		g.setColor(detColor);
+		g2d.setColor(detColor);
 
-		g.drawRect((int) topLeft.x, (int) topLeft.y, 
+		g2d.drawRect((int) topLeft.x, (int) topLeft.y, 
 				(int) botRight.x - (int) topLeft.x, (int) botRight.y - (int) topLeft.y);
 
-		
-		if (pamDetection.getModelResult().isClassification()) {
+
+		//		System.out.println("Is classification: " + pamDetection.getModelResult().isClassification()); 
+		if (pamDetection.getModelResult().isBinaryClassification()) {
+
+			//alpha - higher numbers mean less opaque - means more see through
+			//so want more opacity for higher predictions to highlight more
+			//so low alpha means more opaque
 
 			//set the alpha so that better results are more opaque 
-			int alphaDet = (int) (1 - pamDetection.getModelResult().getPrediction())*alpha; 
-			
+			int alphaDet =  (int) ((1.0-pamDetection.getModelResult().getPrediction())*alpha); 
+
+			//			System.out.println("Alpha Det: " + alphaDet + "  " + pamDetection.getModelResult().getPrediction()); 
 			Color detColorAlpha = new Color(detColor.getRed(), detColor.getGreen(), detColor.getBlue(), alphaDet);
-			g.setColor(detColorAlpha);
-			g.fillRect((int) topLeft.x, (int) topLeft.y, 
+			g2d.setColor(detColorAlpha);
+			g2d.fillRect((int) topLeft.x, (int) topLeft.y, 
 					(int) botRight.x - (int) topLeft.x, (int) botRight.y - (int) topLeft.y);
 
 		}

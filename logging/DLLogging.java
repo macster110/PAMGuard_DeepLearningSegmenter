@@ -43,7 +43,6 @@ public class DLLogging  extends SQLLogging {
 		DLDataUnit dgdu = (DLDataUnit) pamDataUnit;
 		analysisTime.setValue(dgdu.getModelResult().getAnalysisTime());
 		predicition.setValue(dgdu.getModelResult().getPrediction());
-		
 	}
 	
 

@@ -50,7 +50,7 @@ public class OrcaSpotModelResult implements ModelResult {
 
 
 	@Override
-	public boolean isClassification() {
+	public boolean isBinaryClassification() {
 		return binaryClassification;
 	}
 	

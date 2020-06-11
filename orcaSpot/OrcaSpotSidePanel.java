@@ -103,12 +103,14 @@ public class OrcaSpotSidePanel extends PamPanel {
 			
 			c.gridy++;
 			PamPanel.addComponent(this, new JLabel("Buffer"), c);
+			c.gridx=1; 
+			PamPanel.addComponent(this, bufferLabel = new JLabel(), c);
 			
+			c.gridx=0;
 			c.gridwidth=2; 
 			c.gridy++;
 			PamPanel.addComponent(this, bufferBar = new JProgressBar(), c);
-			c.gridx=2; 
-			PamPanel.addComponent(this, bufferLabel = new JLabel(), c);
+
 			
 			c.gridy++;
 			c.gridx=0; 

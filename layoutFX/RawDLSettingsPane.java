@@ -4,6 +4,7 @@ import PamController.SettingsPane;
 import PamDetection.RawDataUnit;
 import PamguardMVC.PamDataBlock;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -113,7 +114,7 @@ public class RawDLSettingsPane  extends SettingsPane<RawDLParams>{
 		hopLength =    new PamSpinner<Integer>(0, Integer.MAX_VALUE, 10,  10000); 
 		hopLength.setPrefWidth(100);
 		hopLength.getStyleClass().add(Spinner.STYLE_CLASS_SPLIT_ARROWS_HORIZONTAL);
-		windowLength.setEditable(true);
+		hopLength.setEditable(true);
 		
 		//button to set default hop size
 		Button defaultButton = new Button();
@@ -185,7 +186,9 @@ public class RawDLSettingsPane  extends SettingsPane<RawDLParams>{
 		
 		PamDataBlock rawDataBlock = sourcePane.getSource();
 		if (rawDataBlock == null){
+			Platform.runLater(()->{
 			PamDialogFX.showWarning("There is no datablock set. The segmenter must have a datablock set."); 
+			}); 
 			return null;
 		}
 
@@ -194,7 +197,9 @@ public class RawDLSettingsPane  extends SettingsPane<RawDLParams>{
 		currParams.modelSelection = dlModelBox.getSelectionModel().getSelectedIndex(); 
 		
 		if (windowLength.getValue() == 0 || hopLength.getValue()==0){
+			Platform.runLater(()->{
 			PamDialogFX.showWarning("Neither the hop nor window length can be zero"); 
+			});
 			return null;
 		}
 

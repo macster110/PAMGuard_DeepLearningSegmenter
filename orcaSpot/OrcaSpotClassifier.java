@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import javax.swing.SwingUtilities;
+
 import PamController.PamControlledUnitSettings;
 import PamController.PamSettingManager;
 import PamController.PamSettings;
@@ -96,9 +98,6 @@ public class OrcaSpotClassifier implements DLClassiferModel, PamSettings {
 			queue.clear();
 		}
 		queue.add(rawDataUnit);
-		
-		
-		System.out.println("ORCASPOT CLASSIFIER: " + "Add data unit " + queue.size()); 
 
 		this.orcaSpotUI.notifyUpdate(-1);
 
@@ -119,6 +118,7 @@ public class OrcaSpotClassifier implements DLClassiferModel, PamSettings {
 		}
 
 		workerThread = new TaskThread();
+		workerThread.setPriority(Thread.MAX_PRIORITY);
 		workerThread.start();
 	}
 
@@ -137,33 +137,39 @@ public class OrcaSpotClassifier implements DLClassiferModel, PamSettings {
 	public void setOrcaSpotParams(OrcaSpotParams2 orcaSpotParams2) {
 		this.orcaSpotParams = orcaSpotParams2;
 	}
-	
+
 
 	/**
 	 * Called whenever there is a new result. 
 	 * @param modelResult - the new model result.
 	 * @param groupedRawData - the raw data from which the result was calculated.
 	 */
-	private void newOrcaSpotResult(OrcaSpotModelResult modelResult, GroupedRawData groupedRawData) {
+	private synchronized void newOrcaSpotResult(OrcaSpotModelResult modelResult, GroupedRawData groupedRawData) {
 
 		this.orcaSpotUI.notifyUpdate(-1);
-		
-		
+
+
 		//check whether to set binary classification to true - mainly for graphics and downstream filtering of data. 
 		modelResult.setBinaryClassification(modelResult.getPrediction()>Double.valueOf(this.orcaSpotParams.threshold));
-		
+
 		//the result is added later to the data block - we are dumping the raw sound data here. 
 		DLDataUnit dlDataUnit = new DLDataUnit(groupedRawData.getTimeMilliseconds(), groupedRawData.getChannelBitmap(), groupedRawData.getStartSample(),
 				groupedRawData.getSampleDuration(), modelResult); 
 		//send the raw data unit off to be classified!
 		dlDataUnit.setFrequency(new double[] {0, dlControl.getDLClassifyProcess().getSampleRate()/2});
 		dlDataUnit.setDurationInMilliseconds(groupedRawData.getDurationInMilliseconds()); 
-		
+
+
 		dlControl.getDLClassifyProcess().getDLClassifiedDataBlock().addPamData(dlDataUnit);
 		
+		if (dlDataUnit.getModelResult().isBinaryClassification()) {
+			//send off to localised datablock 
+			dlControl.getDLClassifyProcess().getDlClassifiedLocBlock().addPamData(dlDataUnit);
+		}
+
 		groupedRawData= null; //just in case 
-		
-	
+
+
 	}
 
 
@@ -174,6 +180,10 @@ public class OrcaSpotClassifier implements DLClassiferModel, PamSettings {
 
 		TaskThread() {
 			super("TaskThread");
+			if (orcaSpotWorker == null) {
+				//create the daemons etc...
+				this.orcaSpotWorker = new OrcaSpotWorkerExe2(orcaSpotParams); 	
+			}
 		}
 
 		public void stopTaskThread() {
@@ -187,25 +197,22 @@ public class OrcaSpotClassifier implements DLClassiferModel, PamSettings {
 
 		public void run() {
 			while (run.get()) {
-//				System.out.println("ORCASPOT THREAD while: " + "The queue size is " + queue.size()); 
+				//				System.out.println("ORCASPOT THREAD while: " + "The queue size is " + queue.size()); 
 
 				try {
-					if (orcaSpotWorker == null) {
-						//create the daemons etc...
-						this.orcaSpotWorker = new OrcaSpotWorkerExe2(orcaSpotParams); 	
-					}
+
 
 					if (queue.size()>0) {
-//						System.out.println("ORCASPOT THREAD: " + "The queue size is " + queue.size()); 
+						//						System.out.println("ORCASPOT THREAD: " + "The queue size is " + queue.size()); 
 						GroupedRawData groupedRawData = queue.remove(0);
 						double[] data = groupedRawData.getRawData()[0]; 
 
 						long timestart = System.currentTimeMillis(); 
 
 						OrcaSpotModelResult modelResult = orcaSpotWorker.runOrcaSpot(data);
-						
+
 						newOrcaSpotResult(modelResult, groupedRawData);
-						
+
 						lastPrediction = modelResult; 
 
 						long timeEnd = System.currentTimeMillis(); 
@@ -213,9 +220,9 @@ public class OrcaSpotClassifier implements DLClassiferModel, PamSettings {
 						System.out.println("ORCASPOT THREAD: " + "Time to run OrcaSpot: " + (timeEnd-timestart)); 
 					}
 					else {
-//						System.out.println("ORCASPOT THREAD SLEEP: "); ; 
+						//						System.out.println("ORCASPOT THREAD SLEEP: "); ; 
 						Thread.sleep(250);
-//						System.out.println("ORCASPOT THREAD DONE: "); ; 
+						//						System.out.println("ORCASPOT THREAD DONE: "); ; 
 					}
 
 				} catch (Exception e) {
