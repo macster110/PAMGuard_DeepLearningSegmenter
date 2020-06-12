@@ -22,10 +22,15 @@ public class DLLocalisation extends AbstractLocalisation {
 
 	public void setBearing(BearingAnnotation bearingAnnotation) {
 		this.setLocContents(bearingAnnotation.getBearingLocalisation().getLocContents());
+//		this.getLocContents().removeLocContent(LocContents.HAS_AMBIGUITY);
 		
-		System.out.println("Loc content!: " + this.getLocContents().hasLocContent(LocContents.HAS_AMBIGUITY) + " angles: " + angles.length); 
 		
 		this.angles = bearingAnnotation.getBearingLocalisation().getAngles(); 
+		this.setSubArrayType(bearingAnnotation.getBearingLocalisation().getSubArrayType()); 
+		
+		System.out.println("Loc content!: " + this.getLocContents().hasLocContent(LocContents.HAS_AMBIGUITY) + " angles: " + angles.length); 
+		PamUtils.PamArrayUtils.printArray(angles);
+
 		
 	}
 	

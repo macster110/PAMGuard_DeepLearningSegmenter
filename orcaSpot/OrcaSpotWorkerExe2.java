@@ -34,6 +34,22 @@ import java.util.*;
  * <li>Python and Anaconda or similar installed.</li>
  * <li>Cuda installed from Nvidea.</li>
  * <li>Cuda support for Pytorch installed.</li>
+ * <b> To set up the python environment properly</b>
+ * <ul>
+ * <li>Open command prompt or Anaconda prompt if is using Anaconda.
+ * <li>Type python -m venv C:\Your\Enviroment\Path\Here for Example python -m
+ * venv C:\Users\Hauec\Desktop\Segmenter\pytorch\my-venv. This creates a Folder
+ * called my-venv in the PyTorch Folder inside of the Segmenter.</li>
+ * <li>Next you need to activate your Virtual environment. Inside of
+ * my-venv\Scripts should see a windows batch called activate.bat. cd to it and
+ * run it in CMD. You'll know that it is active via the (my-venv) precommand.
+ * </li>
+ * <li>Once that is done, run setup_pytorch.bat from the PyTorch folder. It
+ * should automatically install Pytorch, PyVision, and all of the required
+ * dependencies. With the exception of pywin32 and pypiwin32. Both of them need
+ * to installed manually through pip. e.g. pip install pywin32, pypiwin32</li>
+ * </ul>
+ * 
  * </ul>
  * <p> To get the daemon to run properly you must also install C:\Users\macst>conda install win32pipe
  * e.g. in Anaconda this is:

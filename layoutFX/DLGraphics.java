@@ -18,7 +18,8 @@ import Spectrogram.SpectrogramProjector;
 import rawDeepLearningClassifer.deepLearningClassification.DLDataUnit;
 
 /**
- * The detection graphics
+ * The detection graphics for the DL localiser. Forces the graphics to be one colour and paints some 
+ * translucent boxes on the spectrogram depending on the classification model result. 
  * @author Jamie Macaulay
  *
  */
@@ -51,7 +52,6 @@ public class DLGraphics extends PamDetectionOverlayGraphics {
 	public PamSymbol getPamSymbol(PamDataUnit pamDataUnit, GeneralProjector projector) {
 		return this.defaultSymbol; 
 	}
-
 
 
 	@Override
