@@ -14,7 +14,7 @@ The module is fairly straightforward to use. Go to _ _ File ->Add Modules -> Cla
 An example of OrcaSpot working on some simulated data and explanations of the various GUI components. Here the output from the algorithm is being sent to a beam former which provides a bearing to the detected Orca call. 
 
 ## Installing the Plugin
-Installing the PAMGuard plugin is straightforward and detailed on the [PAMGuard website](https://www.pamguard.org/66_CreatingExternalPlug-ins.html). The jar file is located in the resources folder. 
+Installing the PAMGuard plugin is straightforward and detailed on the [PAMGuard website](https://www.pamguard.org/66_CreatingExternalPlug-ins.html). The jar file is located in the resources folder (currently not available). 
 
 ## Deep Learning Models
 ### OrcaSpot
@@ -47,9 +47,11 @@ The best way to develop a PAMGuard external plugin is to download the PAMGuard p
 ```
 Adding a new DeepLearning model requires a new class satisfying the interface ```DLClassifierModel``` in the _ deepLearningClassiifcation _ package. This then needs to be added to an array (```ArrayList<DLClassiferModel> dlModels```) in ```DLControl```.
 
-## Missing Features
+## TODO and Missing Features
 * Viewer mode support is limited. 
 * The segmenter may not work properly for hop sizes that less than 1/100 the sample rate - this will be fixed soon.  
-* Add more models. 
+* There are no help files. 
+* Only OrcaSpot classifier so far implemented . 
+* Plug module jar file still needs to be created.  
 
 
