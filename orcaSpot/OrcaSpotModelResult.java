@@ -9,7 +9,7 @@ import rawDeepLearningClassifer.deepLearningClassification.ModelResult;
  *
  */
 public class OrcaSpotModelResult implements ModelResult {
-	
+
 	/**
 	 * The time in seconds. 
 	 */
@@ -18,17 +18,22 @@ public class OrcaSpotModelResult implements ModelResult {
 	/**
 	 * The detection confidence 
 	 */
-	public double detectionConfidence = 0; 
-	
+	public Double detectionConfidence = null; 
+
 	/**
 	 * The call type confidence
 	 */
-	public double calltypeConfidence = 0;
+	public Double calltypeConfidence = null;
 
 	/**
 	 * Do we call this a yes/no classification
 	 */
-	public boolean binaryClassification = false; 
+	public boolean binaryClassification = false;
+
+	/**
+	 * Description of the predicted class
+	 */
+	public String predictedClass = "none";
 
 	/**
 	 * Constructor for an OrcaSpot result if only a detection has occurred. 
@@ -40,12 +45,18 @@ public class OrcaSpotModelResult implements ModelResult {
 		this.timeSeconds = time; 
 	}
 
+	public OrcaSpotModelResult() {
+		// TODO Auto-generated constructor stub
+	}
+
 	/**
 	 * Get the detection confidence. 
 	 * @return the detection confidence
 	 */
+	@Override
 	public double getPrediction() {
-		return detectionConfidence;
+		if (calltypeConfidence!=null) return calltypeConfidence; 
+		else return detectionConfidence;
 	}
 
 
@@ -53,8 +64,8 @@ public class OrcaSpotModelResult implements ModelResult {
 	public boolean isBinaryClassification() {
 		return binaryClassification;
 	}
-	
-	
+
+
 	/**
 	 * Set whether the binary classification has passed. 
 	 * @param binaryClassification - true if the binary classification has passed. 
@@ -74,6 +85,29 @@ public class OrcaSpotModelResult implements ModelResult {
 	 */
 	public void setAnlaysisTime(double timeSeconds) {
 		this.timeSeconds=timeSeconds; 
+	}
+
+	@Override
+	public String getResultString() {
+		String newString ="";
+
+		if (detectionConfidence!=null) {
+			newString += String.format("Det_conf: %.2f\n ", detectionConfidence); 
+		}
+		else {
+			newString += "Det_conf: none\n"; 
+		}
+
+		if (calltypeConfidence!=null) {
+			newString += String.format("Class_conf: %.2f\n ", calltypeConfidence); 
+		}
+		else {
+			newString += "Class_conf: none\n"; 
+		}
+		
+		newString += String.format("Class_pred: %s\n ", predictedClass); 
+		newString += "binary_class: " + binaryClassification + "\n ";
+		return newString;
 	}
 
 

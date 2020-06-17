@@ -51,9 +51,13 @@ public class OrcaSpotSidePanel extends PamPanel {
 	 */
 	public void updateNewParams() {
 		double lastPrediction = -1;
-		if (orcaSpotClassifier.getLastPrediction()!=null) lastPrediction = orcaSpotClassifier.getLastPrediction().getPrediction();
+		String lastPredString = ""; 
+		if (orcaSpotClassifier.getLastPrediction()!=null) {
+			lastPrediction = orcaSpotClassifier.getLastPrediction().getPrediction();
+			lastPredString = orcaSpotClassifier.getLastPrediction().getResultString(); 
+		}
 		bufferBarPanel.updatePanel(orcaSpotClassifier.getRawDataQueue(), orcaSpotClassifier.MAX_QUEUE_SIZE, 
-				lastPrediction);
+				lastPrediction, lastPredString);
 	}
 
 	private void createSidePane() {
@@ -93,6 +97,11 @@ public class OrcaSpotSidePanel extends PamPanel {
 
 		private JLabel posLabel;
 
+		/**
+		 * Shows results from results label. 
+		 */
+		private JLabel resultLabel;
+
 		public BufferPanel() {
 			
 			this.setLayout(new GridBagLayout());
@@ -115,6 +124,11 @@ public class OrcaSpotSidePanel extends PamPanel {
 			c.gridy++;
 			c.gridx=0; 
 			PamPanel.addComponent(this, posLabel = new JLabel(), c);
+			
+			c.gridy++;
+			c.gridx=0; 
+			PamPanel.addComponent(this, resultLabel = new JLabel(), c);
+
 
 		}
 		
@@ -124,13 +138,15 @@ public class OrcaSpotSidePanel extends PamPanel {
 		 * @param buffermax - the maximum allowed value of the buffer. 
 		 * @param lastPrediciton - the current number of possibilities.  
 		 */
-		public void updatePanel(int numinbuffer, int buffermax, double lastPrediciton) {
+		public void updatePanel(int numinbuffer, int buffermax, double lastPrediciton, String predicitonString) {
 			//System.out.println("Update buffer: " + kcount + " buffermax: " +buffermax +  "   " + (kcount/(double) buffermax) + "%" ); 
 			SwingUtilities.invokeLater(()->{
 				bufferBar.setValue(numinbuffer);
 				bufferBar.setMaximum(buffermax);
 				bufferLabel.setText(String.format("%.1f%%", 100*numinbuffer/(double) buffermax));
-				posLabel.setText(String.format("Last prediciton: %.1f ",lastPrediciton));
+				posLabel.setText(String.format("Last prediction: %.1f ",lastPrediciton));
+				
+				resultLabel.setText(	"<html><pre>" + 	predicitonString + "</pre></html>");
 			});
 		}
 		

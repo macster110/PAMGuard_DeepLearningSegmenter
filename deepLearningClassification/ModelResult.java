@@ -25,6 +25,12 @@ public interface ModelResult {
 	 * @return the analysis time. 
 	 */
 	public double getAnalysisTime(); 
+	
+	/**
+	 * String representation of the result
+	 * @return a string of the result. 
+	 */
+	public String getResultString(); 
 
 
 }

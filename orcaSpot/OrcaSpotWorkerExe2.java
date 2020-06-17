@@ -121,16 +121,32 @@ public class OrcaSpotWorkerExe2 {
 		String[] params;
 		String line;
 		if (cuda) {
-			params = new String[] { currentParams.pythonExeFile, currentParams.getPredict_script(), "--log_dir", currentParams.getLog_Path(),
-					"--sequence_len", currentParams.getSeq_len(), "--hop",
-					currentParams.getHop_size(), "--threshold", currentParams.getThreshold(), "--model",
-					currentParams.getModel(), "--num_workers", currentParams.getNum_workers() };
+			params = new String[] { currentParams.getPythonExe(), 
+					currentParams.getPredict_script(),
+					"--seg_path", currentParams.getSegmenter_script(),
+					"--class_path", currentParams.getClassifierModel(),
+					"--log_dir", currentParams.getLog_Path(),
+					"--sequence_len", currentParams.getSeq_len(),
+					"--hop", currentParams.getHop_size(),
+					"--mode", currentParams.getMode(),
+					"--threshold", currentParams.getThreshold(),
+					"--num_workers", currentParams.getNum_workers(),
+					"--sample_rate", currentParams.getSample_rate()
+			};
 		} 
 		else {
-			params = new String[] { currentParams.pythonExeFile, currentParams.getPredict_script(), "--log_dir", currentParams.getLog_Path(),
-					"--sequence_len", currentParams.getSeq_len(), "--hop",
-					currentParams.getHop_size(), "--threshold", currentParams.getThreshold(), "--no_cuda", "--model",
-					currentParams.getModel(), "--num_workers", currentParams.getNum_workers() };
+			params = new String[] { currentParams.getPythonExe(), 
+					currentParams.getPredict_script(),
+					"--seg_path", currentParams.getSegmenter_script(),
+					"--class_path", currentParams.getClassifierModel(), 
+					"--log_dir", currentParams.getLog_Path(),
+					"--sequence_len", currentParams.getSeq_len(), 
+					"--hop", currentParams.getHop_size(), 
+					"--mode", currentParams.getMode(),
+					"--threshold", currentParams.getThreshold(), 
+					"--no_cuda", 
+					"--num_workers", currentParams.getNum_workers(),
+					"--sample_rate", currentParams.getSample_rate()};
 		}
 		try {
 			for (String aString : params) {
@@ -236,41 +252,68 @@ public class OrcaSpotWorkerExe2 {
 		String line;
 		boolean finished = false;
 		OrcaSpotModelResult orcaSpotModelResult  = null; 
+
+		orcaSpotModelResult = new OrcaSpotModelResult(); 
+
+		int n=0; 
 		while (!finished) {
+			
+			
 			line = Daemonreader.readLine(); // is never null because Daemon doesn't die.
 
 			// make sure we are in Order, should prevent noise from preconsuming. but since
 			// the process is already there it should make no problem.
 
-			System.out.println(line);
+		//System.out.println(this.currentParams.mode + " " + n + ": " + line);
 
 			if (line.trim().toLowerCase().contains("|time=")) {
-
 				String time = line.trim().split(",")[0].split("\\|")[2].trim();
-				String conf = line.trim().split("prob=")[1].trim();
-				
-				String output_orca = "Time=" + time + " -> " + "Confidence=" + conf;
-				System.out.println(output_orca);
-				
-				orcaSpotModelResult = new OrcaSpotModelResult(Double.valueOf(conf), -1.0); 
+				orcaSpotModelResult.timeSeconds = 0.0; 
+			}
+
+			if (line.trim().toLowerCase().contains("prob=")) {
+				String  conf = line.trim().split("prob=")[1].trim();
+				orcaSpotModelResult.detectionConfidence = Double.valueOf(conf); 
+				if (this.currentParams.mode.equals("0") || 
+						(this.currentParams.mode.equals("1") && orcaSpotModelResult.detectionConfidence<=Double.valueOf(currentParams.threshold))) {
+					finished = true; 
+				}
+			}
+
+
+			if (line.trim().toLowerCase().contains("pred_class=")) {
+				String  predClass = line.trim().split(",")[1].trim();
+				predClass = predClass.substring(11, predClass.length()); 
+				orcaSpotModelResult.predictedClass  = predClass; 
+				String  predConf = line.trim().split(" prob_class=")[1].trim().substring(0, 6);
+
+				orcaSpotModelResult.calltypeConfidence = Double.valueOf(predConf); 
 
 				finished = true; 
-
-//				// attempt a classification
-//				if (this.is_orca(line.trim())) {
-//					classtype = "Orca";
-//
-//					classconf = "null";
-//
-//					String output_orca = "Time=" + time + " -> " + classtype + " detected; Confidence=" + conf
-//							+ " Classconfidence=" + classconf + "s!\n";
-//					System.out.println(output_orca);
-//					finished = true;
-//					//break;
-//				}
-//				else finished = true; 
-
 			}
+			
+//			if (n>10) {
+//				//TEMP - 
+//				finished = true;
+//			}
+				
+			n=n+1; 
+			//			finished = true; 
+
+			//				// attempt a classification
+			//				if (this.is_orca(line.trim())) {
+			//					classtype = "Orca";
+			//
+			//					classconf = "null";
+			//
+			//					String output_orca = "Time=" + time + " -> " + classtype + " detected; Confidence=" + conf
+			//							+ " Classconfidence=" + classconf + "s!\n";
+			//					System.out.println(output_orca);
+			//					finished = true;
+			//					//break;
+			//				}
+			//				else finished = true; 
+
 		}
 		return orcaSpotModelResult;
 	}
@@ -280,11 +323,11 @@ public class OrcaSpotWorkerExe2 {
 	 * @throws UnsupportedAudioFileException 
 	 */
 
-	public void runOrcaSpot(File audioFile) throws IOException, UnsupportedAudioFileException {
+	public OrcaSpotModelResult runOrcaSpot(File audioFile) throws IOException, UnsupportedAudioFileException {
 		//Pre process data from file to Doubles
 		double[] data = transformAudio2Double(audioFile);
-		
-		runOrcaSpot(data);
+
+		return runOrcaSpot(data);
 	}
 
 	/**
@@ -294,12 +337,12 @@ public class OrcaSpotWorkerExe2 {
 	 */
 	public OrcaSpotModelResult runOrcaSpot(double[] data) throws IOException  {
 
-//		System.out.println("Data in: ");
-//		for (int i=0; i<20; i++) {
-//			System.out.print("  " + data[i]); 
-//		}
-//		System.out.println("");
-		
+		//		System.out.println("Data in: ");
+		//		for (int i=0; i<20; i++) {
+		//			System.out.print("  " + data[i]); 
+		//		}
+		//		System.out.println("");
+
 		long time0 =  System.currentTimeMillis(); 
 
 		String msg = Arrays.toString(data);
@@ -310,18 +353,18 @@ public class OrcaSpotWorkerExe2 {
 
 		//Send Data
 		RAFClient.writeBytes(msg);
-		
+
 		//Read from Deamon
 		OrcaSpotModelResult orcaSpotResult = readPrediction();
-		
+
 		long time1 =  System.currentTimeMillis(); 
 
 		orcaSpotResult.setAnlaysisTime((time1-time0)/1000.); 
-		
+
 		return orcaSpotResult;
 	}
 
-	
+
 
 	/**
 	 * Check whether the output indicates this is an orca or not.
@@ -353,6 +396,7 @@ public class OrcaSpotWorkerExe2 {
 		String allFiles[] = Directory.list();
 
 		OrcaSpotParams2 orcaSpotParams2= new OrcaSpotParams2(); 
+		orcaSpotParams2.mode="1"; 
 
 		//Build Daemon and Client
 		//True for Cuda
@@ -365,11 +409,15 @@ public class OrcaSpotWorkerExe2 {
 		//First entry.
 		Times.add(System.currentTimeMillis());
 		//Loop for multiple Files
+		OrcaSpotModelResult orcaSpotResult; 
 		for(int i=0; i< allFiles.length;i++)
 		{
 			//Set new Audio File.
-			orcaSpotWorker.runOrcaSpot(new File(Directory.getAbsolutePath()+'/'+allFiles[i]));
+			System.out.println("-----Run new file------");
+
+			orcaSpotResult= orcaSpotWorker.runOrcaSpot(new File(Directory.getAbsolutePath()+'/'+allFiles[i]));
 			Times.add(System.currentTimeMillis());
+			System.out.println(orcaSpotResult.getResultString()); 
 		}
 
 		for(int i=0; i<Times.size()-1;i++)
@@ -380,9 +428,9 @@ public class OrcaSpotWorkerExe2 {
 		orcaSpotWorker.closeOrcaSpotWorker();
 
 	}
-	
-	
-//	/**
+
+
+	//	/**
 	//	 * Make an audio file.
 	//	 * 
 	//	 * @return an audio file.

@@ -55,7 +55,7 @@ public class OrcaSpotClassifier implements DLClassiferModel, PamSettings {
 	 */
 	private OrcaSpotModelResult lastPrediction; 
 
-	private static final int THREAD_POOL_SIZE = 1; //keep this for now
+//	private static final int THREAD_POOL_SIZE = 1; //keep this for now
 
 	/**
 	 * Hiolds a list of segmeneted raw data units which need to be classified. 
@@ -107,10 +107,28 @@ public class OrcaSpotClassifier implements DLClassiferModel, PamSettings {
 
 	@Override
 	public void prepModel() {
-		//make sure the paramters have the right sequence length set up. 
+		//make sure the parameters have the right sequence length set up. 
 		double windowSize = dlControl.getDLParams().rawSampleSize/dlControl.getSegmenter().getSampleRate(); 
 		orcaSpotParams.seq_len = String.valueOf(windowSize);
 		orcaSpotParams.hop_size  = String.valueOf(windowSize); 
+
+		//set the sample rate - decimation is done in Python code if needed
+		orcaSpotParams.sampleRate = String.format("%d", (int) dlControl.getSegmenter().getSampleRate());
+
+		//set the correct mode
+		String mode = null;
+
+		//use both detector and classifier
+		if (orcaSpotParams.useClassifier & orcaSpotParams.useDetector) mode="1"; 
+		//use the classifier only 
+		if (orcaSpotParams.useClassifier & !orcaSpotParams.useDetector) mode = "2";
+		//use detector only 
+		if (!orcaSpotParams.useClassifier & orcaSpotParams.useDetector) mode = "0";
+		
+		if (mode==null) {
+			System.err.print("ORCASPOT: something very wrong: Mode is null??");
+		}
+		orcaSpotParams.mode = mode; 
 
 
 		if (workerThread!=null) {
@@ -161,7 +179,7 @@ public class OrcaSpotClassifier implements DLClassiferModel, PamSettings {
 
 
 		dlControl.getDLClassifyProcess().getDLClassifiedDataBlock().addPamData(dlDataUnit);
-		
+
 		if (dlDataUnit.getModelResult().isBinaryClassification()) {
 			//send off to localised datablock 
 			dlControl.getDLClassifyProcess().getDlClassifiedLocBlock().addPamData(dlDataUnit);

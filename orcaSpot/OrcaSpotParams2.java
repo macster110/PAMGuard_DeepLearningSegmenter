@@ -14,7 +14,7 @@ public class OrcaSpotParams2 implements Serializable, Cloneable {
 	/**
 	 * 
 	 */
-	public static final long serialVersionUID = 2L;
+	public static final long serialVersionUID = 3L;
 
 	
 //	//TODO Decision and Counter
@@ -27,48 +27,60 @@ public class OrcaSpotParams2 implements Serializable, Cloneable {
 	/**
 	 * The master path to the segmentor python folder. 
 	 */
-	public String segmenterMasterPath =  "E:/DeepLearning_OrcaSpot/Segmenter/";
+	public String segmenterMasterPath =  "E:\\DeepLearning_OrcaSpot\\Segmenter";
 	
 	/***Python Scripts***/
 	
 	/**
 	 * Location of the python.exe file.
 	 */
-	public String pythonExeFile = segmenterMasterPath +"pytorch/my-venv/Scripts/python.exe";
+	private String pythonExeFile =  "pytorch/my-venv/Scripts/python.exe";
 	
 //	public String pythonExeFile = "C:/Users/macst/PycharmProjects/python_test/venv/Scripts/python.exe";
 	
 	/**
 	 * Python script for running the initial prediction stage
 	 */
-	public String predict_script  = segmenterMasterPath + "orca-spot/src/predict.py";
+	private String predict_script  =  "orca-spot/src/predict.py";
 	
 	/**
 	 * Python script for running the later classification stage. 
 	 */
-	public String predict2_script = segmenterMasterPath + "r18_m2_a1_c7_n_run1/orca_spot_call_type/src/predict.py"; 
+	private String predict2_script =  "r18_m2_a1_c7_n_run1/orca_spot_call_type/src/predict.py"; 
+	
+	/**
+	 * Python Script running Segmentation stage
+	 */
+	private String segmenter_script =  "r18_m2_a1_c7_n_run1/classifier.pk";
 	
 	/***Classifier Models****/
 	
 	/**
 	 * The initial prediction models
 	 */
-	public String model = segmenterMasterPath + "r18_m2_a1_c7_n_run1/classifier.pk"; 
+	private String model =  "r18_m2_a1_c7_n_run1/classifier.pk"; 
 	
 	/**
 	 * The classifier model
 	 */
-	public String classifier_model = segmenterMasterPath + "r18_m2_a1_c7_n_run1/call_type.pk"; 
+	private String classifier_model =  "r18_m2_a1_c7_n_run1/call_type.pk"; 
+	
+//	/**
+//	 * A Logfile for current Debbuging.
+//	 */
+//	public String log = segmenterMasterPath;
 	
 	/**
-	 * A Logfile for current Debbuging.
+	 * True to use the detector
 	 */
-	public String log = segmenterMasterPath;
+	public boolean useDetector; 
+
 	
 	/**
 	 * Use the classifier 
 	 */
 	public boolean useClassifier = true;
+	
 	
 	/**
 	 * The threshold to apply to the initial prediction stage
@@ -113,7 +125,39 @@ public class OrcaSpotParams2 implements Serializable, Cloneable {
 	 */
 	public String classiferFile = ""; 
 	
+	/**
+	 * The classification mode. 
+	 * 0 means only segmentation Orca no Orca
+	 * 1 means segmentation and classification Orca; Type n something, 
+	 * 2 means only Classification Type n something.
+	 **/
+	public String mode  = "0"; 
 	
+	/**
+	 * The sample rate in samples per second
+	 */
+	public String sampleRate = "44100";
+
+
+	/**
+	 * Get the current classification mode.
+	 * 0 means only segmentation Orca no Orca
+	 * 1 means segmentation and classification Orca; Type n something, 
+	 * 2 means only Classification Type n something.
+	 * return the classification mode
+	 */
+	public String getMode() {
+		return mode;
+	}
+	
+	/**
+	 * Get the sample rate in samples per second
+	 * @return the sample rate. 
+	 */
+	public String getSample_rate() {
+		return this.sampleRate;
+	}
+
 	public String getThreshold() {
 		return threshold;
 	}
@@ -126,29 +170,52 @@ public class OrcaSpotParams2 implements Serializable, Cloneable {
 		this.threshold = threshold;
 	}
 
+	/**
+	 * Get the path to the PythonExe file in the correct virtual environment. 
+	 * @return the Python exe file path. 
+	 */
+	public String getPythonExe() {
+		return segmenterMasterPath +"/" +  this.pythonExeFile; 
+	}
+	
+	/**
+	 * Get the main prediction script for running the detector and classifier. 
+	 * @return the prediction script file path. 
+	 */
 	public String getPredict_script() {
-		return predict_script;
+		return segmenterMasterPath + "/" + predict_script;
 	}
+	
 	public String getClass_script() {
-		return predict2_script;
+		return segmenterMasterPath + "/" + predict2_script;
 	}
 
-	public void setPredict_script(String predict_script) {
-		this.predict_script = predict_script;
-	}
-
-	public String getAudio_file() {
-		return audio_file.getAbsolutePath();
+	public String getSegmenter_script() {
+		return segmenterMasterPath+"/" + segmenter_script;
 	}
 	
+	/**
+	 * Path to the log for OrcaSpot. 
+	 * @return
+	 */
 	public String getLog_Path() {
-		return log;
+		return segmenterMasterPath;
 	}
 	
-	public void setAudio_file(File audio_file) {
-		this.audio_file = audio_file;
+	
+	/*** Detection and Classification Models***/
+	
+	public String getDetectorModel() {
+		return segmenterMasterPath +"/" + model;
 	}
+	
+	public String getClassifierModel() {
+		return segmenterMasterPath + "/" +classifier_model;
+	}
+	
 
+	/** Audio Params***/
+	
 	public String getSeq_len() {
 		return seq_len;
 	}
@@ -165,6 +232,7 @@ public class OrcaSpotParams2 implements Serializable, Cloneable {
 		this.hop_size = hop_size;
 	}
 
+	
 	public Boolean getcuda() {
 		return cuda;
 	}
@@ -173,24 +241,11 @@ public class OrcaSpotParams2 implements Serializable, Cloneable {
 		this.cuda = cuda;
 	}
 
-	public String getModel() {
-		return model;
-	}
-	public String getclassifierModel() {
-		return classifier_model;
-	}
 
-	public void setModel(String model) {
-		this.model = model;
-	}
-	
 	public String getNum_workers() {
 		return num_workers;
 	}
 
-	public void setNum_workers(String num_workers) {
-		this.num_workers = num_workers;
-	}
 	
 	@Override
 	public OrcaSpotParams2 clone() {
@@ -209,6 +264,11 @@ public class OrcaSpotParams2 implements Serializable, Cloneable {
 			return null;
 		}
 		return newParams;
+	}
+
+	public void updateAllPaths() {
+		// TODO Auto-generated method stub
+		
 	}
 
 

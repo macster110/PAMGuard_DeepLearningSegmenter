@@ -51,8 +51,19 @@ public class OrcaSpotPane extends SettingsPane<OrcaSpotParams2> {
 	 */
 	private PamSpinner<Double> detectionSpinner;
 
+	/**
+	 * Check box for enabling the classifier. 
+	 */
 	private CheckBox enableClassifier;
+	
+	/**
+	 * Check box for enabling the detector
+	 */
+	private CheckBox enableDetector;
 
+	/**
+	 * The current params
+	 */
 	private OrcaSpotParams2 currentParams;
 
 	/**
@@ -61,6 +72,8 @@ public class OrcaSpotPane extends SettingsPane<OrcaSpotParams2> {
 	private CheckBox useCuda;
 
 	private Label pathLabel;
+
+
 
 	public OrcaSpotPane() {
 		super(null);
@@ -120,8 +133,11 @@ public class OrcaSpotPane extends SettingsPane<OrcaSpotParams2> {
 		gridPane.add(detectionSpinner = new PamSpinner<Double>(0.0, 1.0, 0.9, 0.1), 1, 0);
 		detectionSpinner.setPrefWidth(100);
 		detectionSpinner.setEditable(true);
-
 		detectionSpinner.getStyleClass().add(Spinner.STYLE_CLASS_SPLIT_ARROWS_HORIZONTAL);
+		gridPane.add(enableDetector = new CheckBox ("Enable"), 2, 0);
+		enableDetector.setOnAction(action->{
+			enableControls(); 
+		});
 
 		gridPane.add(new Label("Call type classiifcation"), 0, 1);
 		gridPane.add(classifierSpinner = new PamSpinner<Double>(0.0, 1.0, 0.9, 0.1), 1, 1);
@@ -154,6 +170,7 @@ public class OrcaSpotPane extends SettingsPane<OrcaSpotParams2> {
 	}
 
 	private void enableControls() {
+		detectionSpinner.setDisable(!enableDetector.isSelected());
 		classifierSpinner.setDisable(!enableClassifier.isSelected());
 	}
 
@@ -168,10 +185,13 @@ public class OrcaSpotPane extends SettingsPane<OrcaSpotParams2> {
 		}
 		else {
 			currParams.segmenterMasterPath =  currentSelectedFile.getPath(); 
+			currParams.updateAllPaths(); 
 		}
 
 		currParams.threshold = String.valueOf(detectionSpinner.getValue()); 
 		currParams.threshold2 = String.valueOf(classifierSpinner.getValue()); 
+		
+		currParams.useDetector = enableDetector.isSelected(); 
 		currParams.useClassifier = enableClassifier.isSelected(); 
 		currParams.cuda = useCuda.isSelected(); 
 
@@ -188,11 +208,12 @@ public class OrcaSpotPane extends SettingsPane<OrcaSpotParams2> {
 		
 		pathLabel .setText(this.currentSelectedFile.getPath()); 
 
-
 		detectionSpinner.getValueFactory().setValue(Double.valueOf(currParams.threshold));
 		classifierSpinner.getValueFactory().setValue(Double.valueOf(currParams.threshold2));
 
+		enableDetector.setSelected(currParams.useDetector);
 		enableClassifier.setSelected(currParams.useClassifier);
+		
 		useCuda.setSelected(currParams.cuda);
 		
 		enableControls();
