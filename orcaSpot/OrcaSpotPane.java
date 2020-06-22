@@ -1,6 +1,9 @@
 package rawDeepLearningClassifer.orcaSpot;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
+import java.nio.file.Path;
 
 import PamController.PamController;
 import PamController.SettingsPane;
@@ -55,7 +58,7 @@ public class OrcaSpotPane extends SettingsPane<OrcaSpotParams2> {
 	 * Check box for enabling the classifier. 
 	 */
 	private CheckBox enableClassifier;
-	
+
 	/**
 	 * Check box for enabling the detector
 	 */
@@ -99,19 +102,24 @@ public class OrcaSpotPane extends SettingsPane<OrcaSpotParams2> {
 		PamButton pamButton = new PamButton("Browse..."); 
 
 		pamButton.setOnAction((action)->{
-			dirChooser.setInitialDirectory(currentSelectedFile);
-			File currentSelectedFile = dirChooser.showDialog(null); 
-			if (currentSelectedFile!=null) {
-				this.currentSelectedFile = currentSelectedFile; 
-				updatePathLabel();
+
+			Path path = currentSelectedFile.toPath();
+			if(Files.exists(path, LinkOption.NOFOLLOW_LINKS))
+			{
+				dirChooser.setInitialDirectory(currentSelectedFile);
 			}
+			else
+			{ 
+				dirChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+			}
+
 		});
-		
+
 		PamHBox hBox = new PamHBox(); 
 		hBox.setSpacing(5);
 		hBox.getChildren().addAll(locationLabel, pamButton); 
 		hBox.setAlignment(Pos.CENTER_LEFT);
-		
+
 		//label to show path
 		pathLabel = new Label(); 
 
@@ -153,14 +161,14 @@ public class OrcaSpotPane extends SettingsPane<OrcaSpotParams2> {
 		PamVBox vBox = new PamVBox(); 
 		vBox.setSpacing(5);
 		vBox.getChildren().addAll(classiferInfoLabel, hBox, pathLabel, useCuda, classiferInfoLabel2, gridPane); 
-		
+
 		mainPane.setCenter(vBox);
 
 		return mainPane; 
 
 	}
-	
-	
+
+
 	/**
 	 * Update the path label and tool tip text; 
 	 */
@@ -190,7 +198,7 @@ public class OrcaSpotPane extends SettingsPane<OrcaSpotParams2> {
 
 		currParams.threshold = String.valueOf(detectionSpinner.getValue()); 
 		currParams.threshold2 = String.valueOf(classifierSpinner.getValue()); 
-		
+
 		currParams.useDetector = enableDetector.isSelected(); 
 		currParams.useClassifier = enableClassifier.isSelected(); 
 		currParams.cuda = useCuda.isSelected(); 
@@ -201,11 +209,11 @@ public class OrcaSpotPane extends SettingsPane<OrcaSpotParams2> {
 	@Override
 	public void setParams(OrcaSpotParams2 currParams) {
 		this.currentParams = currParams.clone(); 
-		
+
 		currentSelectedFile = new File(currentParams.segmenterMasterPath);
-		
+
 		updatePathLabel();
-		
+
 		pathLabel .setText(this.currentSelectedFile.getPath()); 
 
 		detectionSpinner.getValueFactory().setValue(Double.valueOf(currParams.threshold));
@@ -213,9 +221,9 @@ public class OrcaSpotPane extends SettingsPane<OrcaSpotParams2> {
 
 		enableDetector.setSelected(currParams.useDetector);
 		enableClassifier.setSelected(currParams.useClassifier);
-		
+
 		useCuda.setSelected(currParams.cuda);
-		
+
 		enableControls();
 	}
 

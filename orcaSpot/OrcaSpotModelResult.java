@@ -106,7 +106,7 @@ public class OrcaSpotModelResult implements ModelResult {
 		}
 		
 		newString += String.format("Class_pred: %s\n ", predictedClass); 
-		newString += "binary_class: " + binaryClassification + "\n ";
+		newString += "Binary_class: " + binaryClassification + "\n ";
 		return newString;
 	}
 
