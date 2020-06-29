@@ -26,7 +26,7 @@ You will need to.
  * Install [Python and Anaconda or similar](https://docs.anaconda.com/anaconda/install/windows/).
  * Install [CUDA installed from Nvidea](https://developer.nvidia.com/cuda-downloads) to run the classifier on a graphics card. 
  * Install [Cuda support for Pytorch](https://pytorch.org).
- * Download the OrcaSpot Python code and classifier. 
+ * Download the OrcaSpot Python code and classifier (pending publication and licensing). 
  
  To set up the python environment
  * Copy the Orcaspot Segmeneter folder to a location on your computer you ar enot going to change. 
