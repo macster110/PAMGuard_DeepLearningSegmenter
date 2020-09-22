@@ -6,8 +6,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import javax.swing.SwingUtilities;
-
 import PamController.PamControlledUnitSettings;
 import PamController.PamSettingManager;
 import PamController.PamSettings;
@@ -34,7 +32,7 @@ public class OrcaSpotClassifier implements DLClassiferModel, PamSettings {
 	 * The data model control 
 	 */
 	private DLControl dlControl;
-
+	
 	/**
 	 * The OrcaSpot worker that does all the heavy lifting. 
 	 */
@@ -73,7 +71,8 @@ public class OrcaSpotClassifier implements DLClassiferModel, PamSettings {
 		orcaSpotParams = new OrcaSpotParams2(); 
 		this.orcaSpotUI = new OrcaSpotClassifierUI(this); ;
 		//load the previous settings
-		PamSettingManager.getInstance().registerSettings(this);	}
+		PamSettingManager.getInstance().registerSettings(this);	
+	}
 
 	@Override
 	public String getName() {

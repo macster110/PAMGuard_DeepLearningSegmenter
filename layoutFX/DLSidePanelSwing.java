@@ -35,7 +35,7 @@ public class DLSidePanelSwing implements PamSidePanel {
 	 */
 	public void setupPanel() {
 		//System.out
-		if (dlControl.getDLModel().getModelUI()!=null) {
+		if (dlControl.getDLModel().getModelUI()!=null && dlControl.getDLModel().getModelUI().getSidePanel()!=null) {
 			mainPanel.add(dlControl.getDLModel().getModelUI().getSidePanel(), BorderLayout.CENTER);
 //			mainPanel.add(new JLabel("Hello"), BorderLayout.WEST);
 			mainPanel.validate();

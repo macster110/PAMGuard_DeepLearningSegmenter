@@ -3,6 +3,8 @@ package rawDeepLearningClassifer.layoutFX;
 import PamController.SettingsPane;
 import PamDetection.RawDataUnit;
 import PamguardMVC.PamDataBlock;
+import clickDetector.ClickDetection;
+import clipgenerator.ClipDataUnit;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -97,8 +99,13 @@ public class RawDLSettingsPane  extends SettingsPane<RawDLParams>{
 		vBox.setSpacing(5);
 
 		sourcePane = new GroupedSourcePaneFX("Raw Sound Data", RawDataUnit.class, true, false, true);
+		sourcePane.addSourceType(ClickDetection.class, false);
+		sourcePane.addSourceType(ClipDataUnit.class, false);
+
+		
 		vBox.getChildren().add(sourcePane);
 		sourcePane.prefWidthProperty().bind(vBox.widthProperty());
+		sourcePane.setMaxWidth(Double.MAX_VALUE);
 
 		// the segmentation params
 		Label label = new Label("Segmentation"); 

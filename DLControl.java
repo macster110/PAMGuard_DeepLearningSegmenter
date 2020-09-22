@@ -22,6 +22,7 @@ import rawDeepLearningClassifer.layoutFX.DLSidePanelSwing;
 import rawDeepLearningClassifer.layoutFX.RawDLSettingsPane;
 import rawDeepLearningClassifer.orcaSpot.OrcaSpotClassifier;
 import rawDeepLearningClassifer.segmenter.SegmenterProcess;
+import rawDeepLearningClassifer.soundSpot.SoundSpotClassifier;
 
 /**
  * Module which uses an external deep learning classifier to identify any data unit
@@ -88,6 +89,8 @@ public class DLControl extends PamControlledUnit implements PamSettings {
 
 		/*****Add new deep learning models here****/
 
+
+		dlModels.add(new SoundSpotClassifier(this)); 
 		dlModels.add(new OrcaSpotClassifier(this)); 
 
 		//load the previous settings
