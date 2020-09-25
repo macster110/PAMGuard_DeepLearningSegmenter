@@ -6,6 +6,7 @@ import java.nio.file.LinkOption;
 import java.nio.file.Path;
 
 import PamController.SettingsPane;
+import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
@@ -14,6 +15,7 @@ import javafx.scene.control.Spinner;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import pamViewFX.PamGuiManagerFX;
+import pamViewFX.fxGlyphs.PamGlyphDude;
 import pamViewFX.fxNodes.PamBorderPane;
 import pamViewFX.fxNodes.PamButton;
 import pamViewFX.fxNodes.PamGridPane;
@@ -54,6 +56,9 @@ public class SoundSpotPane extends SettingsPane<SoundSpotParams> {
 	 */
 	private PamSpinner<Double> detectionSpinner;
 
+	/**
+	 * True to use CUDA
+	 */
 	private CheckBox useCuda; 
 
 	public SoundSpotPane(Object ownerWindow) {
@@ -106,9 +111,26 @@ public class SoundSpotPane extends SettingsPane<SoundSpotParams> {
 		hBox.setSpacing(5);
 		hBox.getChildren().addAll(locationLabel, pamButton); 
 		hBox.setAlignment(Pos.CENTER_RIGHT);
-
+		
+		
 		useCuda = new CheckBox("Use CUDA"); 
+		
+		PamButton advButton = new PamButton("", PamGlyphDude.createPamGlyph(MaterialDesignIcon.SETTINGS, PamGuiManagerFX.iconSize-3)); 
+		advButton.setOnAction((action)->{
+			//pop up window with adv settings.
+			
+		});
+		PamHBox advSettingsBox = new PamHBox(); 
+		advSettingsBox.setSpacing(5);
+		advSettingsBox.getChildren().addAll(new Label("Advanced"), advButton); 
+		advSettingsBox.setAlignment(Pos.CENTER);
 
+		PamBorderPane advSettings = new PamBorderPane(); 
+		advSettings.setLeft(useCuda);
+		PamBorderPane.setAlignment(useCuda, Pos.CENTER);
+		advSettings.setRight(advSettingsBox);
+		
+		
 		/**Classification thresholds etc to set.**/
 		Label classiferInfoLabel2 = new Label("Binary Classification Threshold"); 
 		classiferInfoLabel2.setFont(PamGuiManagerFX.titleFontSize2);
@@ -128,7 +150,7 @@ public class SoundSpotPane extends SettingsPane<SoundSpotParams> {
 
 		PamVBox vBox = new PamVBox(); 
 		vBox.setSpacing(5);
-		vBox.getChildren().addAll(classiferInfoLabel, hBox, useCuda, classiferInfoLabel2, gridPane); 
+		vBox.getChildren().addAll(classiferInfoLabel, hBox, advSettings, classiferInfoLabel2, gridPane); 
 
 		mainPane.setCenter(vBox);
 

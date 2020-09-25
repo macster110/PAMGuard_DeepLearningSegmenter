@@ -18,7 +18,6 @@ import javafx.scene.layout.Pane;
 import pamViewFX.PamGuiManagerFX;
 import pamViewFX.fxGlyphs.PamGlyphDude;
 import pamViewFX.fxNodes.PamBorderPane;
-import pamViewFX.fxNodes.PamButton;
 import pamViewFX.fxNodes.PamGridPane;
 import pamViewFX.fxNodes.PamSpinner;
 import pamViewFX.fxNodes.PamVBox;
@@ -125,7 +124,7 @@ public class RawDLSettingsPane  extends SettingsPane<RawDLParams>{
 		
 		//button to set default hop size
 		Button defaultButton = new Button();
-		defaultButton.setGraphic(PamGlyphDude.createPamGlyph(MaterialDesignIcon.REFRESH));
+		defaultButton.setGraphic(PamGlyphDude.createPamGlyph(MaterialDesignIcon.REFRESH, PamGuiManagerFX.iconSize-3));
 		defaultButton.setTooltip(new Tooltip("Set default hop size"));
 		defaultButton.setOnAction((action)->{
 			hopLength.getValueFactory().setValue(Math.round(windowLength.getValue()/2));

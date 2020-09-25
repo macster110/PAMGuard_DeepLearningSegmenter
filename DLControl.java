@@ -8,12 +8,16 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
 import PamController.PamControlledUnit;
+import PamController.PamControlledUnitGUI;
 import PamController.PamControlledUnitSettings;
 import PamController.PamController;
+import PamController.PamGUIManager;
 import PamController.PamSettingManager;
 import PamController.PamSettings;
 import PamController.SettingsPane;
 import PamView.PamSidePanel;
+import PamView.WrapperControlledGUISwing;
+import PamguardMVC.PamDataBlock;
 import PamguardMVC.PamRawDataBlock;
 import pamViewFX.fxNodes.pamDialogFX.PamDialogFX2AWT;
 import rawDeepLearningClassifer.deepLearningClassification.DLClassiferModel;
@@ -68,7 +72,17 @@ public class DLControl extends PamControlledUnit implements PamSettings {
 	/**
 	 * The DL side panel - holds algorithm info. 
 	 */
-	private DLSidePanelSwing dlSidePanel; 
+	private DLSidePanelSwing dlSidePanel;
+
+	/**
+	 * DLControl GUI using JavaFX
+	 */
+	private DLControlGUI rawGUIFX;
+
+	/**
+	 * The GUI for swing. 
+	 */
+	private WrapperControlledGUISwing rawDLGUISwing; 
 
 
 	/**
@@ -88,7 +102,6 @@ public class DLControl extends PamControlledUnit implements PamSettings {
 		addPamProcess(dlClassifyProcess = new DLClassifyProcess(this, segmenterProcess.getSegmenterDataBlock()));
 
 		/*****Add new deep learning models here****/
-
 
 		dlModels.add(new SoundSpotClassifier(this)); 
 		dlModels.add(new OrcaSpotClassifier(this)); 
@@ -245,6 +258,44 @@ public class DLControl extends PamControlledUnit implements PamSettings {
 	 */
 	public DLClassifyProcess getDLClassifyProcess() {
 		return this.dlClassifyProcess;
+	}
+	
+	
+	/**
+	 * Get the GUI for the PAMControlled unit. This has multiple GUI options 
+	 * which are instantiated depending on the view type. 
+	 * @param flag. The GUI type flag defined in PAMGuiManager. 
+	 * @return the GUI for the PamControlledUnit unit. 
+	 */
+	public PamControlledUnitGUI getGUI(int flag) {
+		if (flag==PamGUIManager.FX) {
+			if (rawGUIFX ==null) {
+				rawGUIFX= new DLControlGUI(this);
+			}
+			return rawGUIFX;
+		}
+		if (flag==PamGUIManager.SWING) {
+			if (rawDLGUISwing ==null) {
+				rawDLGUISwing= new WrapperControlledGUISwing(this);	
+			}
+			return rawDLGUISwing;
+		}
+		return null;
+	}
+
+
+	public void setParams(RawDLParams newParams) {
+		this.rawDLParmas=newParams;
+	}
+
+
+	
+	/**
+	 * Get the pam datablock 
+	 * @return
+	 */
+	public PamDataBlock getParentDataBlock() {
+		return segmenterProcess.getParentDataBlock();
 	}
 
 }

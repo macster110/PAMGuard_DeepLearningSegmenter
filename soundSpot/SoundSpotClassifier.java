@@ -9,12 +9,12 @@ import rawDeepLearningClassifer.deepLearningClassification.DLClassiferModel;
 import rawDeepLearningClassifer.deepLearningClassification.ModelResult;
 import rawDeepLearningClassifer.layoutFX.DLCLassiferModelUI;
 import rawDeepLearningClassifer.segmenter.SegmenterProcess.GroupedRawData;
-
+import org.pytorch.Module;
 
 /**
  * A deep learning classifier trained using the OrcaSpot and run natively in Java.
  * <p>
- * This method has numerous advanatges, it greatly simplifies the setup, which requires only that
+ * This method has numerous advantages, it greatly simplifies the setup, which requires only that
  * the pytorch TorchScript library is installed and that the library location is added to the virtual
  * machine arguments e.g.  
  * -Djava.library.path=/Users/au671271/libtorch/lib 
@@ -30,10 +30,22 @@ public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 	 * Reference to the control.
 	 */
 	private DLControl dlControl;
-		
+
+	/**
+	 * Sound spot parameters. 
+	 */
 	private SoundSpotParams soundSpotParmas;
-	
+
+	/**
+	 * The user interface for sound spot. 
+	 */
 	private SoundSpotUI soundSpotUI; 
+
+	/**
+	 * The loaded pytorch model 
+	 */
+	public org.pytorch.Module model; 
+
 
 	public SoundSpotClassifier(DLControl dlControl) {
 		this.dlControl=dlControl; 
@@ -49,13 +61,23 @@ public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 
 	@Override
 	public void prepModel() {
-		// TODO Auto-generated method stub
-
+		try {
+			model = Module.load(soundSpotParmas.modelPath);
+			
+			//TODO
+			//need to load the classifier metadata here...
+			
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void closeModel() {
-		// TODO Auto-generated method stub
+		if (model!=null) {
+			model.destroy();
+		}
 
 	}
 
@@ -71,18 +93,17 @@ public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 
 	@Override
 	public Serializable getDLModelSettings() {
-		// TODO Auto-generated method stub
-		return null;
+		return soundSpotParmas;
 	}
 
 	@Override
 	public String getUnitName() {
-		return dlControl.getUnitName()+"_OrcaSpot"; 
+		return dlControl.getUnitName()+"_SoundSpot"; 
 	}
 
 	@Override
 	public String getUnitType() {
-		return dlControl.getUnitType()+"_OrcaSpot";
+		return dlControl.getUnitType()+"_SoundSpot";
 	}
 
 	@Override
@@ -96,13 +117,16 @@ public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 
 	@Override
 	public long getSettingsVersion() {
-		// TODO Auto-generated method stub
-		return 0;
+		return SoundSpotParams.serialVersionUID;
 	}
 
 	@Override
 	public boolean restoreSettings(PamControlledUnitSettings pamControlledUnitSettings) {
-		// TODO Auto-generated method stub
-		return false;
+		SoundSpotParams newParameters = (SoundSpotParams) pamControlledUnitSettings.getSettings();
+		if (newParameters!=null) {
+			soundSpotParmas = newParameters.clone();
+		}
+		else soundSpotParmas = new SoundSpotParams(); 
+		return true;
 	}
 }

@@ -7,7 +7,8 @@ import rawDeepLearningClassifer.layoutFX.DLCLassiferModelUI;
 
 
 /**
- * UI components for the SoundSpot deep leanring model. 
+ * UI components for the SoundSpot deep learning model. 
+ * 
  * @author Jamie Macaulay 
  *
  */

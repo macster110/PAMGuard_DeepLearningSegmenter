@@ -1,6 +1,8 @@
 package rawDeepLearningClassifer.segmenter;
 
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import PamController.PamController;
 import PamDetection.PamDetection;
@@ -16,6 +18,8 @@ import PamguardMVC.PamDataUnit;
 import PamguardMVC.PamObservable;
 import PamguardMVC.PamProcess;
 import PamguardMVC.PamRawDataBlock;
+import clickDetector.ClickDetection;
+import clipgenerator.ClipDataUnit;
 import rawDeepLearningClassifer.DLControl;
 import rawDeepLearningClassifer.deepLearningClassification.DLClassifiedDataBlock;
 
@@ -95,6 +99,16 @@ public class SegmenterProcess extends PamProcess {
 	@Override
 	public void prepareProcess() {
 		setupSegmenter();
+	}
+	
+	/**
+	 * A list of data block class types which are compatible as parent data blocks for the PamProcess. This can return null, e.g. in the case of 
+	 * Acquisition process. 
+	 * @return a list of PamDataBlock sub class types which can be used as parent data blocks for the process. 
+	 */
+	@Override
+	public ArrayList getCompatibleDataUnits(){
+		return new ArrayList<Class<? extends PamDataUnit>>(Arrays.asList(RawDataUnit.class, ClickDetection.class, ClipDataUnit.class));
 	}
 
 
