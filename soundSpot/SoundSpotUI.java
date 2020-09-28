@@ -4,6 +4,7 @@ import javax.swing.JPanel;
 
 import PamController.SettingsPane;
 import rawDeepLearningClassifer.layoutFX.DLCLassiferModelUI;
+import rawDeepLearningClassifer.orcaSpot.OrcaSpotParams2;
 
 
 /**
@@ -33,7 +34,7 @@ public class SoundSpotUI implements DLCLassiferModelUI {
 	}
 
 	@Override
-	public SettingsPane<?> getSettingsPane() {
+	public SettingsPane<SoundSpotParams> getSettingsPane() {
 		if (soundSpotPane==null) {
 			soundSpotPane = new  SoundSpotPane(null); 
 		}
@@ -42,15 +43,17 @@ public class SoundSpotUI implements DLCLassiferModelUI {
 
 	@Override
 	public void getParams() {
-		// TODO Auto-generated method stub
+		SoundSpotParams orcaSpotParams =  getSettingsPane().getParams(soundSpotClassifier.getSoundSpotParams()); 
+		soundSpotClassifier.setSoundSpotParams(orcaSpotParams.clone()); //be safe and clone.  
 		
 	}
 
 	@Override
 	public void setParams() {
-		// TODO Auto-generated method stub
+		 getSettingsPane() .setParams(soundSpotClassifier.getSoundSpotParams());
 		
 	}
+
 
 	@Override
 	public JPanel getSidePanel() {

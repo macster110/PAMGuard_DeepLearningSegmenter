@@ -21,6 +21,17 @@ public class SoundSpotParams extends DLParams implements Serializable, Cloneable
 	 * The model path
 	 */
 	public String modelPath;
+
+	/**
+	 * True to use CUDA. 
+	 */
+	public boolean useCUDA = false;
+
+	
+	/**
+	 * The threshold between zero and one. This is used to allow binary classificiation. 
+	 */
+	public double threshold; 
 	
 	
 	@Override

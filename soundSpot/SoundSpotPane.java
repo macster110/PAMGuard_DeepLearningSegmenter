@@ -5,13 +5,18 @@ import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
 
+import PamController.PamController;
 import PamController.SettingsPane;
+import PamView.dialog.PamDialog;
+import PamView.dialog.warn.WarnOnce;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
+import javafx.scene.control.Tooltip;
+import javafx.scene.control.Alert.AlertType;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import pamViewFX.PamGuiManagerFX;
@@ -22,6 +27,7 @@ import pamViewFX.fxNodes.PamGridPane;
 import pamViewFX.fxNodes.PamHBox;
 import pamViewFX.fxNodes.PamSpinner;
 import pamViewFX.fxNodes.PamVBox;
+import rawDeepLearningClassifer.orcaSpot.OrcaSpotParams2;
 
 /**
  * Settings pane for SoundSpot
@@ -59,7 +65,9 @@ public class SoundSpotPane extends SettingsPane<SoundSpotParams> {
 	/**
 	 * True to use CUDA
 	 */
-	private CheckBox useCuda; 
+	private CheckBox useCuda;
+
+	private SoundSpotParams currentParams; 
 
 	public SoundSpotPane(Object ownerWindow) {
 		super(ownerWindow);
@@ -81,7 +89,7 @@ public class SoundSpotPane extends SettingsPane<SoundSpotParams> {
 		classiferInfoLabel.setFont(PamGuiManagerFX.titleFontSize2);
 
 		/**Basic classifier info**/
-		Label locationLabel = new Label("No classifier file selected"); 
+		pathLabel = new Label("No classifier file selected"); 
 		PamButton pamButton = new PamButton("Browse..."); 
 
 		pamButton.setOnAction((action)->{
@@ -103,13 +111,15 @@ public class SoundSpotPane extends SettingsPane<SoundSpotParams> {
 				return; 
 			}
 
-			locationLabel.setText(file.getName());
+			currentSelectedFile = file; 
+			
+			updatePathLabel(); 
 
 		});
 
 		PamHBox hBox = new PamHBox(); 
 		hBox.setSpacing(5);
-		hBox.getChildren().addAll(locationLabel, pamButton); 
+		hBox.getChildren().addAll(pathLabel, pamButton); 
 		hBox.setAlignment(Pos.CENTER_RIGHT);
 		
 		
@@ -157,18 +167,56 @@ public class SoundSpotPane extends SettingsPane<SoundSpotParams> {
 		return mainPane; 
 	}
 
+	/**
+	 * Update the path label and tool tip text; 
+	 */
+	private void updatePathLabel() {
+		if (currentSelectedFile==null) {
+			pathLabel.setText("No classifier file selected");
+			pathLabel.setTooltip(new Tooltip("Use the Browse... button to select a .pk file"));
+
+		}
+		pathLabel .setText(this.currentSelectedFile.getName()); 
+		pathLabel.setTooltip(new Tooltip(this.currentSelectedFile.getPath()));
+	}
+
 	@Override
 	public SoundSpotParams getParams(SoundSpotParams currParams) {
-		// TODO Auto-generated method stub
-		return null;
+
+		if (currentSelectedFile==null) {
+			//uuurgh need to sort this out with FX stuff
+			WarnOnce.showWarningFX(null,  "No Model File",  "There is no model file selected in the path: Please select a compatible model" , AlertType.ERROR);
+
+		}
+		else {
+			currParams.modelPath =  currentSelectedFile.getPath(); 
+		}
+
+		currParams.threshold = detectionSpinner.getValue(); 
+
+		currParams.useCUDA = useCuda.isSelected(); 
+
+		return currParams;
 	}
 
 	@Override
-	public void setParams(SoundSpotParams input) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void setParams(SoundSpotParams currParams) {
+		this.currentParams = currParams.clone(); 
 
+		if (currentParams.modelPath!=null) {
+		currentSelectedFile = new File(currentParams.modelPath);
+		}
+
+		updatePathLabel();
+
+		pathLabel .setText(this.currentSelectedFile.getPath()); 
+
+		detectionSpinner.getValueFactory().setValue(Double.valueOf(currParams.threshold));
+
+		useCuda.setSelected(currentParams.useCUDA);
+
+	}
+	
 	@Override
 	public String getName() {
 		return "Sound Spot Settings";

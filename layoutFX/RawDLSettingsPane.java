@@ -101,7 +101,7 @@ public class RawDLSettingsPane  extends SettingsPane<RawDLParams>{
 		sourcePane.addSourceType(ClickDetection.class, false);
 		sourcePane.addSourceType(ClipDataUnit.class, false);
 
-		
+
 		vBox.getChildren().add(sourcePane);
 		sourcePane.prefWidthProperty().bind(vBox.widthProperty());
 		sourcePane.setMaxWidth(Double.MAX_VALUE);
@@ -121,7 +121,7 @@ public class RawDLSettingsPane  extends SettingsPane<RawDLParams>{
 		hopLength.setPrefWidth(100);
 		hopLength.getStyleClass().add(Spinner.STYLE_CLASS_SPLIT_ARROWS_HORIZONTAL);
 		hopLength.setEditable(true);
-		
+
 		//button to set default hop size
 		Button defaultButton = new Button();
 		defaultButton.setGraphic(PamGlyphDude.createPamGlyph(MaterialDesignIcon.REFRESH, PamGuiManagerFX.iconSize-3));
@@ -189,11 +189,11 @@ public class RawDLSettingsPane  extends SettingsPane<RawDLParams>{
 	public RawDLParams getParams(RawDLParams currParams) {
 
 		if (currParams==null ) currParams = new RawDLParams(); 
-		
+
 		PamDataBlock rawDataBlock = sourcePane.getSource();
 		if (rawDataBlock == null){
 			Platform.runLater(()->{
-			PamDialogFX.showWarning("There is no datablock set. The segmenter must have a datablock set."); 
+				PamDialogFX.showWarning("There is no datablock set. The segmenter must have a datablock set."); 
 			}); 
 			return null;
 		}
@@ -201,19 +201,21 @@ public class RawDLSettingsPane  extends SettingsPane<RawDLParams>{
 		sourcePane.getParams(currParams.groupedSourceParams); 
 
 		currParams.modelSelection = dlModelBox.getSelectionModel().getSelectedIndex(); 
-		
+
 		if (windowLength.getValue() == 0 || hopLength.getValue()==0){
 			Platform.runLater(()->{
-			PamDialogFX.showWarning("Neither the hop nor window length can be zero"); 
+				PamDialogFX.showWarning("Neither the hop nor window length can be zero"); 
 			});
 			return null;
 		}
 
 		currParams.rawSampleSize = windowLength.getValue(); 
 		currParams.sampleHop = hopLength.getValue(); 
-		
+
 		//update any changes
-		this.dlControl.getDLModels().get(dlModelBox.getSelectionModel().getSelectedIndex()).getModelUI().getParams(); 
+		if (this.dlControl.getDLModels().get(dlModelBox.getSelectionModel().getSelectedIndex()).getModelUI()!=null){
+			this.dlControl.getDLModels().get(dlModelBox.getSelectionModel().getSelectedIndex()).getModelUI().getParams(); 
+		}
 
 		return currParams;
 	}
@@ -221,7 +223,7 @@ public class RawDLSettingsPane  extends SettingsPane<RawDLParams>{
 
 	@Override
 	public void setParams(RawDLParams currParams) {
-		
+
 		sourcePane.setParams(currParams.groupedSourceParams);
 
 		dlModelBox.getSelectionModel().select(currParams.modelSelection);
@@ -229,7 +231,7 @@ public class RawDLSettingsPane  extends SettingsPane<RawDLParams>{
 		windowLength.getValueFactory().setValue(currParams.rawSampleSize);
 
 		hopLength.getValueFactory().setValue(currParams.sampleHop);
-		
+
 		setClassifierPane(); 
 	}
 

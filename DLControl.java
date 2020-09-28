@@ -22,6 +22,7 @@ import PamguardMVC.PamRawDataBlock;
 import pamViewFX.fxNodes.pamDialogFX.PamDialogFX2AWT;
 import rawDeepLearningClassifer.deepLearningClassification.DLClassiferModel;
 import rawDeepLearningClassifer.deepLearningClassification.DLClassifyProcess;
+import rawDeepLearningClassifer.dummyClassifier.DummyClassifier;
 import rawDeepLearningClassifer.layoutFX.DLSidePanelSwing;
 import rawDeepLearningClassifer.layoutFX.RawDLSettingsPane;
 import rawDeepLearningClassifer.orcaSpot.OrcaSpotClassifier;
@@ -104,6 +105,7 @@ public class DLControl extends PamControlledUnit implements PamSettings {
 		/*****Add new deep learning models here****/
 
 		dlModels.add(new SoundSpotClassifier(this)); 
+		dlModels.add(new DummyClassifier()); 
 		dlModels.add(new OrcaSpotClassifier(this)); 
 
 		//load the previous settings

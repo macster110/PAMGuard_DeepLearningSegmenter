@@ -19,7 +19,7 @@ import org.pytorch.Module;
  * machine arguments e.g.  
  * -Djava.library.path=/Users/au671271/libtorch/lib 
  * <p>
- * It also means that np python code is called which greatly increses speed. 
+ * It also means that np python code is called which greatly increases speed. 
  * 
  * @author JamieMacaulay 
  *
@@ -128,5 +128,22 @@ public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 		}
 		else soundSpotParmas = new SoundSpotParams(); 
 		return true;
+	}
+
+	/**
+	 * Get the sound spot parameters. 
+	 * @return sound spot parameters. 
+	 */
+	public SoundSpotParams getSoundSpotParams() {
+		return soundSpotParmas;
+	}
+
+	/**
+	 * Set the sound spot params. 
+	 * @param the params to set 
+	 */
+	public void setSoundSpotParams(SoundSpotParams clone) {
+		this.soundSpotParmas=soundSpotParmas; 
+		
 	}
 }
