@@ -12,6 +12,7 @@ import PamController.PamSettings;
 import rawDeepLearningClassifer.DLControl;
 import rawDeepLearningClassifer.deepLearningClassification.DLClassiferModel;
 import rawDeepLearningClassifer.deepLearningClassification.DLDataUnit;
+import rawDeepLearningClassifer.deepLearningClassification.DLDetection;
 import rawDeepLearningClassifer.deepLearningClassification.ModelResult;
 import rawDeepLearningClassifer.layoutFX.DLCLassiferModelUI;
 import rawDeepLearningClassifer.segmenter.SegmenterProcess.GroupedRawData;
@@ -19,15 +20,19 @@ import rawDeepLearningClassifer.segmenter.SegmenterProcess.GroupedRawData;
 /**
  * Calls python.exe to run a python script and then returns a result. 
  * 
+ * OrcaSpot has been replaced by SoundSpot - a more generic, faster and easier to setup and use version of the classifier. 
+ * 
  * @author Jamie Macaulay
  *
  */
+@Deprecated 
 public class OrcaSpotClassifier implements DLClassiferModel, PamSettings {
 
 	/**
 	 * The maximum allowed queue size;
 	 */
 	public final static int MAX_QUEUE_SIZE = 10 ; 
+	
 	/**
 	 * The data model control 
 	 */
@@ -167,7 +172,7 @@ public class OrcaSpotClassifier implements DLClassiferModel, PamSettings {
 
 
 		//check whether to set binary classification to true - mainly for graphics and downstream filtering of data. 
-		modelResult.setBinaryClassification(modelResult.getPrediction()>Double.valueOf(this.orcaSpotParams.threshold));
+		modelResult.setBinaryClassification(modelResult.getPrediction()[0]>Double.valueOf(this.orcaSpotParams.threshold));
 
 		//the result is added later to the data block - we are dumping the raw sound data here. 
 		DLDataUnit dlDataUnit = new DLDataUnit(groupedRawData.getTimeMilliseconds(), groupedRawData.getChannelBitmap(), groupedRawData.getStartSample(),
@@ -181,7 +186,11 @@ public class OrcaSpotClassifier implements DLClassiferModel, PamSettings {
 
 		if (dlDataUnit.getModelResult().isBinaryClassification()) {
 			//send off to localised datablock 
-			dlControl.getDLClassifyProcess().getDlClassifiedLocBlock().addPamData(dlDataUnit);
+			ArrayList<ModelResult> modelResults = new ArrayList<ModelResult>(); 
+			modelResults.add(modelResult); 
+			dlControl.getDLClassifyProcess().getDlClassifiedLocBlock().addPamData(new DLDetection(groupedRawData.getTimeMilliseconds(), 
+					groupedRawData.getChannelBitmap(), groupedRawData.getStartSample(),
+				groupedRawData.getSampleDuration(), modelResults, null));
 		}
 
 		groupedRawData= null; //just in case 
@@ -193,6 +202,7 @@ public class OrcaSpotClassifier implements DLClassiferModel, PamSettings {
 	public class TaskThread extends Thread {
 
 		private AtomicBoolean run = new AtomicBoolean(true);
+		
 		private OrcaSpotWorkerExe2 orcaSpotWorker;
 
 		TaskThread() {
@@ -305,6 +315,11 @@ public class OrcaSpotClassifier implements DLClassiferModel, PamSettings {
 	 */
 	public OrcaSpotModelResult getLastPrediction() {
 		return lastPrediction;
+	}
+
+	@Override
+	public int getNumClasses() {
+		return 1;
 	}
 
 }

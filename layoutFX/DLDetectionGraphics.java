@@ -14,16 +14,14 @@ import PamView.PamSymbol;
 import PamView.PamSymbolType;
 import PamguardMVC.PamDataBlock;
 import PamguardMVC.PamDataUnit;
-import Spectrogram.SpectrogramProjector;
 import rawDeepLearningClassifer.deepLearningClassification.DLDataUnit;
 
 /**
- * The detection graphics for the DL localiser. Forces the graphics to be one colour and paints some 
- * translucent boxes on the spectrogram depending on the classification model result. 
- * @author Jamie Macaulay
+ * Graphics for the detected data units
+ * @author Jamie Macaulay 
  *
  */
-public class DLGraphics extends PamDetectionOverlayGraphics {
+public class DLDetectionGraphics extends PamDetectionOverlayGraphics {
 
 	public Stroke dashed = new BasicStroke(2, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{9}, 0);
 
@@ -39,7 +37,7 @@ public class DLGraphics extends PamDetectionOverlayGraphics {
 			detColor, detColor ); 
 
 
-	public DLGraphics(PamDataBlock parentDataBlock) {
+	public DLDetectionGraphics(PamDataBlock parentDataBlock) {
 		super(parentDataBlock,null);
 		//		this.setDefaultSymbol(defaultSymbol);
 		setLineColor(detColor); 

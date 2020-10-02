@@ -19,12 +19,15 @@ import PamView.PamSidePanel;
 import PamView.WrapperControlledGUISwing;
 import PamguardMVC.PamDataBlock;
 import PamguardMVC.PamRawDataBlock;
+import clickDetector.ClickDatagramProvider;
 import pamViewFX.fxNodes.pamDialogFX.PamDialogFX2AWT;
 import rawDeepLearningClassifer.deepLearningClassification.DLClassiferModel;
 import rawDeepLearningClassifer.deepLearningClassification.DLClassifyProcess;
 import rawDeepLearningClassifer.dummyClassifier.DummyClassifier;
 import rawDeepLearningClassifer.layoutFX.DLSidePanelSwing;
 import rawDeepLearningClassifer.layoutFX.RawDLSettingsPane;
+import rawDeepLearningClassifer.logging.DLBinaryStore;
+import rawDeepLearningClassifer.logging.DLDatagramProvider;
 import rawDeepLearningClassifer.orcaSpot.OrcaSpotClassifier;
 import rawDeepLearningClassifer.segmenter.SegmenterProcess;
 import rawDeepLearningClassifer.soundSpot.SoundSpotClassifier;
@@ -83,7 +86,12 @@ public class DLControl extends PamControlledUnit implements PamSettings {
 	/**
 	 * The GUI for swing. 
 	 */
-	private WrapperControlledGUISwing rawDLGUISwing; 
+	private WrapperControlledGUISwing rawDLGUISwing;
+
+	/**
+	 * Binary store for the model results. 
+	 */
+	private DLBinaryStore dlBinaryDataSource; 
 
 
 	/**
@@ -101,6 +109,12 @@ public class DLControl extends PamControlledUnit implements PamSettings {
 
 		//classify the raw data segments. 
 		addPamProcess(dlClassifyProcess = new DLClassifyProcess(this, segmenterProcess.getSegmenterDataBlock()));
+		
+		//add storage options etc. 
+		dlBinaryDataSource = new DLBinaryStore(dlClassifyProcess); 
+		dlClassifyProcess.getDLClassifiedDataBlock().setBinaryDataSource(dlBinaryDataSource);
+
+		dlClassifyProcess.getDLClassifiedDataBlock().setDatagramProvider(new DLDatagramProvider(this));
 
 		/*****Add new deep learning models here****/
 
@@ -110,6 +124,8 @@ public class DLControl extends PamControlledUnit implements PamSettings {
 
 		//load the previous settings
 		PamSettingManager.getInstance().registerSettings(this);
+		
+		
 
 		//ensure everything is updated. 
 		updateParams(rawDLParmas); 
@@ -298,6 +314,16 @@ public class DLControl extends PamControlledUnit implements PamSettings {
 	 */
 	public PamDataBlock getParentDataBlock() {
 		return segmenterProcess.getParentDataBlock();
+	}
+
+
+	/**
+	 * Get the number of classes for the current classifier.
+	 * @return the number of classes. 
+	 */
+	public int getNumClasses() {
+		return  getDLModel().getNumClasses(); 
+		
 	}
 
 }

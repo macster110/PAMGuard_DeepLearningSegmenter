@@ -36,6 +36,21 @@ public class RawDLParams implements Serializable, Cloneable {
 	 */
 	public int sampleHop =  96000;  
 	
+	/**
+	 * The maximum number of samples a merged classified data unit can be. 
+	 * if this is the same as rawSampleSize then data units are never merged. It must be
+	 * a  multiple of rawSampleSize. 
+	 */
+	public int maxMergeHops = 5;
+
+	/**
+	 * The deep learning classifier can accept multiple types of data unit that contain a raw data chunk
+	 * e.g. raw data, clicks, clips etc. By default the classifier saves new data units if the source is raw data. However, if 
+	 * the data unit is an already processed data unit, e.g. a click detection, then the results are saved as an annotation 
+	 * to that unit. If forceSave is st true then new data units are created no matter what the source data is. 
+	 */
+	public boolean forceSave = false; 
+	
 	
 	
 	@Override

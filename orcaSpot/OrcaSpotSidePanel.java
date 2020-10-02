@@ -53,7 +53,7 @@ public class OrcaSpotSidePanel extends PamPanel {
 		double lastPrediction = -1;
 		String lastPredString = ""; 
 		if (orcaSpotClassifier.getLastPrediction()!=null) {
-			lastPrediction = orcaSpotClassifier.getLastPrediction().getPrediction();
+			lastPrediction = orcaSpotClassifier.getLastPrediction().getPrediction()[0];
 			lastPredString = orcaSpotClassifier.getLastPrediction().getResultString(); 
 		}
 		bufferBarPanel.updatePanel(orcaSpotClassifier.getRawDataQueue(), orcaSpotClassifier.MAX_QUEUE_SIZE, 

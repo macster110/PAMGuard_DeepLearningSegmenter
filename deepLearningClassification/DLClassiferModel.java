@@ -2,7 +2,6 @@ package rawDeepLearningClassifer.deepLearningClassification;
 
 import java.io.Serializable;
 
-import PamguardMVC.RawDataHolder;
 import rawDeepLearningClassifer.layoutFX.DLCLassiferModelUI;
 import rawDeepLearningClassifer.segmenter.SegmenterProcess.GroupedRawData;
 
@@ -47,6 +46,12 @@ public interface DLClassiferModel {
 	 * @return the settings object. 
 	 */
 	public Serializable getDLModelSettings();
+	
+	/**
+	 * Get the number of output classes. 
+	 * @return the number of output classes. 
+	 */
+	public int getNumClasses();
 
 
 }

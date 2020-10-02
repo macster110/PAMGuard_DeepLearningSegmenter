@@ -21,7 +21,6 @@ import PamguardMVC.PamRawDataBlock;
 import clickDetector.ClickDetection;
 import clipgenerator.ClipDataUnit;
 import rawDeepLearningClassifer.DLControl;
-import rawDeepLearningClassifer.deepLearningClassification.DLClassifiedDataBlock;
 
 
 /**
@@ -32,23 +31,15 @@ import rawDeepLearningClassifer.deepLearningClassification.DLClassifiedDataBlock
 
 public class SegmenterProcess extends PamProcess {
 
+	/**
+	 * the maximum allowed drift between the sample clocks and the file clock before the clopck is reset. 
+	 */
+	private static final double MAX_MILLIS_DRIFT = 1;
 
 	/**
 	 * Reference to the deep learning control. 
 	 */
 	private DLControl dlControl;
-
-
-
-	/**
-	 * Holds data units which have been successfully classified by the deep learning algorithm.
-	 */
-	private DLClassifiedDataBlock classifiedOutput; 
-
-	/**
-	 * The buffer.
-	 */
-	private double[] buffer;
 
 	/**
 	 * The current raw data unit chunks. Each array element is a channel group. 
@@ -59,8 +50,6 @@ public class SegmenterProcess extends PamProcess {
 	 * The current raw data unit chunks. Each array element is a channel group. 
 	 */
 	private GroupedRawData[][] nextRawChunks;
-
-
 
 	/**
 	 * Holds segments of raw sound data
@@ -173,7 +162,7 @@ public class SegmenterProcess extends PamProcess {
 	}
 
 	/*
-	 * Segments raw data and passes a chunk of multi channle data to a depp leanring algorithms. 
+	 * Segments raw data and passes a chunk of multi -hannel data to a deep learning algorithms. 
 	 * (non-Javadoc)
 	 * 
 	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
@@ -184,14 +173,23 @@ public class SegmenterProcess extends PamProcess {
 	 */
 	@Override
 	public void newData(PamObservable obs, PamDataUnit pamRawData) {
-
-
-		newRawDataUnit(obs, pamRawData); 
-
-
+		if (pamRawData instanceof RawDataUnit) {
+			newRawDataUnit(obs, pamRawData); 
+		}
+		else if (pamRawData instanceof ClickDetection) {
+			newClickData(obs,  pamRawData);
+		}
+		else if (pamRawData instanceof ClipDataUnit)  {
+			newClipData(obs,  pamRawData);
+		}
 	}
 
 
+	/**
+	 * A new raw data unit. 
+	 * @param obs - the PAM observable 
+	 * @param pamRawData - PAM raw data. 
+	 */
 	public void newRawDataUnit(PamObservable obs, PamDataUnit pamRawData) {
 
 		//the raw data units should appear in sequential channel order  
@@ -203,32 +201,33 @@ public class SegmenterProcess extends PamProcess {
 
 		int iChan = PamUtils.getSingleChannel(rawDataUnit.getChannelBitmap());
 
-		newRawData(obs, rawDataUnit.getTimeMilliseconds(), rawDataUnit.getStartSample(), rawDataChunk,  iChan);
+		newRawData(rawDataUnit, rawDataChunk,  iChan);
 
 	}
 
 
 	/**
 	 * Process new clip data. 
-	 * @param obs - the observable 
+	 * @param obs - the PAM observable 
 	 * @param pamRawData - the new raw data unit 
 	 */
 	public void newClipData(PamObservable obs, PamDataUnit pamRawData) {
 
 		//the raw data units should appear in sequential channel order  
-		//		System.out.println("New raw data in: chan: " + PamUtils.getSingleChannel(pamRawData.getChannelBitmap()) + " Size: " +  pamRawData.getSampleDuration()); 
+		//System.out.println("New raw data in: chan: " + PamUtils.getSingleChannel(pamRawData.getChannelBitmap()) 
+		//+ " Size: " +  pamRawData.getSampleDuration()); 
 
 		ClipDataUnit rawDataUnit = (ClipDataUnit) pamRawData;
 
 		double[][] rawDataChunk = rawDataUnit.getRawData(); 
 
-		newRawDataChunk( obs, rawDataUnit, rawDataChunk); 
+		newRawDataChunk(rawDataUnit, rawDataChunk); 
 	}
 
 
 	/**
 	 * Process new click data. 
-	 * @param obs - 
+	 * @param obs - the PAM observable
 	 * @param pamRawData
 	 */
 	public void newClickData(PamObservable obs, PamDataUnit pamRawData) {
@@ -240,27 +239,26 @@ public class SegmenterProcess extends PamProcess {
 
 		double[][] rawDataChunk = clickDataUnit.getWaveData(); 
 
-		newRawDataChunk( obs, clickDataUnit, rawDataChunk); 
+		newRawDataChunk(clickDataUnit, rawDataChunk); 
 	}
 
+	
 	/**
-	 * Segment a single new raw data chunk. This is for a discrete data chunk i.e. the data is not a continious time 
-	 * series of acoustic data but a clip of somekind that. 
-	 * @param obs - the observable
+	 * Segment a single new raw data chunk. This is for a discrete data chunk i.e. the data is not a continuous time 
+	 * series of acoustic data but a clip of some kind of that. 
 	 * @param pamDataUnit - the pam data unit containing the chunk of raw data. 
 	 * @param rawDataChunk - the raw chunk of dtaa form the data unit. 
 	 */
-	private void newRawDataChunk(PamObservable obs, PamDataUnit pamDataUnit, double[][] rawDataChunk) {
+	private void newRawDataChunk(PamDataUnit pamDataUnit, double[][] rawDataChunk) {
 		//reset for each click 
 		currentRawChunks=null; 
 		nextRawChunks =null; 
 
 		int[] chans  = PamUtils.getChannelArray(pamDataUnit.getChannelBitmap()); 
+		
 		//pass the raw click data to the segmenter
-		int chan; 
-
 		for (int i=0;i<PamUtils.getNumChannels(pamDataUnit.getChannelBitmap()); i++) {
-			newRawData(obs, pamDataUnit.getTimeMilliseconds(), pamDataUnit.getStartSample(),
+			newRawData(pamDataUnit,
 					rawDataChunk[i], PamUtils.makeChannelMap(new int[] {chans[i]}));
 		}
 
@@ -270,14 +268,16 @@ public class SegmenterProcess extends PamProcess {
 	/**
 	 * Take a raw sound chunk of data and segment into discrete groups. This handles much situations e.g. where the segment is much larger than the raw
 	 * data or where the segment is much small than each rawDataChunk returning multiple segments. 
-	 * @param obs
 	 * @param timeMilliseconds
 	 * @param startSampleTime
 	 * @param rawDataChunk
 	 * @param iChan
 	 */
-	public synchronized void newRawData(PamObservable obs, long timeMilliseconds, long startSampleTime, double[] rawDataChunk, int iChan) {
+	public synchronized void newRawData(PamDataUnit unit, double[] rawDataChunk, int iChan) {
 		
+		long timeMilliseconds = unit.getTimeMilliseconds();
+		long startSampleTime = unit.getStartSample(); 
+				
 		if (currentRawChunks==null) return;
 
 		//TODO - what if the raw data lengths are larger than the segments by a long way?
@@ -293,16 +293,17 @@ public class SegmenterProcess extends PamProcess {
 					//create a new data unit - should only be called once after initial start.  
 					currentRawChunks[i] = new GroupedRawData(timeMilliseconds, getSourceParams() .getGroupChannels(i), 
 							startSampleTime, dlControl.getDLParams().rawSampleSize, dlControl.getDLParams().rawSampleSize); 
+					currentRawChunks[i].setParentDataUnit(unit);; 
 				}
 				
-				System.out.println("------------"); 
-				System.out.println("Group time: " + PamCalendar.formatDBDateTime(currentRawChunks[i].getTimeMilliseconds(), true)); 
-				System.out.println("Data unit time: " + PamCalendar.formatDBDateTime(timeMilliseconds)); 
-				System.out.println(": " + Math.abs(currentRawChunks[i].getTimeMilliseconds()  - timeMilliseconds) + " : " +  1000*currentRawChunks[i].getRawDataPointer()[0]/this.getSampleRate()); 
+//				System.out.println("------------"); 
+//				System.out.println("Group time: " + PamCalendar.formatDBDateTime(currentRawChunks[i].getTimeMilliseconds(), true)); 
+//				System.out.println("Data unit time: " + PamCalendar.formatDBDateTime(timeMilliseconds)); 
+//				System.out.println(": " + Math.abs(currentRawChunks[i].getTimeMilliseconds()  - timeMilliseconds) + " : " +  1000*currentRawChunks[i].getRawDataPointer()[0]/this.getSampleRate()); 
 
 				//current time milliseconds is referenced from the first chunk with samples added. But, this can mean, especially for long period of times and multiple 
 				//chunks that things get a bit out of sync. So make a quick check to ensure that time millis is roughly correct. If not then fix. 
-				if (Math.abs(((double) currentRawChunks[i].getTimeMilliseconds() + 1000.*currentRawChunks[i].getRawDataPointer()[0]/this.getSampleRate()) - timeMilliseconds)>2) {
+				if (Math.abs(((double) currentRawChunks[i].getTimeMilliseconds() + 1000.*currentRawChunks[i].getRawDataPointer()[0]/this.getSampleRate()) - timeMilliseconds)>MAX_MILLIS_DRIFT) {
 					System.out.println("RESETTING TIME: "); 
 					currentRawChunks[i].setTimeMilliseconds(timeMilliseconds);
 					currentRawChunks[i].setStartSample(startSampleTime);
@@ -363,11 +364,15 @@ public class SegmenterProcess extends PamProcess {
 							//long timeMillis = lastRawDataChunk.getTimeMilliseconds() + (long) (1000*(copyLen-getBackSmapleHop() )/this.getSampleRate()); 
 							//long startSample = lastRawDataChunk.getStartSample() + copyLen - getBackSmapleHop() ; 
 							
-							long timeMillis = lastRawDataChunk.getTimeMilliseconds() + (long) (1000.*(dlControl.getDLParams().sampleHop)/this.getSampleRate()); 
+							//go from current raw chunks tim millis to try and minimise compounding time errors. 
+//							long timeMillis = (long) (currentRawChunks[i].getTimeMilliseconds() + j*(1000.*(dlControl.getDLParams().sampleHop)/this.getSampleRate())); 
 							long startSample = lastRawDataChunk.getStartSample() + dlControl.getDLParams().sampleHop; 
+							long timeMillis = this.absSamplesToMilliseconds(startSample); 
 
 							nextRawChunks[i][j] = new GroupedRawData(timeMillis, getSourceParams().getGroupChannels(i), 
 									startSample, dlControl.getDLParams().rawSampleSize, dlControl.getDLParams().rawSampleSize); 
+							nextRawChunks[i][j].setParentDataUnit(unit);
+
 						}
 
 						//add the hop from the current grouped raw data unit to the new grouped raw data unit 
@@ -401,7 +406,6 @@ public class SegmenterProcess extends PamProcess {
 					packageSegmenterDataUnit(currentRawChunks[i]); 
 					//System.out.println("Current segmnent UID: " + currentRawChunks[i].getUID()); 
 
-
 					this.segmenterDataBlock.addPamData(currentRawChunks[i]);
 					//add all segments up to the last one. 
 					for (int j=0;j<nextRawChunks[i].length-1; j++) {
@@ -424,8 +428,6 @@ public class SegmenterProcess extends PamProcess {
 			}; 
 		}
 	}
-
-
 
 
 	private int getBackSmapleHop() {
@@ -501,7 +503,7 @@ public class SegmenterProcess extends PamProcess {
 	 *
 	 */
 	public class GroupedRawData extends PamDataUnit implements PamDetection {
-		//implements pam detection for plotting. 
+
 
 		/*
 		 * Raw data holder
@@ -514,7 +516,20 @@ public class SegmenterProcess extends PamProcess {
 		 */
 		protected int[] rawDataPointer;
 
+		/**
+		 * The data unit associated with this raw data chunk. 
+		 */
+		private PamDataUnit rawDataUnit;
 
+
+		/**
+		 * Create a grouped raw data unit. This contains a segment of sound data. 
+		 * @param timeMilliseconds - the time in milliseconds. 
+		 * @param channelBitmap - the channel bitmap of the raw data. 
+		 * @param startSample - the start sample of the raw data. 
+		 * @param duration - the duration of the raw data in milliseconds. 
+		 * @param samplesize - the total sample size of the raw data unit chunk in samples. 
+		 */
 		public GroupedRawData(long timeMilliseconds, int channelBitmap, long startSample, long duration, int samplesize) {
 			super(timeMilliseconds, channelBitmap, startSample, duration);
 			rawData = new double[PamUtils.getNumChannels(channelBitmap)][];
@@ -525,6 +540,23 @@ public class SegmenterProcess extends PamProcess {
 				rawData[i] = new double[samplesize];
 			}
 		}
+
+		/**
+		 * Set the parent data unit. 
+		 * @param unit - the raw data unit. 
+		 */
+		public void setParentDataUnit(PamDataUnit rawDataUnit) {
+			this.rawDataUnit=rawDataUnit; 
+		}
+		
+		/**
+		 * Get the data unit that this raw sound segment is associated with. 
+		 * @Return unit - the raw data unit
+		 */
+		public PamDataUnit getParentDataUnit() {
+			 return rawDataUnit;
+		}
+
 
 		/**
 		 * Copy raw data from an array to another. 
@@ -575,7 +607,6 @@ public class SegmenterProcess extends PamProcess {
 		public int[] getRawDataPointer() {
 			return rawDataPointer;
 		}
-
 	}
 
 
@@ -590,7 +621,11 @@ public class SegmenterProcess extends PamProcess {
 		this.currentRawChunks = null; 
 	}
 
-
+	/**
+	 * Get the segmenter data block. This holds raw chunks of data to be sent to the 
+	 * deep learning classifier. 
+	 * @return the segmenter data block. 
+	 */
 	public SegmenterDataBlock getSegmenterDataBlock() {
 		return segmenterDataBlock;
 	}

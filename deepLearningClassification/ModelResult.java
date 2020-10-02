@@ -8,11 +8,10 @@ package rawDeepLearningClassifer.deepLearningClassification;
 public interface ModelResult {
 
 	/**
-	 * Get the prediction for this result. This is one number that
-	 * represents the overall probability. 
+	 * Get the predictions for this result. The array contains the probabilities for all classes. 
 	 * @return the prediction.
 	 */
-	public double getPrediction(); 
+	public double[] getPrediction(); 
 
 	/**
 	 * Check whether binary classification has passed. 

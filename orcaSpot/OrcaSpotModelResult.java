@@ -18,7 +18,7 @@ public class OrcaSpotModelResult implements ModelResult {
 	/**
 	 * The detection confidence 
 	 */
-	public Double detectionConfidence = null; 
+	public double[] detectionConfidence = null; 
 
 	/**
 	 * The call type confidence
@@ -41,7 +41,7 @@ public class OrcaSpotModelResult implements ModelResult {
 	 * @param time - the time in seconds. 
 	 */
 	public OrcaSpotModelResult(Double detConf, Double time) {
-		this.detectionConfidence = detConf;
+		this.detectionConfidence = new double[] {detConf};
 		this.timeSeconds = time; 
 	}
 
@@ -54,8 +54,8 @@ public class OrcaSpotModelResult implements ModelResult {
 	 * @return the detection confidence
 	 */
 	@Override
-	public double getPrediction() {
-		if (calltypeConfidence!=null) return calltypeConfidence; 
+	public double[] getPrediction() {
+		if (calltypeConfidence!=null) return new double[] {calltypeConfidence}; 
 		else return detectionConfidence;
 	}
 

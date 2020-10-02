@@ -273,9 +273,9 @@ public class OrcaSpotWorkerExe2 {
 
 			if (line.trim().toLowerCase().contains("prob=")) {
 				String  conf = line.trim().split("prob=")[1].trim();
-				orcaSpotModelResult.detectionConfidence = Double.valueOf(conf); 
+				orcaSpotModelResult.detectionConfidence = new double[] {Double.valueOf(conf)}; 
 				if (this.currentParams.mode.equals("0") || 
-						(this.currentParams.mode.equals("1") && orcaSpotModelResult.detectionConfidence<=Double.valueOf(currentParams.threshold))) {
+						(this.currentParams.mode.equals("1") && orcaSpotModelResult.detectionConfidence[0]<=Double.valueOf(currentParams.threshold))) {
 					finished = true; 
 				}
 			}

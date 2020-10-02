@@ -61,9 +61,8 @@ public class DummyClassifier implements DLClassiferModel{
 		}
 
 		@Override
-		public double getPrediction() {
-			// TODO Auto-generated method stub
-			return 0;
+		public double[] getPrediction() {
+			return new double[] {probability};
 		}
 
 		@Override
@@ -82,6 +81,13 @@ public class DummyClassifier implements DLClassiferModel{
 			return "Dummy result: " + probability;
 		}
 		
+	}
+
+
+
+	@Override
+	public int getNumClasses() {
+		return 1;
 	}
 
 }

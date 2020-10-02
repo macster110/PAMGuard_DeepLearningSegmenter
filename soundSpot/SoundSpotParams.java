@@ -31,7 +31,12 @@ public class SoundSpotParams extends DLParams implements Serializable, Cloneable
 	/**
 	 * The threshold between zero and one. This is used to allow binary classificiation. 
 	 */
-	public double threshold; 
+	public double threshold;
+
+	/*
+	 * the number of output classes. 
+	 */
+	public int numClasses; 
 	
 	
 	@Override
