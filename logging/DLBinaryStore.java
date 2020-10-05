@@ -64,6 +64,7 @@ public class DLBinaryStore extends BinaryDataSource {
 	 */
 	@Override
 	public BinaryObjectData getPackedData(PamDataUnit pamDataUnit) {
+		
 		DLDataUnit dlDataUnit = (DLDataUnit) pamDataUnit;
 		if (dos == null || bos == null) {
 			dos = new DataOutputStream(bos = new ByteArrayOutputStream());

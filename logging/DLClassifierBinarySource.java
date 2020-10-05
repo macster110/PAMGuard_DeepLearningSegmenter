@@ -20,7 +20,11 @@ import rawDeepLearningClassifer.deepLearningClassification.DLClassifiedDataBlock
 import rawDeepLearningClassifer.deepLearningClassification.DLDetection;
 import rawDeepLearningClassifer.deepLearningClassification.ModelResult;
 
-
+/**
+ * Saves and loads binary data for classified Deep Learning data units. 
+ * @author Jamie Macaulay 
+ *
+ */
 public class DLClassifierBinarySource extends BinaryDataSource {
 
 
@@ -53,7 +57,7 @@ public class DLClassifierBinarySource extends BinaryDataSource {
 
 	@Override
 	public String getStreamName() {
-		return "Clips";
+		return "Deep_Learning";
 	}
 
 	@Override
@@ -107,13 +111,12 @@ public class DLClassifierBinarySource extends BinaryDataSource {
 		DataInputStream dis = new DataInputStream(bis);
 
 		DataUnitBaseData baseData = binaryObjectData.getDataUnitBaseData();
-
+		
+		//model results are loaded as annotations. 
 
 		double[][] rawData = null;
-		ArrayList<ModelResult> modelResults = null; 
 		
 		try {
-			modelResults = readProbData(dis); 
 			rawData = readWavClip(dis);
 
 			bis.close();
@@ -123,7 +126,7 @@ public class DLClassifierBinarySource extends BinaryDataSource {
 			return null;
 		}
 
-		DLDetection newUnit = new DLDetection(baseData, modelResults, rawData);
+		DLDetection newUnit = new DLDetection(baseData, rawData);
 		
 		return newUnit;
 	}
@@ -182,10 +185,6 @@ public class DLClassifierBinarySource extends BinaryDataSource {
 		return rawData;
 	}
 
-	private ArrayList<ModelResult> readProbData(DataInputStream dis) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public ModuleFooter sinkModuleFooter(BinaryObjectData binaryObjectData,

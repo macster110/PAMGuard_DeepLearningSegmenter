@@ -4,7 +4,9 @@ import java.util.ArrayList;
 
 import PamDetection.RawDataUnit;
 import PamUtils.PamUtils;
+import PamView.GroupedSourceParameters;
 import PamView.PamDetectionOverlayGraphics;
+import PamguardMVC.DataUnitBaseData;
 import PamguardMVC.PamDataUnit;
 import PamguardMVC.PamObservable;
 import PamguardMVC.PamProcess;
@@ -48,13 +50,13 @@ public class DLClassifyProcess extends PamProcess {
 	/**
 	 * Buffer which holds positive grouped data results to be merged into one data unit. This mirrors modeResultDataBuffer
 	 */
-	private ArrayList<GroupedRawData> groupDataBuffer = new ArrayList<GroupedRawData>(); 
+	private ArrayList<GroupedRawData>[] groupDataBuffer; 
 
 	/**
 	 * Buffer which holds positive model results to be merged into one data unit. This mirrors groupDataBuffer. 
 	 */
-	private ArrayList<ModelResult> modelResultDataBuffer = new ArrayList<ModelResult>(); 
-	
+	private ArrayList<ModelResult>[] modelResultDataBuffer; 
+
 	/**
 	 * The DL annotation type. 
 	 */
@@ -65,7 +67,7 @@ public class DLClassifyProcess extends PamProcess {
 	 * The last parent data for grouped data. This is used to ensure that DLDetections 
 	 * correspond to the raw chunk of data from a parent detectiobn e.g. a click detection. 
 	 */
-	private PamDataUnit lastParentDataUnit; 
+	private PamDataUnit[] lastParentDataUnit; 
 
 
 	public DLClassifyProcess(DLControl dlControl, SegmenterDataBlock parentDataBlock) {
@@ -95,7 +97,7 @@ public class DLClassifyProcess extends PamProcess {
 
 		//the process name. 
 		setProcessName("Deep Learning Classifier");  
-		
+
 		//create an annotations object. 
 		dlAnnotationType = new DLAnnotationType(dlControl);
 	}
@@ -108,6 +110,44 @@ public class DLClassifyProcess extends PamProcess {
 
 		return dlClassifiedDataBlock;
 	}
+	
+	/**
+	 * Setup the classification process. 
+	 */
+	private void setupClassifierProcess() {
+		
+		if (dlControl.getDLParams()==null) {
+			System.err.println("SegmenterProcess.setupSegmenter: The DLParams are null???"); 
+
+		}
+
+		if (dlControl.getDLParams().groupedSourceParams==null) {
+			dlControl.getDLParams().groupedSourceParams = new GroupedSourceParameters(); 
+			System.err.println("Raw Deep Learning Classifier: The grouped source parameters were null. A new instance has been created: Possible de-serialization error.");
+		}
+		
+		
+		int[] chanGroups = dlControl.getDLParams().groupedSourceParams.getChannelGroups();
+
+		//initialise an array of nulls. 
+		if (chanGroups!=null) {
+			groupDataBuffer = new  ArrayList[chanGroups.length] ; 
+			modelResultDataBuffer = new  ArrayList[chanGroups.length] ; 
+			lastParentDataUnit = new PamDataUnit[chanGroups.length]; 
+			for (int i =0; i<chanGroups.length; i++) {
+				groupDataBuffer[i] = new ArrayList<GroupedRawData>();
+				modelResultDataBuffer[i] = new ArrayList<ModelResult>(); 
+			}
+		}
+
+	}
+	
+
+	@Override
+	public void prepareProcess() {
+		setupClassifierProcess();
+	}
+
 
 	/*
 	 * Segments raw data and passes a chunk of multi-channel data to a deep learning algorithms. 
@@ -149,64 +189,80 @@ public class DLClassifyProcess extends PamProcess {
 				pamRawData.getStartSample(), pamRawData.getSampleDuration(), modelResult); 
 		dlDataUnit.setFrequency(new double[] {0, dlControl.getDLClassifyProcess().getSampleRate()/2});
 		dlDataUnit.setDurationInMilliseconds(pamRawData.getDurationInMilliseconds()); 
-		
+
 		this.dlModelResultDataBlock.addPamData(dlDataUnit);
 
 
-		/*** 
-		 * The are two options here. 
-		 * 1) Create a new data unit from the segmented data. This data unit may be made up of multiple segment that all pass binary
-		 * classification. 
-		 * 2) Annotated an existing data unit with a deep learning annotation. 
-		 */
-		if (pamRawData.getParentDataUnit() instanceof RawDataUnit) {
-			if (dlDataUnit.getModelResult().isBinaryClassification()) {
-				//if the model result has a binary classification then it is added to the data buffer unless the data
-				//buffer has reached a maximum size. In that case the data is saved. 
-				groupDataBuffer.add(pamRawData); 
-				modelResultDataBuffer.add(modelResult); 
-				if (groupDataBuffer.size()>=dlControl.getDLParams().maxMergeHops) {
-					//need to save the data unit and clear the unit. 
-					DLDetection dlDetection  = makeDLDetection(groupDataBuffer, modelResultDataBuffer); 
-					clearBuffer();
-					if (dlDetection!=null) {
-						this.dlClassifiedDataBlock.addPamData(dlDetection);
-					}
-				}
 
-			}
-			else {
+		//need to implement multiple groups. 
+
+
+		for (int i=0; i<getSourceParams().countChannelGroups(); i++) {
+
+//			System.out.println("RawDataIn: chan: " + pamRawData.getChannelBitmap()+ "  " +
+//			PamUtils.hasChannel(getSourceParams().getGroupChannels(i), pamRawData.getChannelBitmap()) + 
+//			" grouped source: " +getSourceParams().getGroupChannels(i)); 
+
+			if (PamUtils.hasChannel(getSourceParams().getGroupChannels(i), PamUtils.getSingleChannel(pamRawData.getChannelBitmap()))) {
+
+				/*** 
+				 * The are two options here. 
+				 * 1) Create a new data unit from the segmented data. This data unit may be made up of multiple segment that all pass binary
+				 * classification. 
+				 * 2) Annotated an existing data unit with a deep learning annotation. 
+				 */
 				if (pamRawData.getParentDataUnit() instanceof RawDataUnit) {
-					//no binary classification thus the data unit is complete and buffer must be saved. 
-					DLDetection dlDetection  = makeDLDetection(groupDataBuffer, modelResultDataBuffer); 
-					clearBuffer() ;
-					if (dlDetection!=null) {
-						this.dlClassifiedDataBlock.addPamData(dlDetection);
-					}
-				}
-			}
-		}
-		else {
-			//need to go by the parent data unit for merging data, not the 
-			if (pamRawData.getParentDataUnit()!=lastParentDataUnit) {
-				//save any data
-				if (groupDataBuffer.size()>0 && lastParentDataUnit!=null) {
-					if (this.dlControl.getDLParams().forceSave) {
-						DLDetection dlDetection = makeDLDetection(groupDataBuffer,modelResultDataBuffer);
-						clearBuffer();
-						if (dlDetection!=null) {
-							this.dlClassifiedDataBlock.addPamData(dlDetection);
+					if (dlDataUnit.getModelResult().isBinaryClassification()) {
+						//if the model result has a binary classification then it is added to the data buffer unless the data
+						//buffer has reached a maximum size. In that case the data is saved. 
+						groupDataBuffer[i].add(pamRawData); 
+						modelResultDataBuffer[i].add(modelResult); 
+						if (groupDataBuffer[i].size()>=dlControl.getDLParams().maxMergeHops) {
+							//need to save the data unit and clear the unit. 
+							DLDetection dlDetection  = makeDLDetection(groupDataBuffer[i], modelResultDataBuffer[i]); 
+							clearBuffer(i);
+							if (dlDetection!=null) {
+								this.dlClassifiedDataBlock.addPamData(dlDetection);
+
+							}
 						}
+
 					}
 					else {
-						addDLAnnotation(lastParentDataUnit,groupDataBuffer,modelResultDataBuffer); 
-						clearBuffer(); 
+						if (pamRawData.getParentDataUnit() instanceof RawDataUnit) {
+							//no binary classification thus the data unit is complete and buffer must be saved. 
+							DLDetection dlDetection  = makeDLDetection(groupDataBuffer[i], modelResultDataBuffer[i]); 
+							clearBuffer(i) ;
+							if (dlDetection!=null) {
+								this.dlClassifiedDataBlock.addPamData(dlDetection);
+
+							}
+						}
 					}
 				}
+				else {
+					//need to go by the parent data unit for merging data, not the 
+					if (pamRawData.getParentDataUnit()!=lastParentDataUnit[i]) {
+						//save any data
+						if (groupDataBuffer[i].size()>0 && lastParentDataUnit[i]!=null) {
+							if (this.dlControl.getDLParams().forceSave) {
+								DLDetection dlDetection = makeDLDetection(groupDataBuffer[i],modelResultDataBuffer[i]);
+								clearBuffer(i);
+								if (dlDetection!=null) {
+									this.dlClassifiedDataBlock.addPamData(dlDetection);
+								}
+							}
+							else {
+								addDLAnnotation(lastParentDataUnit[i],groupDataBuffer[i],modelResultDataBuffer[i]); 
+								clearBuffer(i); 
+							}
+						}
+					}
+					lastParentDataUnit[i]=pamRawData.getParentDataUnit();
+					groupDataBuffer[i].add(pamRawData); 
+					modelResultDataBuffer[i].add(modelResult); 
+				}
 			}
-			lastParentDataUnit=pamRawData.getParentDataUnit();
-			groupDataBuffer.add(pamRawData); 
-			modelResultDataBuffer.add(modelResult); 
 		}
 	}
 
@@ -217,17 +273,17 @@ public class DLClassifyProcess extends PamProcess {
 	 * @return a DL detection with merged raw data. 
 	 */
 	private synchronized DLDetection makeDLDetection(ArrayList<GroupedRawData> groupDataBuffer, ArrayList<ModelResult> modelResult) {
-		
+
 		if (groupDataBuffer==null || groupDataBuffer.size()<=0) {
 			return null; 
 		}
-		
-		
+
+
 		int chans = PamUtils.getNumChannels(groupDataBuffer.get(0).getChannelBitmap());
 
 		//need to merge the raw data chunks- these are overlapping whihc is a bit of pain but should be OK if we only copy in the hop lengths.
 		double[][] rawdata = new double[PamUtils.getNumChannels(groupDataBuffer.get(0).getChannelBitmap())][dlControl.getDLParams().sampleHop*groupDataBuffer.size()]; 
-		
+
 		//copy all data into a new data buffer making sure to compensate for hop size.  
 		for (int i=0; i<groupDataBuffer.size(); i++) {
 			for (int j=0; j<chans; j++) {
@@ -235,19 +291,25 @@ public class DLClassifyProcess extends PamProcess {
 			}
 		}
 
+		DataUnitBaseData basicData  = groupDataBuffer.get(0).getBasicData().clone(); 
+		basicData.setMillisecondDuration(1000.*groupDataBuffer.size()*dlControl.getDLParams().sampleHop/this.sampleRate);
+		basicData.setSampleDuration((long) (groupDataBuffer.size()*dlControl.getDLParams().sampleHop));
+
+		DLDetection dlDetection = new DLDetection(basicData, rawdata); 
+		addDLAnnotation(dlDetection, groupDataBuffer,modelResult); 
 		//create the data unit
-		return new DLDetection(groupDataBuffer.get(0).getBasicData().clone(), modelResult, rawdata); 
+		return dlDetection; 
 	}
-	
+
 	/**
 	 * Clear the data unit buffer. 
 	 */
-	private void clearBuffer() {
-		groupDataBuffer.clear(); 
-		modelResultDataBuffer.clear(); 
+	private void clearBuffer(int group) {
+		groupDataBuffer[group].clear(); 
+		modelResultDataBuffer[group].clear(); 
 	}
-	
-	
+
+
 	/**
 	 * Add a data annotation to an existing data unit from a number of model results and corresponding chunks of raw sound data. 
 	 * @param groupDataBuffer - the raw data chunks (these may overlap). 
@@ -285,6 +347,15 @@ public class DLClassifyProcess extends PamProcess {
 	 */
 	public int getNumClasses() {
 		return this.dlControl.getNumClasses(); 
+	}
+
+
+	/**
+	 * Convenience function to get grouped source parameters. 
+	 * @return the grouped source parameters. 
+	 */
+	private GroupedSourceParameters getSourceParams() {
+		return dlControl.getDLParams().groupedSourceParams; 
 	}
 
 }

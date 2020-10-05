@@ -2,6 +2,9 @@ package rawDeepLearningClassifer.deepLearningClassification;
 
 /**
  * Model results for the classifier. 
+ * <p> Model results are dependent on the type of deep learning classifier that is being used 
+ * but all must implement ModelResult. ModelResults are saved to binary files and if there is unique
+ * model result data that requires saving then modifications must be made to ModelResultBinaryFactory class 
  * @author Jamie Macaulay
  *
  */
@@ -30,6 +33,7 @@ public interface ModelResult {
 	 * @return a string of the result. 
 	 */
 	public String getResultString(); 
+
 
 
 }

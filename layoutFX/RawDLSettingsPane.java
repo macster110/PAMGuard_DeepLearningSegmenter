@@ -15,6 +15,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import pamViewFX.PamGuiManagerFX;
 import pamViewFX.fxGlyphs.PamGlyphDude;
 import pamViewFX.fxNodes.PamBorderPane;
@@ -71,6 +72,11 @@ public class RawDLSettingsPane  extends SettingsPane<RawDLParams>{
 	 */
 	private PamBorderPane classifierPane;
 
+	/**
+	 * Set the maximum number of segments that can be re-merged
+	 */
+	private PamSpinner<Integer>  reMergeSeg;
+
 	public RawDLSettingsPane(DLControl dlControl){
 		super(null); 
 		this.dlControl=dlControl; 
@@ -121,6 +127,11 @@ public class RawDLSettingsPane  extends SettingsPane<RawDLParams>{
 		hopLength.setPrefWidth(100);
 		hopLength.getStyleClass().add(Spinner.STYLE_CLASS_SPLIT_ARROWS_HORIZONTAL);
 		hopLength.setEditable(true);
+		
+		reMergeSeg =    new PamSpinner<Integer>(0, Integer.MAX_VALUE, 1,  1); 
+		reMergeSeg.setPrefWidth(100);
+		reMergeSeg.getStyleClass().add(Spinner.STYLE_CLASS_SPLIT_ARROWS_HORIZONTAL);
+		reMergeSeg.setEditable(true);
 
 		//button to set default hop size
 		Button defaultButton = new Button();
@@ -134,10 +145,15 @@ public class RawDLSettingsPane  extends SettingsPane<RawDLParams>{
 		segmenterGridPane.add(new Label("Window length"), 0, 0);
 		segmenterGridPane.add(windowLength, 1, 0);
 		segmenterGridPane.add(new Label("samples"), 2, 0);
+		
 		segmenterGridPane.add(new Label("Hop length"), 0, 1);
 		segmenterGridPane.add(hopLength, 1, 1);
 		segmenterGridPane.add(new Label("samples"), 2, 1);
 		segmenterGridPane.add(defaultButton, 3, 1);
+		
+		segmenterGridPane.add(new Label("Max. re-merge"), 0, 2);
+		segmenterGridPane.add(reMergeSeg, 1, 2);
+		segmenterGridPane.add(new Label("segments"), 2, 2);
 
 
 		vBox.getChildren().add(segmenterGridPane);
@@ -211,6 +227,8 @@ public class RawDLSettingsPane  extends SettingsPane<RawDLParams>{
 
 		currParams.rawSampleSize = windowLength.getValue(); 
 		currParams.sampleHop = hopLength.getValue(); 
+		currParams.maxMergeHops = reMergeSeg.getValue(); 
+
 
 		//update any changes
 		if (this.dlControl.getDLModels().get(dlModelBox.getSelectionModel().getSelectedIndex()).getModelUI()!=null){
@@ -231,6 +249,8 @@ public class RawDLSettingsPane  extends SettingsPane<RawDLParams>{
 		windowLength.getValueFactory().setValue(currParams.rawSampleSize);
 
 		hopLength.getValueFactory().setValue(currParams.sampleHop);
+		
+		reMergeSeg.getValueFactory().setValue(currParams.maxMergeHops);
 
 		setClassifierPane(); 
 	}

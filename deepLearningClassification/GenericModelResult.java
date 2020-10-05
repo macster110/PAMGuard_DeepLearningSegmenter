@@ -18,6 +18,10 @@ public class GenericModelResult implements ModelResult {
 		this.p=p; 
 	}
 
+	public GenericModelResult(double[] data, boolean isBinary) {
+		// TODO Auto-generated constructor stub
+	}
+
 	@Override
 	public double[] getPrediction() {
 		return p;

@@ -14,7 +14,7 @@ import PamView.PamSymbol;
 import PamView.PamSymbolType;
 import PamguardMVC.PamDataBlock;
 import PamguardMVC.PamDataUnit;
-import rawDeepLearningClassifer.deepLearningClassification.DLDataUnit;
+import rawDeepLearningClassifer.deepLearningClassification.DLDetection;
 
 /**
  * Graphics for the detected data units
@@ -31,7 +31,7 @@ public class DLDetectionGraphics extends PamDetectionOverlayGraphics {
 
 	public int alpha = 64; // 25% transparent
 
-	public Color detColor = Color.CYAN; 
+	public Color detColor = Color.GREEN; 
 
 	private PamSymbol defaultSymbol = new PamSymbol(PamSymbolType.SYMBOL_DIAMOND, 10, 12, false,
 			detColor, detColor ); 
@@ -56,7 +56,7 @@ public class DLDetectionGraphics extends PamDetectionOverlayGraphics {
 	protected Rectangle drawOnSpectrogram(Graphics g, PamDataUnit pamDataUnit, GeneralProjector generalProjector) {
 		// draw a rectangle with time and frequency bounds of detection.
 		// spectrogram projector is now updated to use Hz instead of bins. 
-		DLDataUnit pamDetection = (DLDataUnit) pamDataUnit;	// originally cast pamDataUnit to PamDetection class
+		DLDetection pamDetection = (DLDetection) pamDataUnit;	// originally cast pamDataUnit to PamDetection class
 
 
 		double[] frequency = pamDetection.getFrequency();
@@ -81,17 +81,7 @@ public class DLDetectionGraphics extends PamDetectionOverlayGraphics {
 		//creates a copy of the Graphics instance
 		Graphics2D g2d = (Graphics2D) g.create();
 
-		//		System.out.println("New OrcaSpotDatauNit draw: " + topLeft.x + "  " + botRight.x 
-		//				+ " " + topLeft.y + "  " + botRight.y + " Frequency: " + frequency[0] + " " + frequency[1]); 
-
-		//do not paint unles sit's passed binary classiifcation 
-		if (pamDetection.getModelResult().isBinaryClassification()) {
-			//set the stroke of the copy, not the original 
-			g2d.setStroke(normal);
-		}
-		else {
-			g2d.setStroke(dashed);
-		}
+		g2d.setStroke(normal);
 
 		g2d.setColor(detColor);
 
@@ -99,23 +89,20 @@ public class DLDetectionGraphics extends PamDetectionOverlayGraphics {
 				(int) botRight.x - (int) topLeft.x, (int) botRight.y - (int) topLeft.y);
 
 
-		//		System.out.println("Is classification: " + pamDetection.getModelResult().isClassification()); 
-		if (pamDetection.getModelResult().isBinaryClassification()) {
 
-			//alpha - higher numbers mean less opaque - means more see through
-			//so want more opacity for higher predictions to highlight more
-			//so low alpha means more opaque
+		//alpha - higher numbers mean less opaque - means more see through
+		//so want more opacity for higher predictions to highlight more
+		//so low alpha means more opaque
 
-			//set the alpha so that better results are more opaque 
-			int alphaDet =  (int) ((1.0-PamUtils.PamArrayUtils.max(pamDetection.getModelResult().getPrediction()))*alpha); 
+		//set the alpha so that better results are more opaque 
+		int alphaDet = 155 ; //  (int) ((1.0-PamUtils.PamArrayUtils.max(pamDetection.getModelResults().get(0).getPrediction()))*alpha); 
 
-			//			System.out.println("Alpha Det: " + alphaDet + "  " + pamDetection.getModelResult().getPrediction()); 
-			Color detColorAlpha = new Color(detColor.getRed(), detColor.getGreen(), detColor.getBlue(), alphaDet);
-			g2d.setColor(detColorAlpha);
-			g2d.fillRect((int) topLeft.x, (int) topLeft.y, 
-					(int) botRight.x - (int) topLeft.x, (int) botRight.y - (int) topLeft.y);
+		//			System.out.println("Alpha Det: " + alphaDet + "  " + pamDetection.getModelResult().getPrediction()); 
+		Color detColorAlpha = new Color(detColor.getRed(), detColor.getGreen(), detColor.getBlue(), alphaDet);
+		g2d.setColor(detColorAlpha);
+		g2d.fillRect((int) topLeft.x, (int) topLeft.y, 
+				(int) botRight.x - (int) topLeft.x, (int) botRight.y - (int) topLeft.y);
 
-		}
 
 		return new Rectangle((int) topLeft.x, (int) topLeft.y, 
 				(int) botRight.x - (int) topLeft.x, (int) botRight.y - (int) topLeft.y);

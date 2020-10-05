@@ -22,4 +22,12 @@ public class DLAnnotation extends DataAnnotation<DLAnnotationType> {
 		this.modelResults = modelResults; 
 	}
 
+	/**
+	 * Get all the model results. 
+	 * @return the model results. 
+	 */
+	public ArrayList<ModelResult> getModelResults() {
+		return modelResults;
+	}
+
 }

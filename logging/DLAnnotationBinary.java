@@ -21,6 +21,8 @@ public class DLAnnotationBinary extends AnnotationBinaryHandler<DLAnnotation> {
 	@Override
 	public AnnotationBinaryData getAnnotationBinaryData(PamDataUnit pamDataUnit, DataAnnotation annotation) {
 		// TODO Auto-generated method stub
+		
+		//if there specific types of model results then add unique binary data her.e 
 		return null;
 	}
 

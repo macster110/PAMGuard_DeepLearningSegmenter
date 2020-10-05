@@ -19,7 +19,6 @@ import PamView.PamSidePanel;
 import PamView.WrapperControlledGUISwing;
 import PamguardMVC.PamDataBlock;
 import PamguardMVC.PamRawDataBlock;
-import clickDetector.ClickDatagramProvider;
 import pamViewFX.fxNodes.pamDialogFX.PamDialogFX2AWT;
 import rawDeepLearningClassifer.deepLearningClassification.DLClassiferModel;
 import rawDeepLearningClassifer.deepLearningClassification.DLClassifyProcess;
@@ -27,7 +26,7 @@ import rawDeepLearningClassifer.dummyClassifier.DummyClassifier;
 import rawDeepLearningClassifer.layoutFX.DLSidePanelSwing;
 import rawDeepLearningClassifer.layoutFX.RawDLSettingsPane;
 import rawDeepLearningClassifer.logging.DLBinaryStore;
-import rawDeepLearningClassifer.logging.DLDatagramProvider;
+import rawDeepLearningClassifer.logging.DLDetectionDatagram;
 import rawDeepLearningClassifer.orcaSpot.OrcaSpotClassifier;
 import rawDeepLearningClassifer.segmenter.SegmenterProcess;
 import rawDeepLearningClassifer.soundSpot.SoundSpotClassifier;
@@ -114,7 +113,7 @@ public class DLControl extends PamControlledUnit implements PamSettings {
 		dlBinaryDataSource = new DLBinaryStore(dlClassifyProcess); 
 		dlClassifyProcess.getDLClassifiedDataBlock().setBinaryDataSource(dlBinaryDataSource);
 
-		dlClassifyProcess.getDLClassifiedDataBlock().setDatagramProvider(new DLDatagramProvider(this));
+		dlClassifyProcess.getDLClassifiedDataBlock().setDatagramProvider(new DLDetectionDatagram(this));
 
 		/*****Add new deep learning models here****/
 

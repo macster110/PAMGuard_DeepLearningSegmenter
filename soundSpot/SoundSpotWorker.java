@@ -138,7 +138,7 @@ public class SoundSpotWorker {
 	    	System.out.println("The probability is: " + prob[j]); 
 	    }
 	    
-	    SoundSpotResult soundSpotResult = new SoundSpotResult(); 
+	    SoundSpotResult soundSpotResult = new SoundSpotResult(prob); 
 	    
 	    return soundSpotResult; 
 	}

@@ -7,7 +7,6 @@ import java.util.Arrays;
 import PamController.PamController;
 import PamDetection.PamDetection;
 import PamDetection.RawDataUnit;
-import PamUtils.PamCalendar;
 import PamUtils.PamUtils;
 import PamView.GroupedSourceParameters;
 import PamView.PamDetectionOverlayGraphics;
@@ -283,11 +282,11 @@ public class SegmenterProcess extends PamProcess {
 		//TODO - what if the raw data lengths are larger than the segments by a long way?
 		for (int i=0; i<getSourceParams().countChannelGroups(); i++) {
 
-			//			System.out.println("RawDataIn: chan: " + iChan+ "  " + PamUtils.hasChannel(getSourceParams().getGroupChannels(i), iChan) + " grouped source: " +getSourceParams().getGroupChannels(i)); 
+			System.out.println("Segmenter: RawDataIn: chan: " + iChan+ "  " + PamUtils.hasChannel(getSourceParams().getGroupChannels(i), iChan) + " grouped source: " +getSourceParams().getGroupChannels(i)); 
 
 			if (PamUtils.hasChannel(getSourceParams().getGroupChannels(i), iChan)) {
 
-				//				System.out.println("Data holder size: " + PamUtils.getSingleChannel(pamRawData.getChannelBitmap())); 
+//				System.out.println("Data holder size: " + unit.getChannelBitmap()); 
 
 				if (currentRawChunks[i]==null) {
 					//create a new data unit - should only be called once after initial start.  
