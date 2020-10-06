@@ -33,7 +33,7 @@ public class SegmenterProcess extends PamProcess {
 	/**
 	 * the maximum allowed drift between the sample clocks and the file clock before the clopck is reset. 
 	 */
-	private static final double MAX_MILLIS_DRIFT = 1;
+	private static final double MAX_MILLIS_DRIFT = 2;
 
 	/**
 	 * Reference to the deep learning control. 
@@ -282,7 +282,7 @@ public class SegmenterProcess extends PamProcess {
 		//TODO - what if the raw data lengths are larger than the segments by a long way?
 		for (int i=0; i<getSourceParams().countChannelGroups(); i++) {
 
-			System.out.println("Segmenter: RawDataIn: chan: " + iChan+ "  " + PamUtils.hasChannel(getSourceParams().getGroupChannels(i), iChan) + " grouped source: " +getSourceParams().getGroupChannels(i)); 
+			//System.out.println("Segmenter: RawDataIn: chan: " + iChan+ "  " + PamUtils.hasChannel(getSourceParams().getGroupChannels(i), iChan) + " grouped source: " +getSourceParams().getGroupChannels(i)); 
 
 			if (PamUtils.hasChannel(getSourceParams().getGroupChannels(i), iChan)) {
 

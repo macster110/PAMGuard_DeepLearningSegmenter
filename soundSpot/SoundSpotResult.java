@@ -10,16 +10,16 @@ import rawDeepLearningClassifer.deepLearningClassification.ModelResult;
  */
 public class SoundSpotResult implements ModelResult {
 
-	public SoundSpotResult(double[] data, boolean isBinary) {
+	public SoundSpotResult(float[] data, boolean isBinary) {
 		// TODO Auto-generated constructor stub
 	}
 
-	public SoundSpotResult(double[] prob) {
+	public SoundSpotResult(float[] prob) {
 		// TODO Auto-generated constructor stub
 	}
 
 	@Override
-	public double[] getPrediction() {
+	public float[] getPrediction() {
 		// TODO Auto-generated method stub
 		return null;
 	}

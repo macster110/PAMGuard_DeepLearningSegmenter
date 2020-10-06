@@ -16,7 +16,7 @@ import binaryFileStorage.BinaryObjectData;
 import binaryFileStorage.ModuleFooter;
 import binaryFileStorage.ModuleHeader;
 import rawDeepLearningClassifer.DLControl;
-import rawDeepLearningClassifer.deepLearningClassification.DLClassifiedDataBlock;
+import rawDeepLearningClassifer.deepLearningClassification.DLDetectionDataBlock;
 import rawDeepLearningClassifer.deepLearningClassification.DLDetection;
 import rawDeepLearningClassifer.deepLearningClassification.ModelResult;
 
@@ -25,7 +25,7 @@ import rawDeepLearningClassifer.deepLearningClassification.ModelResult;
  * @author Jamie Macaulay 
  *
  */
-public class DLClassifierBinarySource extends BinaryDataSource {
+public class DLDetectionBinarySource extends BinaryDataSource {
 
 
 	/**
@@ -36,11 +36,11 @@ public class DLClassifierBinarySource extends BinaryDataSource {
 
 	private DLControl clipControl;
 
-	private DLClassifiedDataBlock clipDataBlock;
+	private DLDetectionDataBlock clipDataBlock;
 
-	public DLClassifierBinarySource(DLControl clipControl, DLClassifiedDataBlock clipDataBlock) {
+	public DLDetectionBinarySource(DLControl dlControl, DLDetectionDataBlock clipDataBlock) {
 		super(clipDataBlock);
-		this.clipControl = clipControl;
+		this.clipControl = dlControl;
 		this.clipDataBlock = clipDataBlock;
 	}
 
@@ -79,7 +79,7 @@ public class DLClassifierBinarySource extends BinaryDataSource {
 	@Override
 	public BinaryObjectData getPackedData(PamDataUnit pamDataUnit) {
 		DLDetection cd = (DLDetection) pamDataUnit;
-
+		
 		// make a byte array output stream and write the data to that, 
 		// then dump that down to the main storage stream
 		if (dos == null || bos == null) {

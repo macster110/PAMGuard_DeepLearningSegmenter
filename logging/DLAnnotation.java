@@ -20,6 +20,7 @@ public class DLAnnotation extends DataAnnotation<DLAnnotationType> {
 	public DLAnnotation(DLAnnotationType dlAnnotationType, ArrayList<ModelResult> modelResults) {
 		super(dlAnnotationType);
 		this.modelResults = modelResults; 
+		//add to annotations. 
 	}
 
 	/**
@@ -28,6 +29,21 @@ public class DLAnnotation extends DataAnnotation<DLAnnotationType> {
 	 */
 	public ArrayList<ModelResult> getModelResults() {
 		return modelResults;
+	}
+
+
+	@Override
+	public String toString() {
+		String results = "<html><p> "; 
+		for (int j=0; j<this.modelResults.get(0).getPrediction().length; j++) {
+			results += "Class " + j + ": "; 
+			for (int i=0; i<this.modelResults.size(); i++) {
+				results += String.format(" %.2f", modelResults.get(i).getPrediction()[j]);
+			}
+			results += "\n"; 
+		}
+		results += "<html>"; 
+		return results;
 	}
 
 }

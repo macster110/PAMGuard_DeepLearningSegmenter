@@ -4,7 +4,8 @@ import PamguardMVC.DataUnitBaseData;
 import PamguardMVC.PamDataUnit;
 
 /**
- * A data unit created from classification results of DL model. 
+ * A data unit created from classification results of DL model. this data unit holds one model results, i.e. 
+ * corresponds to one segment of raw data. 
  * 
  * @author Jamie Macaulay 
  *
@@ -28,13 +29,18 @@ public class DLDataUnit extends PamDataUnit {
 	public DLDataUnit(long timeMilliseconds,
 			int channelBitmap, long startSample, long durationSamples, 	ModelResult modelResult) {
 		super(timeMilliseconds, channelBitmap, startSample, durationSamples); 
-		
+
 		this.modelResult = modelResult; 
 	}
-	
-	public DLDataUnit(DataUnitBaseData baseData, double[] data) {
+
+	public DLDataUnit(DataUnitBaseData baseData, float[] data) {
 		super(baseData);
 		this.modelResult = new GenericModelResult(data); 
+	}
+
+	public DLDataUnit(DataUnitBaseData baseData, ModelResult modelResult) {
+		super(baseData);
+		this.modelResult = modelResult; 
 	}
 
 	/**

@@ -13,7 +13,7 @@ import rawDeepLearningClassifer.DLControl;
  */
 public class DLAnnotationType extends DataAnnotationType<DLAnnotation>  {
 		
-		public static final String NAME = "DL_annotation";
+		public static final String NAME = "Deep learning result";
 		
 		private DLAnnotationSQL dlAnnotationSQL;
 		
@@ -68,6 +68,8 @@ public class DLAnnotationType extends DataAnnotationType<DLAnnotation>  {
 		public String getShortIdCode() {
 			return NAME;
 		}
+		
+		
 
 
 }

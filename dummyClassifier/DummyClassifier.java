@@ -17,7 +17,7 @@ public class DummyClassifier implements DLClassiferModel{
 
 	@Override
 	public ModelResult runModel(GroupedRawData rawDataUnit) {
-		return new DummyModelResult(Math.random());
+		return new DummyModelResult((float) Math.random());
 	}
 
 	@Override
@@ -49,42 +49,6 @@ public class DummyClassifier implements DLClassiferModel{
 		return null;
 	}
 	
-	
-	
-	class DummyModelResult implements ModelResult {
-		
-		
-		private double probability;
-
-		public DummyModelResult(double probability) {
-			this.probability = probability;  
-		}
-
-		@Override
-		public double[] getPrediction() {
-			return new double[] {probability};
-		}
-
-		@Override
-		public boolean isBinaryClassification() {
-			return probability>0.7;
-		}
-
-		@Override
-		public double getAnalysisTime() {
-			// TODO Auto-generated method stub
-			return 0.0001;
-		}
-
-		@Override
-		public String getResultString() {
-			return "Dummy result: " + probability;
-		}
-		
-	}
-
-
-
 	@Override
 	public int getNumClasses() {
 		return 1;

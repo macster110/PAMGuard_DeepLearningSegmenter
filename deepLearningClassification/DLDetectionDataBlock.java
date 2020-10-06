@@ -9,9 +9,9 @@ import PamguardMVC.PamProcess;
  * @author Jamie Macaulay
  *
  */
-public class DLClassifiedDataBlock extends PamDataBlock<DLDetection> {
+public class DLDetectionDataBlock extends PamDataBlock<DLDetection> {
 
-	public DLClassifiedDataBlock(String dataName, PamProcess parentProcess, int channelMap) {
+	public DLDetectionDataBlock(String dataName, PamProcess parentProcess, int channelMap) {
 		super(DLDetection.class, dataName, parentProcess, channelMap);
 		
 	}

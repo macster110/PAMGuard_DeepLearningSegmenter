@@ -14,7 +14,7 @@ public interface ModelResult {
 	 * Get the predictions for this result. The array contains the probabilities for all classes. 
 	 * @return the prediction.
 	 */
-	public double[] getPrediction(); 
+	public float[] getPrediction(); 
 
 	/**
 	 * Check whether binary classification has passed. 

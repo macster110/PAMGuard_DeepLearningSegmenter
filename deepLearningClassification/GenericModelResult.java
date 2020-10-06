@@ -12,18 +12,20 @@ public class GenericModelResult implements ModelResult {
 	/**
 	 * List of probabilities per species. 
 	 */
-	private double[] p;
+	private float[] p;
+	private boolean isBinary;
 
-	public GenericModelResult(double[] p) {
+	public GenericModelResult(float[] p) {
 		this.p=p; 
 	}
 
-	public GenericModelResult(double[] data, boolean isBinary) {
-		// TODO Auto-generated constructor stub
+	public GenericModelResult(float[] data, boolean isBinary) {
+		this.p=p; 
+		this.isBinary = isBinary; 
 	}
 
 	@Override
-	public double[] getPrediction() {
+	public float[] getPrediction() {
 		return p;
 	}
 

@@ -45,7 +45,7 @@ public class DLClassifyProcess extends PamProcess {
 	/**
 	 * Holds results which have passed a binary classification 
 	 */
-	private DLClassifiedDataBlock dlClassifiedDataBlock;
+	private DLDetectionDataBlock dlDetectionDataBlock;
 
 	/**
 	 * Buffer which holds positive grouped data results to be merged into one data unit. This mirrors modeResultDataBuffer
@@ -81,9 +81,9 @@ public class DLClassifyProcess extends PamProcess {
 		dlModelResultDataBlock.setNaturalLifetimeMillis(600*1000); //keep this data for a while.
 
 		//the classifier deep learning data, 
-		dlClassifiedDataBlock = new DLClassifiedDataBlock("DL Classifier Data", this, dlControl.getDLParams().groupedSourceParams.getChanOrSeqBitmap());
-		addOutputDataBlock(dlClassifiedDataBlock);
-		dlClassifiedDataBlock.setNaturalLifetimeMillis(600*1000); //keep this data for a while.
+		dlDetectionDataBlock = new DLDetectionDataBlock("DL Classifier Data", this, dlControl.getDLParams().groupedSourceParams.getChanOrSeqBitmap());
+		addOutputDataBlock(dlDetectionDataBlock);
+		dlDetectionDataBlock.setNaturalLifetimeMillis(600*1000); //keep this data for a while.
 
 
 		//add custom graphics
@@ -91,9 +91,9 @@ public class DLClassifyProcess extends PamProcess {
 		overlayGraphics.setDetectionData(true);
 		dlModelResultDataBlock.setOverlayDraw(overlayGraphics);
 
-		overlayGraphics = new DLDetectionGraphics(dlClassifiedDataBlock);
+		overlayGraphics = new DLDetectionGraphics(dlDetectionDataBlock);
 		overlayGraphics.setDetectionData(true);
-		dlClassifiedDataBlock.setOverlayDraw(overlayGraphics);
+		dlDetectionDataBlock.setOverlayDraw(overlayGraphics);
 
 		//the process name. 
 		setProcessName("Deep Learning Classifier");  
@@ -102,15 +102,6 @@ public class DLClassifyProcess extends PamProcess {
 		dlAnnotationType = new DLAnnotationType(dlControl);
 	}
 
-	/**
-	 * Data block which holds data units for localisation.
-	 * @return the data block which holds data unit for localisation.
-	 */	
-	public DLClassifiedDataBlock getDlClassifiedLocBlock() {
-
-		return dlClassifiedDataBlock;
-	}
-	
 	/**
 	 * Setup the classification process. 
 	 */
@@ -187,10 +178,11 @@ public class DLClassifyProcess extends PamProcess {
 		//create a new data unit - allways add to the model result section. 
 		DLDataUnit dlDataUnit = new DLDataUnit(pamRawData.getTimeMilliseconds(), pamRawData.getChannelBitmap(), 
 				pamRawData.getStartSample(), pamRawData.getSampleDuration(), modelResult); 
+		
 		dlDataUnit.setFrequency(new double[] {0, dlControl.getDLClassifyProcess().getSampleRate()/2});
 		dlDataUnit.setDurationInMilliseconds(pamRawData.getDurationInMilliseconds()); 
 
-		this.dlModelResultDataBlock.addPamData(dlDataUnit);
+		this.dlModelResultDataBlock.addPamData(dlDataUnit); //here
 
 
 
@@ -222,7 +214,7 @@ public class DLClassifyProcess extends PamProcess {
 							DLDetection dlDetection  = makeDLDetection(groupDataBuffer[i], modelResultDataBuffer[i]); 
 							clearBuffer(i);
 							if (dlDetection!=null) {
-								this.dlClassifiedDataBlock.addPamData(dlDetection);
+								this.dlDetectionDataBlock.addPamData(dlDetection);
 
 							}
 						}
@@ -234,7 +226,7 @@ public class DLClassifyProcess extends PamProcess {
 							DLDetection dlDetection  = makeDLDetection(groupDataBuffer[i], modelResultDataBuffer[i]); 
 							clearBuffer(i) ;
 							if (dlDetection!=null) {
-								this.dlClassifiedDataBlock.addPamData(dlDetection);
+								this.dlDetectionDataBlock.addPamData(dlDetection);
 
 							}
 						}
@@ -249,7 +241,7 @@ public class DLClassifyProcess extends PamProcess {
 								DLDetection dlDetection = makeDLDetection(groupDataBuffer[i],modelResultDataBuffer[i]);
 								clearBuffer(i);
 								if (dlDetection!=null) {
-									this.dlClassifiedDataBlock.addPamData(dlDetection);
+									this.dlDetectionDataBlock.addPamData(dlDetection);
 								}
 							}
 							else {
@@ -297,6 +289,7 @@ public class DLClassifyProcess extends PamProcess {
 
 		DLDetection dlDetection = new DLDetection(basicData, rawdata); 
 		addDLAnnotation(dlDetection, groupDataBuffer,modelResult); 
+		
 		//create the data unit
 		return dlDetection; 
 	}
@@ -333,11 +326,19 @@ public class DLClassifyProcess extends PamProcess {
 	}
 
 	/**
-	 * Get the data block which contains detectons from the deep learning output. 
+	 * Get the data block which contains all results from the deep learning output. 
+	 * @return the data block which holds results output form the deep learning classifier. 
+	 */
+	public DLModelDataBlock getDLResultDataBlock() {
+		return dlModelResultDataBlock; 
+	}
+	
+	/**
+	 * Get the data block which contains detections from the deep learning output. 
 	 * @return the data block which holds classified data units
 	 */
-	public DLModelDataBlock getDLClassifiedDataBlock() {
-		return dlModelResultDataBlock; 
+	public DLDetectionDataBlock getDLDetectionDatablock() {
+		return this.dlDetectionDataBlock; 
 	}
 
 	/**

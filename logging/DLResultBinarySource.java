@@ -5,13 +5,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
-import java.io.IOException;
-
-import Acquisition.AcquisitionProcess;
-import PamUtils.PamArrayUtils;
 import PamguardMVC.DataUnitBaseData;
 import PamguardMVC.PamDataUnit;
-import PamguardMVC.PamProcess;
 import binaryFileStorage.BinaryDataSource;
 import binaryFileStorage.BinaryHeader;
 import binaryFileStorage.BinaryObjectData;
@@ -20,26 +15,27 @@ import binaryFileStorage.ModuleHeader;
 import rawDeepLearningClassifer.deepLearningClassification.DLClassifyProcess;
 import rawDeepLearningClassifer.deepLearningClassification.DLDataUnit;
 import rawDeepLearningClassifer.deepLearningClassification.DLModelDataBlock;
+import rawDeepLearningClassifer.deepLearningClassification.ModelResult;
 
 /**
  * Binary storage for the all the model results, i.e. all the returned probabilities. 
  * @author Jamie Macaulay 
  *
  */
-public class DLBinaryStore extends BinaryDataSource {
-	
+public class DLResultBinarySource extends BinaryDataSource {
+
 	private DLModelDataBlock dlDataBlock;
 	private ByteArrayOutputStream bos;
 	private DataOutputStream dos;
-	
+
 	/**
-	 * The dl classifier process. 
+	 * TReference to the DL classifier process. 
 	 */
 	private DLClassifyProcess dlClassifierProcess;
 
-	public DLBinaryStore(DLClassifyProcess dlClassifierProcess) {
-		super(dlClassifierProcess.getDLClassifiedDataBlock());
-		this.dlDataBlock = dlClassifierProcess.getDLClassifiedDataBlock();
+	public DLResultBinarySource(DLClassifyProcess dlClassifierProcess) {
+		super(dlClassifierProcess.getDLResultDataBlock());
+		this.dlDataBlock = dlClassifierProcess.getDLResultDataBlock();
 		this.dlClassifierProcess=dlClassifierProcess; 
 	}
 
@@ -72,29 +68,12 @@ public class DLBinaryStore extends BinaryDataSource {
 		else {
 			bos.reset();
 		}
-		double[] probabilities = dlDataUnit.getModelResult().getPrediction(); 
-		double maxVal = PamArrayUtils.max(probabilities); 
-		double scale;
-		if (maxVal > 0) {
-			scale = (float) (32767./maxVal);			
-		}
-		else {
-			scale = 1.;
-		}
-		/*
-		 * Pretty minimilist write since channel map will already be stored in the
-		 * standard header and data.length must match the channel map. 
-		 */
-		try {
-			dos.writeFloat((float) scale);
-			dos.writeShort(probabilities.length);
-			for (int i = 0; i < probabilities.length; i++) {
-				dos.writeShort((short) (scale*probabilities[i]));
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
-		}
+
+		int type = ModelResultBinaryFactory.getType(dlDataUnit.getModelResult()); 
+
+
+		ModelResultBinaryFactory.getPackedData(dlDataUnit.getModelResult(), dos, type);
+		
 		BinaryObjectData packedData = new BinaryObjectData(0, bos.toByteArray());
 		return packedData;
 	}
@@ -105,22 +84,12 @@ public class DLBinaryStore extends BinaryDataSource {
 	@Override
 	public PamDataUnit sinkData(BinaryObjectData binaryObjectData, BinaryHeader bh, int moduleVersion) {
 		DataUnitBaseData baseData = binaryObjectData.getDataUnitBaseData();
-		
-		DataInputStream dis = new DataInputStream(new ByteArrayInputStream(binaryObjectData.getData()));
-		try {
-			double scale = dis.readFloat();
-			short nSpecies = dis.readShort(); 
-			double[] data = new double[nSpecies];
-			for (int i = 0; i < nSpecies; i++) {
-				data[i] = (double) dis.readShort() / scale;
-			}
-			return new DLDataUnit(baseData, data);
 
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
-		}
-	
+		DataInputStream dis = new DataInputStream(new ByteArrayInputStream(binaryObjectData.getData()));
+		ModelResult result= ModelResultBinaryFactory.sinkData(dis); 
+
+		return new DLDataUnit(baseData, result);
+
 	}
 
 	/* (non-Javadoc)
@@ -142,15 +111,17 @@ public class DLBinaryStore extends BinaryDataSource {
 		return null;
 	}
 
-	@Override
-	public void newFileOpened(File outputFile) {
-		
-	}
 
 	@Override
 	public byte[] getModuleHeaderData() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void newFileOpened(File outputFile) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

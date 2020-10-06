@@ -25,7 +25,9 @@ import rawDeepLearningClassifer.deepLearningClassification.DLClassifyProcess;
 import rawDeepLearningClassifer.dummyClassifier.DummyClassifier;
 import rawDeepLearningClassifer.layoutFX.DLSidePanelSwing;
 import rawDeepLearningClassifer.layoutFX.RawDLSettingsPane;
-import rawDeepLearningClassifer.logging.DLBinaryStore;
+import rawDeepLearningClassifer.logging.DLResultBinarySource;
+import rawDeepLearningClassifer.logging.DLDataUnitDatagram;
+import rawDeepLearningClassifer.logging.DLDetectionBinarySource;
 import rawDeepLearningClassifer.logging.DLDetectionDatagram;
 import rawDeepLearningClassifer.orcaSpot.OrcaSpotClassifier;
 import rawDeepLearningClassifer.segmenter.SegmenterProcess;
@@ -40,6 +42,7 @@ import rawDeepLearningClassifer.soundSpot.SoundSpotClassifier;
  * @author Jamie Macaulay 
  *
  */
+@SuppressWarnings("deprecation")
 public class DLControl extends PamControlledUnit implements PamSettings {
 
 	/**
@@ -90,7 +93,12 @@ public class DLControl extends PamControlledUnit implements PamSettings {
 	/**
 	 * Binary store for the model results. 
 	 */
-	private DLBinaryStore dlBinaryDataSource; 
+	private DLResultBinarySource dlBinaryDataSource;
+
+	/**
+	 * The binary data source for detection data
+	 */
+	private DLDetectionBinarySource dlDetectionBinarySource; 
 
 
 	/**
@@ -110,10 +118,13 @@ public class DLControl extends PamControlledUnit implements PamSettings {
 		addPamProcess(dlClassifyProcess = new DLClassifyProcess(this, segmenterProcess.getSegmenterDataBlock()));
 		
 		//add storage options etc. 
-		dlBinaryDataSource = new DLBinaryStore(dlClassifyProcess); 
-		dlClassifyProcess.getDLClassifiedDataBlock().setBinaryDataSource(dlBinaryDataSource);
-
-		dlClassifyProcess.getDLClassifiedDataBlock().setDatagramProvider(new DLDetectionDatagram(this));
+		dlBinaryDataSource = new DLResultBinarySource(dlClassifyProcess); 
+		dlClassifyProcess.getDLResultDataBlock().setBinaryDataSource(dlBinaryDataSource);
+//		dlClassifyProcess.getDLResultDataBlock().setDatagramProvider(new DLDataUnitDatagram(this));
+				
+		dlDetectionBinarySource = new DLDetectionBinarySource(this, dlClassifyProcess.getDLDetectionDatablock()); 
+		dlClassifyProcess.getDLDetectionDatablock().setBinaryDataSource(dlDetectionBinarySource);
+		dlClassifyProcess.getDLDetectionDatablock().setDatagramProvider(new DLDetectionDatagram(this));
 
 		/*****Add new deep learning models here****/
 
@@ -308,9 +319,10 @@ public class DLControl extends PamControlledUnit implements PamSettings {
 
 	
 	/**
-	 * Get the pam datablock 
-	 * @return
+	 * Get the parent data block.   
+	 * @return the parent data block. 
 	 */
+	@SuppressWarnings("rawtypes")
 	public PamDataBlock getParentDataBlock() {
 		return segmenterProcess.getParentDataBlock();
 	}

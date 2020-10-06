@@ -273,7 +273,7 @@ public class OrcaSpotWorkerExe2 {
 
 			if (line.trim().toLowerCase().contains("prob=")) {
 				String  conf = line.trim().split("prob=")[1].trim();
-				orcaSpotModelResult.detectionConfidence = new double[] {Double.valueOf(conf)}; 
+				orcaSpotModelResult.detectionConfidence = new float[] {Float.valueOf(conf)}; 
 				if (this.currentParams.mode.equals("0") || 
 						(this.currentParams.mode.equals("1") && orcaSpotModelResult.detectionConfidence[0]<=Double.valueOf(currentParams.threshold))) {
 					finished = true; 
@@ -287,7 +287,7 @@ public class OrcaSpotWorkerExe2 {
 				orcaSpotModelResult.predictedClass  = predClass; 
 				String  predConf = line.trim().split(" prob_class=")[1].trim().substring(0, 6);
 
-				orcaSpotModelResult.calltypeConfidence = Double.valueOf(predConf); 
+				orcaSpotModelResult.calltypeConfidence = Float.valueOf(predConf); 
 
 				finished = true; 
 			}

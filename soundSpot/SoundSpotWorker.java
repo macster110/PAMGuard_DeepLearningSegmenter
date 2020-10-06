@@ -126,7 +126,7 @@ public class SoundSpotWorker {
 	public SoundSpotResult makeModelResult(Tensor output) {
 		
 		//grab the results. 
-	    double[] prob = new double[(int) output.shape()[1]]; 
+	    float[] prob = new float[(int) output.shape()[1]]; 
 	    
 	    
 	    for (int j=0; j<output.shape()[1]; j++) {
@@ -134,7 +134,7 @@ public class SoundSpotWorker {
 //	    	prob = torch.nn.functional.softmax(out).numpy()[n, 1]
 //                    pred = int(prob >= ARGS.threshold)		    	
 	    	//softmax function
-	    	prob[j] = DLUtils.softmax(output.getDataAsFloatArray()[j], output.getDataAsFloatArray()); 
+	    	prob[j] = (float) DLUtils.softmax(output.getDataAsFloatArray()[j], output.getDataAsFloatArray()); 
 	    	System.out.println("The probability is: " + prob[j]); 
 	    }
 	    

@@ -182,13 +182,13 @@ public class OrcaSpotClassifier implements DLClassiferModel, PamSettings {
 		dlDataUnit.setDurationInMilliseconds(groupedRawData.getDurationInMilliseconds()); 
 
 
-		dlControl.getDLClassifyProcess().getDLClassifiedDataBlock().addPamData(dlDataUnit);
+		dlControl.getDLClassifyProcess().getDLResultDataBlock().addPamData(dlDataUnit);
 
 		if (dlDataUnit.getModelResult().isBinaryClassification()) {
 			//send off to localised datablock 
 			ArrayList<ModelResult> modelResults = new ArrayList<ModelResult>(); 
 			modelResults.add(modelResult); 
-			dlControl.getDLClassifyProcess().getDlClassifiedLocBlock().addPamData(new DLDetection(groupedRawData.getTimeMilliseconds(), 
+			dlControl.getDLClassifyProcess().getDLDetectionDatablock().addPamData(new DLDetection(groupedRawData.getTimeMilliseconds(), 
 					groupedRawData.getChannelBitmap(), groupedRawData.getStartSample(),
 				groupedRawData.getSampleDuration(), modelResults, null));
 		}
