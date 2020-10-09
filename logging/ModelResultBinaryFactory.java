@@ -95,7 +95,7 @@ public class ModelResultBinaryFactory {
 	public static ModelResult sinkData(DataInputStream dis) {
 		try {
 
-			System.out.println("Make model result: "); 
+			//System.out.println("Make model result: "); 
 			
 			int type = dis.readByte(); 
 			boolean isBinary = dis.readBoolean(); 
@@ -121,7 +121,7 @@ public class ModelResultBinaryFactory {
 				break; 
 			}
 			
-			System.out.println("New model result: "+ type); 
+			//System.out.println("New model result: "+ type); 
 
 			return result; 
 

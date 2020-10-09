@@ -616,8 +616,9 @@ public class SegmenterProcess extends PamProcess {
 
 	@Override
 	public void pamStop() {
-		nextRawChunks = null;
-		this.currentRawChunks = null; 
+		
+//		this.nextRawChunks = null;
+//		this.currentRawChunks = null; 
 	}
 
 	/**

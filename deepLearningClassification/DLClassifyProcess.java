@@ -187,8 +187,6 @@ public class DLClassifyProcess extends PamProcess {
 
 
 		//need to implement multiple groups. 
-
-
 		for (int i=0; i<getSourceParams().countChannelGroups(); i++) {
 
 //			System.out.println("RawDataIn: chan: " + pamRawData.getChannelBitmap()+ "  " +
@@ -270,7 +268,6 @@ public class DLClassifyProcess extends PamProcess {
 			return null; 
 		}
 
-
 		int chans = PamUtils.getNumChannels(groupDataBuffer.get(0).getChannelBitmap());
 
 		//need to merge the raw data chunks- these are overlapping whihc is a bit of pain but should be OK if we only copy in the hop lengths.
@@ -287,6 +284,8 @@ public class DLClassifyProcess extends PamProcess {
 		basicData.setMillisecondDuration(1000.*groupDataBuffer.size()*dlControl.getDLParams().sampleHop/this.sampleRate);
 		basicData.setSampleDuration((long) (groupDataBuffer.size()*dlControl.getDLParams().sampleHop));
 
+		
+//		System.out.println("Model result: " + modelResult.size()); 
 		DLDetection dlDetection = new DLDetection(basicData, rawdata); 
 		addDLAnnotation(dlDetection, groupDataBuffer,modelResult); 
 		
@@ -298,8 +297,12 @@ public class DLClassifyProcess extends PamProcess {
 	 * Clear the data unit buffer. 
 	 */
 	private void clearBuffer(int group) {
-		groupDataBuffer[group].clear(); 
-		modelResultDataBuffer[group].clear(); 
+		//do not clear because the arrays are referenced by other data. Prevent
+		//the need to clone the arrays
+		groupDataBuffer[group] = new ArrayList<GroupedRawData>();
+		modelResultDataBuffer[group] = new ArrayList<ModelResult>(); 
+//		groupDataBuffer[group].clear(); 
+//		modelResultDataBuffer[group].clear(); 
 	}
 
 

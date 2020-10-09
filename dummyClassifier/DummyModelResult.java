@@ -16,6 +16,7 @@ public class DummyModelResult implements ModelResult {
 	}
 
 
+
 	@Override
 	public float[] getPrediction() {
 		return probability;

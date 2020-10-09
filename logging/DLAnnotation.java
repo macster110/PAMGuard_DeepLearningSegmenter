@@ -19,6 +19,7 @@ public class DLAnnotation extends DataAnnotation<DLAnnotationType> {
 
 	public DLAnnotation(DLAnnotationType dlAnnotationType, ArrayList<ModelResult> modelResults) {
 		super(dlAnnotationType);
+		//		System.out.println("DLAnnotation: " + modelResults.size()); 
 		this.modelResults = modelResults; 
 		//add to annotations. 
 	}
@@ -34,15 +35,32 @@ public class DLAnnotation extends DataAnnotation<DLAnnotationType> {
 
 	@Override
 	public String toString() {
-		String results = "<html><p> "; 
-		for (int j=0; j<this.modelResults.get(0).getPrediction().length; j++) {
-			results += "Class " + j + ": "; 
-			for (int i=0; i<this.modelResults.size(); i++) {
-				results += String.format(" %.2f", modelResults.get(i).getPrediction()[j]);
-			}
-			results += "\n"; 
+		String results = "<html>"; 
+
+		if (modelResults==null) {
+			results += "WARNING: There are no model results associated with this data unit?"; 
 		}
-		results += "<html>"; 
+		else {
+			for (int j=0; j<this.modelResults.get(0).getPrediction().length; j++) {
+				results += "<p>"; 
+				results += "Class " + j + ": "; 
+				for (int i=0; i<this.modelResults.size(); i++) {
+
+					if (i<this.modelResults.size()-1) {
+						results += String.format(" %.2f,", modelResults.get(i).getPrediction()[j]);
+					}
+					else {
+						//remove comma
+						results += String.format(" %.2f", modelResults.get(i).getPrediction()[j]);
+					}
+				}
+				results += "</p>"; 
+			}
+		}
+		
+		results += "</html>"; 
+
+
 		return results;
 	}
 

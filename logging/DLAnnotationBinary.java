@@ -17,11 +17,13 @@ import rawDeepLearningClassifer.deepLearningClassification.ModelResult;
 
 /**
  * Saves deep learning annotations in binary files. 
+ * 
  * @author Jamie Macaulay
  *
  */
 public class DLAnnotationBinary extends AnnotationBinaryHandler<DLAnnotation> {
 
+	
 	private ByteArrayOutputStream bos;
 	private DataOutputStream dos;
 	private DLAnnotationType dlAnnotationType;
@@ -46,6 +48,8 @@ public class DLAnnotationBinary extends AnnotationBinaryHandler<DLAnnotation> {
 			}
 
 			dos.writeShort(dlDetection.getModelResults().size());
+			
+//			System.out.println("DLAnnotationBinary.Number of model result to saves: " + dlDetection.getModelResults().size() + "  " + ba.getModelResults().size()); 
 
 			for (int i=0; i<dlDetection.getModelResults().size(); i++) {
 				ModelResultBinaryFactory.getPackedData(dlDetection.getModelResults().get(i), dos, 	ModelResultBinaryFactory.getType(dlDetection.getModelResults().get(i)));
@@ -70,12 +74,13 @@ public class DLAnnotationBinary extends AnnotationBinaryHandler<DLAnnotation> {
 
 		int version = annotationBinaryData.annotationVersion; //1 for original single template, 2 for multi template
 
-		//		System.out.println("Matched annot length: " + annotationBinaryData.data.length); 
 
 		ArrayList<ModelResult> modelResults = new ArrayList<ModelResult>(); 
 		try {
 
 			int numModels  = dis.readShort(); 
+			
+//			System.out.println("DLAnnotationBinary.Number of model results: " + numModels); 
 
 			for (int i =0; i<numModels; i++) {
 				modelResults.add(ModelResultBinaryFactory.sinkData(dis)); 

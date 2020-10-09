@@ -17,7 +17,7 @@ public class DummyClassifier implements DLClassiferModel{
 
 	@Override
 	public ModelResult runModel(GroupedRawData rawDataUnit) {
-		return new DummyModelResult((float) Math.random());
+		return new DummyModelResult(new float[] {(float) Math.random(), (float) Math.random()});
 	}
 
 	@Override
@@ -51,7 +51,7 @@ public class DummyClassifier implements DLClassiferModel{
 	
 	@Override
 	public int getNumClasses() {
-		return 1;
+		return 2;
 	}
 
 }

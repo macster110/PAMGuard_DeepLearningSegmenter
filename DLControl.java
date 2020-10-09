@@ -120,7 +120,7 @@ public class DLControl extends PamControlledUnit implements PamSettings {
 		//add storage options etc. 
 		dlBinaryDataSource = new DLResultBinarySource(dlClassifyProcess); 
 		dlClassifyProcess.getDLResultDataBlock().setBinaryDataSource(dlBinaryDataSource);
-//		dlClassifyProcess.getDLResultDataBlock().setDatagramProvider(new DLDataUnitDatagram(this));
+		dlClassifyProcess.getDLResultDataBlock().setDatagramProvider(new DLDataUnitDatagram(this));
 				
 		dlDetectionBinarySource = new DLDetectionBinarySource(this, dlClassifyProcess.getDLDetectionDatablock()); 
 		dlClassifyProcess.getDLDetectionDatablock().setBinaryDataSource(dlDetectionBinarySource);
