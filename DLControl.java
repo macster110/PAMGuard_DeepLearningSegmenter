@@ -19,11 +19,16 @@ import PamView.PamSidePanel;
 import PamView.WrapperControlledGUISwing;
 import PamguardMVC.PamDataBlock;
 import PamguardMVC.PamRawDataBlock;
+import clickDetector.tdPlots.ClickDetSymbolManager;
+import dataPlotsFX.data.TDDataProviderRegisterFX;
+import dataPlotsFX.rawClipDataPlot.ClipPlotProviderFX;
 import pamViewFX.fxNodes.pamDialogFX.PamDialogFX2AWT;
+import rawDeepLearningClassifer.dataPlotFX.DLDetectionPlotProvider;
 import rawDeepLearningClassifer.deepLearningClassification.DLClassiferModel;
 import rawDeepLearningClassifer.deepLearningClassification.DLClassifyProcess;
 import rawDeepLearningClassifer.dummyClassifier.DummyClassifier;
 import rawDeepLearningClassifer.layoutFX.DLSidePanelSwing;
+import rawDeepLearningClassifer.layoutFX.DLSymbolManager;
 import rawDeepLearningClassifer.layoutFX.RawDLSettingsPane;
 import rawDeepLearningClassifer.logging.DLResultBinarySource;
 import rawDeepLearningClassifer.logging.DLDataUnitDatagram;
@@ -126,15 +131,19 @@ public class DLControl extends PamControlledUnit implements PamSettings {
 		dlClassifyProcess.getDLDetectionDatablock().setBinaryDataSource(dlDetectionBinarySource);
 		dlClassifyProcess.getDLDetectionDatablock().setDatagramProvider(new DLDetectionDatagram(this));
 
+		dlClassifyProcess.getDLDetectionDatablock().setPamSymbolManager(new DLSymbolManager(this, 	dlClassifyProcess.getDLDetectionDatablock()));
+
 		/*****Add new deep learning models here****/
 
 		dlModels.add(new SoundSpotClassifier(this)); 
 		dlModels.add(new DummyClassifier()); 
 		dlModels.add(new OrcaSpotClassifier(this)); 
 
+		//register click detector for the javafx display. 
+		TDDataProviderRegisterFX.getInstance().registerDataInfo(new DLDetectionPlotProvider(this, dlClassifyProcess.getDLDetectionDatablock()));
+		
 		//load the previous settings
 		PamSettingManager.getInstance().registerSettings(this);
-		
 		
 
 		//ensure everything is updated. 

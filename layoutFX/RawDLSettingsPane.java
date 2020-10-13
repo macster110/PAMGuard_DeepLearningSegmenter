@@ -16,6 +16,7 @@ import javafx.scene.control.Spinner;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
+import javafx.stage.Stage;
 import pamViewFX.PamGuiManagerFX;
 import pamViewFX.fxGlyphs.PamGlyphDude;
 import pamViewFX.fxNodes.PamBorderPane;
@@ -172,6 +173,11 @@ public class RawDLSettingsPane  extends SettingsPane<RawDLParams>{
 
 		dlModelBox.setOnAction((action)->{
 			setClassifierPane(); 
+			if (mainPane!=null) {
+				Stage stage = (Stage) mainPane.getScene().getWindow();
+				stage.sizeToScene();
+			}
+
 		});
 
 		vBox.getChildren().add(dlModelBox);

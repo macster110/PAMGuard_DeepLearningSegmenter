@@ -14,6 +14,8 @@ import PamguardMVC.RawDataHolder;
 import annotation.DataAnnotation;
 import bearinglocaliser.annotation.BearingAnnotation;
 import clickDetector.ClickDetection;
+import clickDetector.ClickSpectrogram;
+import clipgenerator.ClipSpectrogram;
 import fftManager.FastFFT;
 import rawDeepLearningClassifer.logging.DLAnnotation;
 
@@ -42,6 +44,8 @@ public class DLDetection extends PamDataUnit implements PamDetection, RawDataHol
 	private int currentSpecLen;
 
 	private ComplexArray[] complexSpectrum;
+
+	private ClipSpectrogram dlSpectrogram;
 
 
 	/**
@@ -219,11 +223,32 @@ public class DLDetection extends PamDataUnit implements PamDetection, RawDataHol
 	}
 
 
+	/**
+	 * Get the spectrum length
+	 * @return the spectrogram length. 
+	 */
 	private int getCurrentSpectrumLength() {
 		if (currentSpecLen<=0) {
 			currentSpecLen = PamUtils.getMinFftLength(getSampleDuration());
 		}
 		return currentSpecLen; 
+	}
+
+
+	
+	/**
+	 * Get a spectrogram image of the wave clip. The clip is null until called. It is recalculated if the 
+	 * FFT length and/or hop size are different. 
+	 * @param fftSize - the FFT size in samples
+	 * @param fftHop - the FFT hop in samples
+	 * @return a spectrogram clip (dB/Hz ).
+	 */
+	public ClipSpectrogram getSpectrogram(int fftSize, int fftHop) {
+		if (dlSpectrogram==null || dlSpectrogram.getFFTHop()!=fftHop || dlSpectrogram.getFFTSize()!=fftSize) {
+			dlSpectrogram = new ClipSpectrogram(this); 
+			dlSpectrogram.calcSpectrogram(this.getWaveData(), fftSize, fftHop); 
+		}
+		return dlSpectrogram;
 	}
 
 
