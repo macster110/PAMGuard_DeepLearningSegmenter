@@ -74,7 +74,6 @@ public class DLAnnotationBinary extends AnnotationBinaryHandler<DLAnnotation> {
 
 		int version = annotationBinaryData.annotationVersion; //1 for original single template, 2 for multi template
 
-
 		ArrayList<ModelResult> modelResults = new ArrayList<ModelResult>(); 
 		try {
 

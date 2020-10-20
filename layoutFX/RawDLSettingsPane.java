@@ -92,6 +92,7 @@ public class RawDLSettingsPane  extends SettingsPane<RawDLParams>{
 		mainPane=new PamBorderPane(); 
 		mainPane.setCenter(createDLPane());
 		mainPane.setPadding(new Insets(5,5,5,5));
+		mainPane.setMinHeight(400);
 	}
 
 
@@ -128,7 +129,7 @@ public class RawDLSettingsPane  extends SettingsPane<RawDLParams>{
 		hopLength.setPrefWidth(100);
 		hopLength.getStyleClass().add(Spinner.STYLE_CLASS_SPLIT_ARROWS_HORIZONTAL);
 		hopLength.setEditable(true);
-		
+
 		reMergeSeg =    new PamSpinner<Integer>(0, Integer.MAX_VALUE, 1,  1); 
 		reMergeSeg.setPrefWidth(100);
 		reMergeSeg.getStyleClass().add(Spinner.STYLE_CLASS_SPLIT_ARROWS_HORIZONTAL);
@@ -146,12 +147,12 @@ public class RawDLSettingsPane  extends SettingsPane<RawDLParams>{
 		segmenterGridPane.add(new Label("Window length"), 0, 0);
 		segmenterGridPane.add(windowLength, 1, 0);
 		segmenterGridPane.add(new Label("samples"), 2, 0);
-		
+
 		segmenterGridPane.add(new Label("Hop length"), 0, 1);
 		segmenterGridPane.add(hopLength, 1, 1);
 		segmenterGridPane.add(new Label("samples"), 2, 1);
 		segmenterGridPane.add(defaultButton, 3, 1);
-		
+
 		segmenterGridPane.add(new Label("Max. re-merge"), 0, 2);
 		segmenterGridPane.add(reMergeSeg, 1, 2);
 		segmenterGridPane.add(new Label("segments"), 2, 2);
@@ -174,8 +175,10 @@ public class RawDLSettingsPane  extends SettingsPane<RawDLParams>{
 		dlModelBox.setOnAction((action)->{
 			setClassifierPane(); 
 			if (mainPane!=null) {
-				Stage stage = (Stage) mainPane.getScene().getWindow();
-				stage.sizeToScene();
+				if (mainPane.getScene().getWindow() instanceof Stage) {
+					Stage stage = (Stage) mainPane.getScene().getWindow();
+					stage.sizeToScene();
+				}
 			}
 
 		});
@@ -249,13 +252,14 @@ public class RawDLSettingsPane  extends SettingsPane<RawDLParams>{
 	public void setParams(RawDLParams currParams) {
 
 		sourcePane.setParams(currParams.groupedSourceParams);
+		sourcePane.sourceChanged();
 
 		dlModelBox.getSelectionModel().select(currParams.modelSelection);
 
 		windowLength.getValueFactory().setValue(currParams.rawSampleSize);
 
 		hopLength.getValueFactory().setValue(currParams.sampleHop);
-		
+
 		reMergeSeg.getValueFactory().setValue(currParams.maxMergeHops);
 
 		setClassifierPane(); 

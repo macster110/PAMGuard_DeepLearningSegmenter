@@ -1,22 +1,18 @@
 package rawDeepLearningClassifer.deepLearningClassification;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-
 import PamDetection.AbstractLocalisation;
 import PamDetection.LocContents;
 import PamDetection.PamDetection;
+import PamUtils.PamArrayUtils;
 import PamUtils.PamUtils;
-import PamUtils.complex.ComplexArray;
 import PamguardMVC.DataUnitBaseData;
 import PamguardMVC.PamDataUnit;
 import PamguardMVC.RawDataHolder;
+import PamguardMVC.RawDataTransforms;
 import annotation.DataAnnotation;
 import bearinglocaliser.annotation.BearingAnnotation;
-import clickDetector.ClickDetection;
-import clickDetector.ClickSpectrogram;
 import clipgenerator.ClipSpectrogram;
-import fftManager.FastFFT;
 import rawDeepLearningClassifer.logging.DLAnnotation;
 
 /**
@@ -38,14 +34,11 @@ public class DLDetection extends PamDataUnit implements PamDetection, RawDataHol
 	 * The raw data unit. 
 	 */
 	private double[][] waveData;
-
-	private double[][] powerSpectra;
-
-	private int currentSpecLen;
-
-	private ComplexArray[] complexSpectrum;
-
-	private ClipSpectrogram dlSpectrogram;
+	
+	/**
+	 * Holds the raw data transforms for the  wave data. 
+	 */
+	private RawDataTransforms rawDataTransforms; 
 
 
 	/**
@@ -63,6 +56,8 @@ public class DLDetection extends PamDataUnit implements PamDetection, RawDataHol
 		DLAnnotation annotation = new DLAnnotation(null, modelResults); 
 		this.addDataAnnotation(annotation);
 		this.waveData=waveData; 
+		rawDataTransforms= new RawDataTransforms(this); 
+		setAmplitude(); //must set amplitude as this is not stored in binary files. 
 	}
 	
 	
@@ -76,6 +71,21 @@ public class DLDetection extends PamDataUnit implements PamDetection, RawDataHol
 	public DLDetection(DataUnitBaseData baseData, double[][] waveData) {
 		super(baseData);
 		this.waveData=waveData; 
+		setAmplitude();//must set amplitude as this is not stored in binary files. 
+	}
+	
+	private void setAmplitude() {
+		//calcuate the amplitude. 
+		this.getBasicData().setMeasuredAmplitudeType(DataUnitBaseData.AMPLITUDE_SCALE_LINREFSD);
+
+		double[] amp = new double[waveData.length]; 
+		int n = 0; 
+		for (double[] waveform:waveData) {
+			amp[n] = PamArrayUtils.minmaxdiff(waveform); 
+			n++; 
+		}
+		//the maximum amplitude within the channel group is used. 
+		this.getBasicData().setMeasuredAmplitude(PamArrayUtils.max(amp));
 	}
 
 	
@@ -121,117 +131,15 @@ public class DLDetection extends PamDataUnit implements PamDetection, RawDataHol
 		else return null; 
 	}
 
-
-
-	public double[] getPrediction() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 	
 	
 	/**
-	 * Returns the power spectrum for a given channel (square of magnitude of
-	 * complex spectrum)
-	 * 
-	 * @param channel channel number
-	 * @param fftLength
-	 * @return Power spectrum
-	 */
-	public synchronized double[] getPowerSpectrum(int channel, int fftLength) {
-		if (powerSpectra == null) {
-			powerSpectra = new double[PamUtils.getNumChannels(this.getChannelBitmap())][];
-		}
-		if (fftLength == 0) {
-			fftLength = getCurrentSpectrumLength();
-		}
-		if (fftLength == 0) {
-		}
-		if (powerSpectra[channel] == null
-				|| powerSpectra[channel].length != fftLength / 2) {
-			ComplexArray cData = getComplexSpectrumHann(channel, fftLength);
-			currentSpecLen = fftLength;
-			powerSpectra[channel] = cData.magsq();
-			if (powerSpectra==null){
-				System.err.println("DLDetection: could not calculate power spectra");
-				return null;
-
-			}
-			if (powerSpectra[channel].length != fftLength/2) {
-				powerSpectra[channel] = Arrays.copyOf(powerSpectra[channel], fftLength/2);
-			}
-		}
-		return powerSpectra[channel];
-	}
-	
-	
-	/**
-	 * 
-	 * Returns the complex spectrum for a given channel using a set FFT length as
-	 * getComplexSpectrum, but applies a Hanning window to the raw data first 
-	 * 
-	 * @param channel - the channel to calculate
-	 * @param fftLength - the FFT length to use. 
-	 * @return the complex spectrum - the comnplex spectrum of the wave data from the specified channel. 
-	 */
-	public synchronized ComplexArray getComplexSpectrumHann(int channel, int fftLength) {
-		complexSpectrum = new ComplexArray[PamUtils.getNumChannels(this.getChannelBitmap())];
-		if (complexSpectrum[channel] == null
-				|| complexSpectrum.length != fftLength / 2) {
-			
-			complexSpectrum[channel] =  getComplexSpectrumHann(getWaveData()[channel], fftLength); 
-			currentSpecLen = fftLength;
-		}
-		return complexSpectrum[channel];
-	}
-	
-	/**
-	 * Get the complex spectrum of a waveform. 
-	 * @param waveData - the wave data. 
-	 * @param fftLength
-	 * @return
-	 */
-	public static ComplexArray getComplexSpectrumHann(double[] waveData, int fftLength) {
-		double[] paddedRawData;
-		double[] rawData;
-		int i, mn;
-		ComplexArray complexSpectrum; 
-			paddedRawData = new double[fftLength];
-			//messy this Hann window function should be in a utility class. 
-			rawData = ClickDetection.applyHanningWindow(waveData);
-			mn = Math.min(fftLength, waveData.length);
-			for (i = 0; i < mn; i++) {
-				paddedRawData[i] = rawData[i];
-			}
-			for (i = mn; i < fftLength; i++) {
-				paddedRawData[i] = 0;
-			}
-			
-			FastFFT fastFFT = new FastFFT();
-
-			complexSpectrum= fastFFT.rfft(paddedRawData, fftLength);
-		return complexSpectrum;		
-	}
-	
-
-	/**
-	 * Get the wave data fro a specified channel. 
+	 * Get the wave data for a specified channel. 
 	 * @param channel
 	 * @return
 	 */
 	private double[] getWaveData(int channel) {
 		return this.getWaveData()[channel];
-	}
-
-
-	/**
-	 * Get the spectrum length
-	 * @return the spectrogram length. 
-	 */
-	private int getCurrentSpectrumLength() {
-		if (currentSpecLen<=0) {
-			currentSpecLen = PamUtils.getMinFftLength(getSampleDuration());
-		}
-		return currentSpecLen; 
 	}
 
 
@@ -244,11 +152,24 @@ public class DLDetection extends PamDataUnit implements PamDetection, RawDataHol
 	 * @return a spectrogram clip (dB/Hz ).
 	 */
 	public ClipSpectrogram getSpectrogram(int fftSize, int fftHop) {
-		if (dlSpectrogram==null || dlSpectrogram.getFFTHop()!=fftHop || dlSpectrogram.getFFTSize()!=fftSize) {
-			dlSpectrogram = new ClipSpectrogram(this); 
-			dlSpectrogram.calcSpectrogram(this.getWaveData(), fftSize, fftHop); 
-		}
-		return dlSpectrogram;
+		return rawDataTransforms.getSpectrogram(fftSize, fftHop);
+	}
+
+	/**
+	 * Get the RawDataTransforms which handles data transforms such as FFT calculations, spectrgorams, cepstrums's etc.  
+	 * @return the raw transforms associated with the data unit. 
+	 */
+	public RawDataTransforms getRawDataTransforms() {
+		return rawDataTransforms;
+	}
+
+	/***
+	 * Get the power spectrum for all channels. 
+	 * @param fftLength - the fft length to use. 
+	 * @return the power sepctrums for all channels. 
+	 */
+	public double[][] getPowerSpectrum(int fftLength) {
+		return getRawDataTransforms().getPowerSpectrum(fftLength);
 	}
 
 

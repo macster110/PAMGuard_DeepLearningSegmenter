@@ -3,6 +3,7 @@ package rawDeepLearningClassifer;
 import PamController.PamController;
 import PamController.PamControllerInterface;
 import PamController.SettingsPane;
+import fftManager.layoutFX.FFTPaneFX;
 import pamViewFX.PamControlledGUIFX;
 
 /**
@@ -29,6 +30,7 @@ public class DLControlGUI extends PamControlledGUIFX {
 	 * @return a Pane containing controls to change settings for module.
 	 */
 	public SettingsPane<?> getSettingsPane(){
+		dlControl.getSettingsPane().setParams(dlControl.getDLParams());
 		return dlControl.getSettingsPane();
 	}
 	

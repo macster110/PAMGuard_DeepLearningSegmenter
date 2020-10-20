@@ -5,6 +5,8 @@ import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
 
+import org.controlsfx.control.PopOver;
+
 import PamController.PamController;
 import PamController.SettingsPane;
 import PamView.dialog.PamDialog;
@@ -67,7 +69,20 @@ public class SoundSpotPane extends SettingsPane<SoundSpotParams> {
 	 */
 	private CheckBox useCuda;
 
-	private SoundSpotParams currentParams; 
+	/**
+	 * The currently held parameters. 
+	 */
+	private SoundSpotParams currentParams;
+
+	/**
+	 * A pop over to show the advanced pane. 
+	 */
+	private PopOver popOver;
+
+	/**
+	 * Advanced settings pane. 
+	 */
+	private SoundSpotAdvPane advSettingsPane; 
 
 	public SoundSpotPane(Object ownerWindow) {
 		super(ownerWindow);
@@ -75,6 +90,7 @@ public class SoundSpotPane extends SettingsPane<SoundSpotParams> {
 		//the directory chooser. 
 		fileChooser = new FileChooser();
 		fileChooser.setTitle("Classifier Model Location");
+		advSettingsPane= new SoundSpotAdvPane(null); 
 	}
 
 	/**
@@ -128,6 +144,7 @@ public class SoundSpotPane extends SettingsPane<SoundSpotParams> {
 		PamButton advButton = new PamButton("", PamGlyphDude.createPamGlyph(MaterialDesignIcon.SETTINGS, PamGuiManagerFX.iconSize-3)); 
 		advButton.setOnAction((action)->{
 			//pop up window with adv settings.
+			showAdvPane(advButton); 
 			
 		});
 		PamHBox advSettingsBox = new PamHBox(); 
@@ -165,6 +182,25 @@ public class SoundSpotPane extends SettingsPane<SoundSpotParams> {
 		mainPane.setCenter(vBox);
 
 		return mainPane; 
+	}
+
+	
+	/**
+	 * Sho0w the advanced settings. 
+	 * @param advSettingsButton - the advanced settings. 
+	 */
+	public void showAdvPane(PamButton advSettingsButton) {
+
+			if (popOver==null) {
+				popOver = new PopOver(); 
+				popOver.setContentNode(advSettingsPane.getContentNode());
+			}
+
+			popOver.showingProperty().addListener((obs, old, newval)->{
+
+			});
+
+			popOver.show(advSettingsButton);
 	}
 
 	/**

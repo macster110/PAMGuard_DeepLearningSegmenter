@@ -3,6 +3,7 @@ package rawDeepLearningClassifer.deepLearningClassification;
 import java.util.ArrayList;
 
 import PamDetection.RawDataUnit;
+import PamUtils.PamArrayUtils;
 import PamUtils.PamUtils;
 import PamView.GroupedSourceParameters;
 import PamView.PamDetectionOverlayGraphics;
@@ -106,7 +107,7 @@ public class DLClassifyProcess extends PamProcess {
 	 * Setup the classification process. 
 	 */
 	private void setupClassifierProcess() {
-		
+
 		if (dlControl.getDLParams()==null) {
 			System.err.println("SegmenterProcess.setupSegmenter: The DLParams are null???"); 
 
@@ -116,8 +117,8 @@ public class DLClassifyProcess extends PamProcess {
 			dlControl.getDLParams().groupedSourceParams = new GroupedSourceParameters(); 
 			System.err.println("Raw Deep Learning Classifier: The grouped source parameters were null. A new instance has been created: Possible de-serialization error.");
 		}
-		
-		
+
+
 		int[] chanGroups = dlControl.getDLParams().groupedSourceParams.getChannelGroups();
 
 		//initialise an array of nulls. 
@@ -132,7 +133,7 @@ public class DLClassifyProcess extends PamProcess {
 		}
 
 	}
-	
+
 
 	@Override
 	public void prepareProcess() {
@@ -178,7 +179,7 @@ public class DLClassifyProcess extends PamProcess {
 		//create a new data unit - allways add to the model result section. 
 		DLDataUnit dlDataUnit = new DLDataUnit(pamRawData.getTimeMilliseconds(), pamRawData.getChannelBitmap(), 
 				pamRawData.getStartSample(), pamRawData.getSampleDuration(), modelResult); 
-		
+
 		dlDataUnit.setFrequency(new double[] {0, dlControl.getDLClassifyProcess().getSampleRate()/2});
 		dlDataUnit.setDurationInMilliseconds(pamRawData.getDurationInMilliseconds()); 
 
@@ -189,9 +190,9 @@ public class DLClassifyProcess extends PamProcess {
 		//need to implement multiple groups. 
 		for (int i=0; i<getSourceParams().countChannelGroups(); i++) {
 
-//			System.out.println("RawDataIn: chan: " + pamRawData.getChannelBitmap()+ "  " +
-//			PamUtils.hasChannel(getSourceParams().getGroupChannels(i), pamRawData.getChannelBitmap()) + 
-//			" grouped source: " +getSourceParams().getGroupChannels(i)); 
+			//			System.out.println("RawDataIn: chan: " + pamRawData.getChannelBitmap()+ "  " +
+			//			PamUtils.hasChannel(getSourceParams().getGroupChannels(i), pamRawData.getChannelBitmap()) + 
+			//			" grouped source: " +getSourceParams().getGroupChannels(i)); 
 
 			if (PamUtils.hasChannel(getSourceParams().getGroupChannels(i), PamUtils.getSingleChannel(pamRawData.getChannelBitmap()))) {
 
@@ -225,7 +226,7 @@ public class DLClassifyProcess extends PamProcess {
 							clearBuffer(i) ;
 							if (dlDetection!=null) {
 								this.dlDetectionDataBlock.addPamData(dlDetection);
-
+								System.out.println("Amplitude: " + dlDetection.getAmplitudeDB()  + "  " + dlDetection.getMeasuredAmplitudeType());
 							}
 						}
 					}
@@ -240,6 +241,7 @@ public class DLClassifyProcess extends PamProcess {
 								clearBuffer(i);
 								if (dlDetection!=null) {
 									this.dlDetectionDataBlock.addPamData(dlDetection);
+									
 								}
 							}
 							else {
@@ -283,15 +285,19 @@ public class DLClassifyProcess extends PamProcess {
 		DataUnitBaseData basicData  = groupDataBuffer.get(0).getBasicData().clone(); 
 		basicData.setMillisecondDuration(1000.*groupDataBuffer.size()*dlControl.getDLParams().sampleHop/this.sampleRate);
 		basicData.setSampleDuration((long) (groupDataBuffer.size()*dlControl.getDLParams().sampleHop));
-
 		
-//		System.out.println("Model result: " + modelResult.size()); 
+		
+		
+
+
+		//		System.out.println("Model result: " + modelResult.size()); 
 		DLDetection dlDetection = new DLDetection(basicData, rawdata); 
 		addDLAnnotation(dlDetection, groupDataBuffer,modelResult); 
-		
+
 		//create the data unit
 		return dlDetection; 
 	}
+
 
 	/**
 	 * Clear the data unit buffer. 
@@ -301,8 +307,8 @@ public class DLClassifyProcess extends PamProcess {
 		//the need to clone the arrays
 		groupDataBuffer[group] = new ArrayList<GroupedRawData>();
 		modelResultDataBuffer[group] = new ArrayList<ModelResult>(); 
-//		groupDataBuffer[group].clear(); 
-//		modelResultDataBuffer[group].clear(); 
+		//		groupDataBuffer[group].clear(); 
+		//		modelResultDataBuffer[group].clear(); 
 	}
 
 
@@ -335,7 +341,7 @@ public class DLClassifyProcess extends PamProcess {
 	public DLModelDataBlock getDLResultDataBlock() {
 		return dlModelResultDataBlock; 
 	}
-	
+
 	/**
 	 * Get the data block which contains detections from the deep learning output. 
 	 * @return the data block which holds classified data units

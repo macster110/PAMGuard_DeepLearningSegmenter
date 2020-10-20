@@ -37,7 +37,7 @@ public class DLDetectionDatagram implements DatagramProvider  {
 //			}
 //		}
 		for (int i = 0; i < nChan; i++) {
-			fftData = click.getPowerSpectrum(i, gramLen*2);
+			fftData = click.getRawDataTransforms().getPowerSpectrum(i, gramLen*2);
 			if (fftData!=null){
 			for (int s = 0; s < gramLen; s++) {
 //				dataGramLine[s] += Math.log(fftData[s]);

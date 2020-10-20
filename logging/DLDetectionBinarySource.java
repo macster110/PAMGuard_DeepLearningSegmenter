@@ -80,6 +80,9 @@ public class DLDetectionBinarySource extends BinaryDataSource {
 	public BinaryObjectData getPackedData(PamDataUnit pamDataUnit) {
 		DLDetection cd = (DLDetection) pamDataUnit;
 		
+		//System.out.println("DLDetecitonBinarySource: packed: " +  pamDataUnit.getBasicData().getMeasuredAmplitudeType()); 
+
+		
 		// make a byte array output stream and write the data to that, 
 		// then dump that down to the main storage stream
 		if (dos == null || bos == null) {
@@ -111,6 +114,9 @@ public class DLDetectionBinarySource extends BinaryDataSource {
 		DataInputStream dis = new DataInputStream(bis);
 
 		DataUnitBaseData baseData = binaryObjectData.getDataUnitBaseData();
+		//This is not stored in the base data. Probably sensible because it's the same number for every data unit. 
+		//baseData.setMeasuredAmplitudeType(DataUnitBaseData.AMPLITUDE_SCALE_LINREFSD); <- now in constructor. 
+		//System.out.println("DLDetecitonBinarySource: sink: " +  baseData.getMeasuredAmplitudeType()); 
 		
 		//model results are loaded as annotations. 
 

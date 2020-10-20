@@ -277,7 +277,7 @@ public class DLControl extends PamControlledUnit implements PamSettings {
 			SettingsPane<RawDLParams> setPane = (SettingsPane<RawDLParams>) getSettingsPane();
 			setPane.setParams(this.rawDLParmas);
 			settingsDialog = new PamDialogFX2AWT<RawDLParams>(parentFrame, setPane, false);
-			settingsDialog.setResizable(false);
+			settingsDialog.setResizable(true);
 		}
 		RawDLParams newParams = settingsDialog.showDialog(rawDLParmas);
 
