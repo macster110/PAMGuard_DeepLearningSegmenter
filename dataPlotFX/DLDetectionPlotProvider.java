@@ -1,11 +1,10 @@
 package rawDeepLearningClassifer.dataPlotFX;
 
-import clipgenerator.ClipDataBlock;
 import dataPlotsFX.data.TDDataInfoFX;
 import dataPlotsFX.data.TDDataProviderFX;
 import dataPlotsFX.layout.TDGraphFX;
 import rawDeepLearningClassifer.DLControl;
-import rawDeepLearningClassifer.deepLearningClassification.DLDetectionDataBlock;
+import rawDeepLearningClassifer.dlClassification.DLDetectionDataBlock;
 
 /**
  * The DL detection plot provider. 

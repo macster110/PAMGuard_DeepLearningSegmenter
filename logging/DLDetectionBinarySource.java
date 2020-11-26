@@ -16,9 +16,9 @@ import binaryFileStorage.BinaryObjectData;
 import binaryFileStorage.ModuleFooter;
 import binaryFileStorage.ModuleHeader;
 import rawDeepLearningClassifer.DLControl;
-import rawDeepLearningClassifer.deepLearningClassification.DLDetectionDataBlock;
-import rawDeepLearningClassifer.deepLearningClassification.DLDetection;
-import rawDeepLearningClassifer.deepLearningClassification.ModelResult;
+import rawDeepLearningClassifer.dlClassification.DLDetection;
+import rawDeepLearningClassifer.dlClassification.DLDetectionDataBlock;
+import rawDeepLearningClassifer.dlClassification.ModelResult;
 
 /**
  * Saves and loads binary data for classified Deep Learning data units. 

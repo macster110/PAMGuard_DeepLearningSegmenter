@@ -11,7 +11,7 @@ import dataPlotsFX.rawClipDataPlot.RawClipDataInfo;
 import javafx.scene.Node;
 import pamViewFX.fxGlyphs.PamSVGIcon;
 import rawDeepLearningClassifer.DLControl;
-import rawDeepLearningClassifer.deepLearningClassification.DLDetection;
+import rawDeepLearningClassifer.dlClassification.DLDetection;
 
 /**
  * Allows the deep learning results to be plotted on the TD display. 

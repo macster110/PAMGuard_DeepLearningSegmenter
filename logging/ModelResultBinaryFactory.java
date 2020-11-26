@@ -6,10 +6,10 @@ import java.io.IOException;
 
 import PamUtils.PamArrayUtils;
 import binaryFileStorage.BinaryHeader;
-import rawDeepLearningClassifer.deepLearningClassification.GenericModelResult;
-import rawDeepLearningClassifer.deepLearningClassification.ModelResult;
-import rawDeepLearningClassifer.dummyClassifier.DummyModelResult;
-import rawDeepLearningClassifer.soundSpot.SoundSpotResult;
+import rawDeepLearningClassifer.dlClassification.GenericModelResult;
+import rawDeepLearningClassifer.dlClassification.ModelResult;
+import rawDeepLearningClassifer.dlClassification.dummyClassifier.DummyModelResult;
+import rawDeepLearningClassifer.dlClassification.soundSpot.SoundSpotResult;
 
 /**
  * Handles the saving and loading of Model results from binary files. 

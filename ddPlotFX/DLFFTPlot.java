@@ -6,7 +6,7 @@ import detectionPlotFX.plots.FFTPlot;
 import detectionPlotFX.projector.DetectionPlotProjector;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.shape.Rectangle;
-import rawDeepLearningClassifer.deepLearningClassification.DLDetection;
+import rawDeepLearningClassifer.dlClassification.DLDetection;
 
 public class DLFFTPlot extends FFTPlot<DLDetection> {
 

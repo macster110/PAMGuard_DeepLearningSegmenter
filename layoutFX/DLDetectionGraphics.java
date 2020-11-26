@@ -14,7 +14,7 @@ import PamView.PamSymbol;
 import PamView.PamSymbolType;
 import PamguardMVC.PamDataBlock;
 import PamguardMVC.PamDataUnit;
-import rawDeepLearningClassifer.deepLearningClassification.DLDetection;
+import rawDeepLearningClassifer.dlClassification.DLDetection;
 
 /**
  * Graphics for the detected data units

@@ -15,7 +15,7 @@ import PamView.PamSymbolType;
 import PamguardMVC.PamDataBlock;
 import PamguardMVC.PamDataUnit;
 import Spectrogram.SpectrogramProjector;
-import rawDeepLearningClassifer.deepLearningClassification.DLDataUnit;
+import rawDeepLearningClassifer.dlClassification.DLDataUnit;
 
 /**
  * The detection graphics for the DL localiser. Forces the graphics to be one colour and paints some 

@@ -6,7 +6,7 @@ import PamguardMVC.PamDataUnit;
 import dataGram.DatagramProvider;
 import dataGram.DatagramScaleInformation;
 import rawDeepLearningClassifer.DLControl;
-import rawDeepLearningClassifer.deepLearningClassification.DLDetection;
+import rawDeepLearningClassifer.dlClassification.DLDetection;
 
 /**
  * The datagram provider for classified data deep learning units. this shows the freqeuncy distirbution 

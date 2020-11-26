@@ -3,7 +3,7 @@ package rawDeepLearningClassifer.logging;
 import java.util.ArrayList;
 
 import annotation.DataAnnotation;
-import rawDeepLearningClassifer.deepLearningClassification.ModelResult;
+import rawDeepLearningClassifer.dlClassification.ModelResult;
 
 /**
  * Deep learning results annotation. 

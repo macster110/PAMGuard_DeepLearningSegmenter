@@ -4,7 +4,7 @@ import PamguardMVC.PamDataUnit;
 import dataGram.DatagramProvider;
 import dataGram.DatagramScaleInformation;
 import rawDeepLearningClassifer.DLControl;
-import rawDeepLearningClassifer.deepLearningClassification.DLDataUnit;
+import rawDeepLearningClassifer.dlClassification.DLDataUnit;
 
 /**
  * Datagram showing the raw model outputs form the classifier. 

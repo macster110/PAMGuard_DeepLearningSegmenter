@@ -22,11 +22,16 @@ import PamguardMVC.PamRawDataBlock;
 import clickDetector.tdPlots.ClickDetSymbolManager;
 import dataPlotsFX.data.TDDataProviderRegisterFX;
 import dataPlotsFX.rawClipDataPlot.ClipPlotProviderFX;
+import detectionPlotFX.clickDDPlot.ClickDDPlotProvider;
+import detectionPlotFX.data.DDPlotRegister;
 import pamViewFX.fxNodes.pamDialogFX.PamDialogFX2AWT;
 import rawDeepLearningClassifer.dataPlotFX.DLDetectionPlotProvider;
-import rawDeepLearningClassifer.deepLearningClassification.DLClassiferModel;
-import rawDeepLearningClassifer.deepLearningClassification.DLClassifyProcess;
-import rawDeepLearningClassifer.dummyClassifier.DummyClassifier;
+import rawDeepLearningClassifer.ddPlotFX.RawDLDDPlotProvider;
+import rawDeepLearningClassifer.dlClassification.DLClassiferModel;
+import rawDeepLearningClassifer.dlClassification.DLClassifyProcess;
+import rawDeepLearningClassifer.dlClassification.dummyClassifier.DummyClassifier;
+import rawDeepLearningClassifer.dlClassification.orcaSpot.OrcaSpotClassifier;
+import rawDeepLearningClassifer.dlClassification.soundSpot.SoundSpotClassifier;
 import rawDeepLearningClassifer.layoutFX.DLSidePanelSwing;
 import rawDeepLearningClassifer.layoutFX.DLSymbolManager;
 import rawDeepLearningClassifer.layoutFX.RawDLSettingsPane;
@@ -34,9 +39,7 @@ import rawDeepLearningClassifer.logging.DLResultBinarySource;
 import rawDeepLearningClassifer.logging.DLDataUnitDatagram;
 import rawDeepLearningClassifer.logging.DLDetectionBinarySource;
 import rawDeepLearningClassifer.logging.DLDetectionDatagram;
-import rawDeepLearningClassifer.orcaSpot.OrcaSpotClassifier;
 import rawDeepLearningClassifer.segmenter.SegmenterProcess;
-import rawDeepLearningClassifer.soundSpot.SoundSpotClassifier;
 
 /**
  * Module which uses an external deep learning classifier to identify any data unit
@@ -141,7 +144,8 @@ public class DLControl extends PamControlledUnit implements PamSettings {
 
 		//register click detector for the javafx display. 
 		TDDataProviderRegisterFX.getInstance().registerDataInfo(new DLDetectionPlotProvider(this, dlClassifyProcess.getDLDetectionDatablock()));
-		
+		//register the DD display
+		DDPlotRegister.getInstance().registerDataInfo(new RawDLDDPlotProvider(this, dlClassifyProcess.getDLDetectionDatablock()));
 		//load the previous settings
 		PamSettingManager.getInstance().registerSettings(this);
 		

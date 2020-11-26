@@ -1,5 +1,6 @@
 package rawDeepLearningClassifer.layoutFX;
 
+import PamController.PamGUIManager;
 import PamController.SettingsPane;
 import PamDetection.RawDataUnit;
 import PamguardMVC.PamDataBlock;
@@ -25,9 +26,10 @@ import pamViewFX.fxNodes.PamSpinner;
 import pamViewFX.fxNodes.PamVBox;
 import pamViewFX.fxNodes.pamDialogFX.PamDialogFX;
 import pamViewFX.fxNodes.utilityPanes.GroupedSourcePaneFX;
+import pamViewFX.fxStyles.PamStylesManagerFX;
 import rawDeepLearningClassifer.DLControl;
 import rawDeepLearningClassifer.RawDLParams;
-import rawDeepLearningClassifer.deepLearningClassification.DLClassiferModel;
+import rawDeepLearningClassifer.dlClassification.DLClassiferModel;
 
 /**
  * The settings pane. 
@@ -89,10 +91,17 @@ public class RawDLSettingsPane  extends SettingsPane<RawDLParams>{
 		//			stage.sizeToScene();
 		//		});
 		//		this.setTop(newButton);
+		
+		
 		mainPane=new PamBorderPane(); 
 		mainPane.setCenter(createDLPane());
 		mainPane.setPadding(new Insets(5,5,5,5));
 		mainPane.setMinHeight(400);
+		mainPane.setMaxWidth(250);
+		mainPane.setPrefWidth(250);
+
+		mainPane.getStylesheets().add(PamStylesManagerFX.getPamStylesManagerFX().getCurStyle().getDialogCSS()); 
+
 	}
 
 
@@ -116,7 +125,7 @@ public class RawDLSettingsPane  extends SettingsPane<RawDLParams>{
 
 		// the segmentation params
 		Label label = new Label("Segmentation"); 
-		label.setFont(PamGuiManagerFX.titleFontSize2);
+		PamGuiManagerFX.titleFont2style(label); 
 
 		vBox.getChildren().add(label);
 
@@ -161,8 +170,8 @@ public class RawDLSettingsPane  extends SettingsPane<RawDLParams>{
 		vBox.getChildren().add(segmenterGridPane);
 
 		Label label2 = new Label("Deep Learning Model"); 
-		label2.setFont(PamGuiManagerFX.titleFontSize2);
-
+		PamGuiManagerFX.titleFont2style(label2);
+		
 		vBox.getChildren().add(label2);
 
 		//add the possible deep learning models. 

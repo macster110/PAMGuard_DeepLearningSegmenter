@@ -2,7 +2,7 @@ package rawDeepLearningClassifer.ddPlotFX;
 
 import detectionPlotFX.layout.DetectionPlotDisplay;
 import detectionPlotFX.plots.SpectrumPlot;
-import rawDeepLearningClassifer.deepLearningClassification.DLDetection;
+import rawDeepLearningClassifer.dlClassification.DLDetection;
 
 /**
  * Spectrum plot for raw data holders. 
@@ -23,7 +23,7 @@ public class DLSpectrumPlot extends SpectrumPlot<DLDetection> {
 
 	@Override
 	public double[][] getCepstrum(DLDetection data) {
-		return null; 
+		return data.getRawDataTransforms().getCepstrum(data.getWaveData()[0].length); 
 		//return data.getRawDataTransforms().getCepstrum(channel, cepLength)
 	}
 

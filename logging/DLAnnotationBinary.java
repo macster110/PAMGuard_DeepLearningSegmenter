@@ -12,8 +12,8 @@ import annotation.DataAnnotation;
 import annotation.binary.AnnotationBinaryData;
 import annotation.binary.AnnotationBinaryHandler;
 import binaryFileStorage.BinaryStore;
-import rawDeepLearningClassifer.deepLearningClassification.DLDetection;
-import rawDeepLearningClassifer.deepLearningClassification.ModelResult;
+import rawDeepLearningClassifer.dlClassification.DLDetection;
+import rawDeepLearningClassifer.dlClassification.ModelResult;
 
 /**
  * Saves deep learning annotations in binary files. 

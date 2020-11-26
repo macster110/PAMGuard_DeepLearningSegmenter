@@ -12,10 +12,10 @@ import binaryFileStorage.BinaryHeader;
 import binaryFileStorage.BinaryObjectData;
 import binaryFileStorage.ModuleFooter;
 import binaryFileStorage.ModuleHeader;
-import rawDeepLearningClassifer.deepLearningClassification.DLClassifyProcess;
-import rawDeepLearningClassifer.deepLearningClassification.DLDataUnit;
-import rawDeepLearningClassifer.deepLearningClassification.DLModelDataBlock;
-import rawDeepLearningClassifer.deepLearningClassification.ModelResult;
+import rawDeepLearningClassifer.dlClassification.DLClassifyProcess;
+import rawDeepLearningClassifer.dlClassification.DLDataUnit;
+import rawDeepLearningClassifer.dlClassification.DLModelDataBlock;
+import rawDeepLearningClassifer.dlClassification.ModelResult;
 
 /**
  * Binary storage for the all the model results, i.e. all the returned probabilities. 

@@ -1,10 +1,9 @@
 package rawDeepLearningClassifer.ddPlotFX;
 
 import PamUtils.PamUtils;
-import clickDetector.ClickDetection;
 import detectionPlotFX.layout.DetectionPlotDisplay;
 import detectionPlotFX.plots.WaveformPlot;
-import rawDeepLearningClassifer.deepLearningClassification.DLDetection;
+import rawDeepLearningClassifer.dlClassification.DLDetection;
 
 /**
  * Plot a click waveform. 

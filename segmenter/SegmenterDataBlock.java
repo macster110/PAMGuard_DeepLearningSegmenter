@@ -2,7 +2,7 @@ package rawDeepLearningClassifer.segmenter;
 
 import PamguardMVC.PamDataBlock;
 import PamguardMVC.PamProcess;
-import rawDeepLearningClassifer.deepLearningClassification.ModelResultDataUnit;
+import rawDeepLearningClassifer.dlClassification.ModelResultDataUnit;
 import rawDeepLearningClassifer.segmenter.SegmenterProcess.GroupedRawData;
 
 /**
