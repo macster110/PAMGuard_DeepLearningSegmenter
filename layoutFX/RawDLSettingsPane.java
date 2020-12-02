@@ -1,6 +1,5 @@
 package rawDeepLearningClassifer.layoutFX;
 
-import PamController.PamGUIManager;
 import PamController.SettingsPane;
 import PamDetection.RawDataUnit;
 import PamguardMVC.PamDataBlock;
@@ -16,7 +15,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import pamViewFX.PamGuiManagerFX;
 import pamViewFX.fxGlyphs.PamGlyphDude;
@@ -201,6 +199,24 @@ public class RawDLSettingsPane  extends SettingsPane<RawDLParams>{
 
 		return vBox; 
 	}
+
+	/**
+	 * Get the segment length spinner. 
+	 * @return the segment spinner. 
+	 */
+	public PamSpinner<Integer> getSegmentLenSpinner() {
+		return windowLength;
+	}
+
+	/**
+	 * Get the segment hop spinner. 
+	 * @return the segment spinner. 
+	 */
+	public PamSpinner<Integer> getHopLenSpinner() {
+		return this.hopLength;
+	}
+
+
 
 	/**
 	 * Set the classifier pane. 

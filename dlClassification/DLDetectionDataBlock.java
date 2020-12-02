@@ -1,5 +1,6 @@
 package rawDeepLearningClassifer.dlClassification;
 
+import PamguardMVC.AcousticDataBlock;
 import PamguardMVC.PamDataBlock;
 import PamguardMVC.PamProcess;
 
@@ -9,7 +10,7 @@ import PamguardMVC.PamProcess;
  * @author Jamie Macaulay
  *
  */
-public class DLDetectionDataBlock extends PamDataBlock<DLDetection> {
+public class DLDetectionDataBlock extends AcousticDataBlock<DLDetection> {
 
 	public DLDetectionDataBlock(String dataName, PamProcess parentProcess, int channelMap) {
 		super(DLDetection.class, dataName, parentProcess, channelMap);

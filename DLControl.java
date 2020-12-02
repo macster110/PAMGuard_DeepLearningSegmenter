@@ -148,8 +148,7 @@ public class DLControl extends PamControlledUnit implements PamSettings {
 		DDPlotRegister.getInstance().registerDataInfo(new RawDLDDPlotProvider(this, dlClassifyProcess.getDLDetectionDatablock()));
 		//load the previous settings
 		PamSettingManager.getInstance().registerSettings(this);
-		
-
+	
 		//ensure everything is updated. 
 		updateParams(rawDLParmas); 
 	}
@@ -181,6 +180,7 @@ public class DLControl extends PamControlledUnit implements PamSettings {
 		this.rawDLParmas = newParams; 
 
 		this.segmenterProcess.setupSegmenter(); 
+		this.dlClassifyProcess.setupProcess();
 
 		if (dlSidePanel!=null) {
 			dlSidePanel.setupPanel(); 

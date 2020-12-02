@@ -21,7 +21,7 @@ public class PamSoundSpotParams implements Serializable, Cloneable {
 	/**
 	 * 
 	 */
-	public static final long serialVersionUID = 1L;
+	public static final long serialVersionUID = 2L;
 	
 	/**
 	 * The model path
@@ -42,23 +42,33 @@ public class PamSoundSpotParams implements Serializable, Cloneable {
 	/**
 	 * The threshold between zero and one. This is used to allow binary classification. 
 	 */
-	public double threshold;
+	public double threshold = 0.9; 
 
 	/*
 	 * the number of output classes. 
 	 */
-	public int numClasses; 
+	public int numClasses = 2; 
 	
 	/**
 	 * List of transforms for the raw data e.g. filtering, spectrogram, spectrogram normalisation etc. This is only used for saving serialised settings
 	 * 
 	 */
-	public List<DLTransformPane> dlTransfromParams = null; 
+	public List<DLTransformParams> dlTransfromParams = null; 
 	
 	/**
-	 * The DL transforms currently used in the Deep learning process. 
+	 * The DL custom transforms if the default transforms for the mdoel are not being used. 
 	 */
 	public transient ArrayList<DLTransform> dlTransfroms = null;
+
+	/**
+	 * The default segment length of the model in microseconds. 
+	 */
+	public 	Double defaultSegmentLen = null;
+
+	/**
+	 * The class names. e.g. porpoise, noise, bat
+	 */
+	public String[] classNames; 
 
 
 	

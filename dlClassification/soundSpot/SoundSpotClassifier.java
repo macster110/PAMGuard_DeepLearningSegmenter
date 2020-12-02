@@ -14,13 +14,17 @@ import org.jamdev.jtorch4pam.transforms.FreqTransform;
 import org.jamdev.jtorch4pam.transforms.WaveTransform;
 
 import PamController.PamControlledUnitSettings;
+import PamController.PamSettingManager;
 import PamController.PamSettings;
 import PamUtils.PamCalendar;
 import rawDeepLearningClassifer.DLControl;
 import rawDeepLearningClassifer.dlClassification.DLClassiferModel;
 import rawDeepLearningClassifer.dlClassification.ModelResult;
 import rawDeepLearningClassifer.layoutFX.DLCLassiferModelUI;
+import rawDeepLearningClassifer.layoutFX.RawDLSettingsPane;
 import rawDeepLearningClassifer.segmenter.SegmenterProcess.GroupedRawData;
+import warnings.PamWarning;
+import warnings.WarningSystem;
 
 /**
  * A deep learning classifier trained using the OrcaSpot and run natively in Java.
@@ -76,6 +80,8 @@ public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 	 */
 	private boolean forceQueue = false; 
 
+	PamWarning soundSpotWarning = new PamWarning("SoundSpotClassifier", "",
+			2); 
 
 
 
@@ -83,6 +89,8 @@ public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 		this.dlControl=dlControl; 
 		this.soundSpotParmas = new PamSoundSpotParams(); 
 		this.soundSpotUI= new SoundSpotUI(this); 
+		//load the previous settings
+		PamSettingManager.getInstance().registerSettings(this);
 	}
 
 	
@@ -94,7 +102,7 @@ public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 		 */
 		if (PamCalendar.isSoundFile() && !forceQueue) {
 			//run the model 
-			SoundSpotResult modelResult = getSoundSpotWorker().runModel(groupedRawData, 0); 
+			SoundSpotResult modelResult = getSoundSpotWorker().runModel(groupedRawData, groupedRawData.getParentDataBlock().getSampleRate(), 0); 
 			return modelResult; //returns to the classifier. 
 		}
 		else {
@@ -150,8 +158,7 @@ public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 						//						System.out.println("ORCASPOT THREAD: " + "The queue size is " + queue.size()); 
 						GroupedRawData groupedRawData = queue.remove(0);
 
-
-						SoundSpotResult modelResult = getSoundSpotWorker().runModel(groupedRawData, 0); 
+						SoundSpotResult modelResult = getSoundSpotWorker().runModel(groupedRawData,groupedRawData.getParentDataBlock().getSampleRate(), 0); 
 
 						newResult(modelResult, groupedRawData);
 
@@ -183,9 +190,16 @@ public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 
 	@Override
 	public void prepModel() {
+		System.out.println("PrepModel! !!!");
 		getSoundSpotWorker().prepModel(soundSpotParmas);
 		if (!soundSpotParmas.useDefaultTransfroms) {
-			
+			//set cusotm transforms in the model. 
+			getSoundSpotWorker().setModelTransforms(soundSpotParmas.dlTransfroms);
+		}
+		
+		if (	getSoundSpotWorker().getModel()==null) {
+			soundSpotWarning.setWarningMessage("There is no loaded classifier model. SoundSpot disabled.");
+			WarningSystem.getWarningSystem().addWarning(soundSpotWarning);
 		}
 	}
 
@@ -225,6 +239,7 @@ public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 		if (soundSpotParmas==null) {
 			soundSpotParmas = new PamSoundSpotParams(); 
 		}
+		System.out.println("SoundSpot have been saved. : " + soundSpotParmas.modelPath); 
 		return soundSpotParmas;
 
 	}
@@ -239,6 +254,7 @@ public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 		PamSoundSpotParams newParameters = (PamSoundSpotParams) pamControlledUnitSettings.getSettings();
 		if (newParameters!=null) {
 			soundSpotParmas = newParameters.clone();
+			System.out.println("SoundSpot have been restored. : " + soundSpotParmas.modelPath); 
 		}
 		else soundSpotParmas = new PamSoundSpotParams(); 
 		return true;
@@ -270,6 +286,17 @@ public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 	public void newModelSelected(File file) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	public RawDLSettingsPane getRawSettingsPane() {
+		return this.dlControl.getSettingsPane();
+	}
+	
+	/**
+	 * Get the number of samples for microseconds. Based on the smaple rate of the parent datablock. 
+	 */
+	public double microSeconds2Samples(double microseconds) {
+		return microseconds*this.dlControl.getSegmenter().getSampleRate()/1000.0/1000.0;
 	}
 
 }

@@ -88,6 +88,7 @@ public class DLResultBinarySource extends BinaryDataSource {
 		DataInputStream dis = new DataInputStream(new ByteArrayInputStream(binaryObjectData.getData()));
 		ModelResult result= ModelResultBinaryFactory.sinkData(dis); 
 
+
 		return new DLDataUnit(baseData, result);
 
 	}

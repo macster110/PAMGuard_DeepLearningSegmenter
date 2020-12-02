@@ -46,7 +46,7 @@ public class DataTransformPaneFactory {
 			settingsPane = new SimpleTransformPane((SimpleTransform) dlTransfrom, new String[]{"Min. ", "Max. "}); 
 			break;
 		case SPECCROPINTERP:
-			settingsPane = new TiledTransformPane((SimpleTransform) dlTransfrom, new String[]{"Min Freq. ", "Max Freq. ", " No. bins "},  new String[]{"Hz", "Hz", ""}, 2); 
+			settingsPane = new SimpleTransformPane((SimpleTransform) dlTransfrom, new String[]{"Min Freq. ", "Max Freq. ", " No. bins "},  new String[]{"Hz", "Hz", ""}, 2); 
 			break;
 		case SPECNORMALISE:
 			settingsPane = new SimpleTransformPane((SimpleTransform) dlTransfrom, new String[]{"Min. dB ", "Reference dB"}); 

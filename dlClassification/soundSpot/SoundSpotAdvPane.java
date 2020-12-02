@@ -93,7 +93,7 @@ public class SoundSpotAdvPane extends SettingsPane<PamSoundSpotParams> {
 
 	@Override
 	public PamSoundSpotParams getParams(PamSoundSpotParams currParams) {
-		currParams.dlTransfromParams = transfromPane.getDLTransforms(); 
+		currParams.dlTransfroms = transfromPane.getDLTransforms(); 
 		currParams.useDefaultTransfroms = toggleSwitch.isSelected(); 
 		return currParams; 
 	}

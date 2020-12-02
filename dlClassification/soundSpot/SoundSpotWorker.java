@@ -1,23 +1,19 @@
 package rawDeepLearningClassifer.dlClassification.soundSpot;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-
 import org.jamdev.jtorch4pam.SoundSpot.SoundSpotModel;
 import org.jamdev.jtorch4pam.SoundSpot.SoundSpotParams;
-import org.jamdev.jtorch4pam.spectrogram.SpecTransform;
-import org.jamdev.jtorch4pam.spectrogram.Spectrogram;
 import org.jamdev.jtorch4pam.transforms.DLTransform;
 import org.jamdev.jtorch4pam.transforms.FreqTransform;
+import org.jamdev.jtorch4pam.transforms.SimpleTransform;
 import org.jamdev.jtorch4pam.transforms.WaveTransform;
 import org.jamdev.jtorch4pam.transforms.DLTransform.DLTransformType;
 import org.jamdev.jtorch4pam.utils.DLUtils;
 import org.jamdev.jtorch4pam.wavFiles.AudioData;
-import org.pytorch.IValue;
 import org.pytorch.Module;
 import org.pytorch.Tensor;
 
-import PamUtils.PamCalendar;
+import PamUtils.PamArrayUtils;
 import rawDeepLearningClassifer.segmenter.SegmenterProcess.GroupedRawData;
 
 
@@ -39,6 +35,9 @@ public class SoundSpotWorker {
 	 */
 	private Module model;
 
+	/**
+	 * The samplerate
+	 */
 	private float sampleRate;
 
 	/**
@@ -53,6 +52,7 @@ public class SoundSpotWorker {
 	private SoundSpotModel soundSpotModel; 
 
 	public SoundSpotWorker() {
+
 	}
 
 	/**
@@ -63,13 +63,17 @@ public class SoundSpotWorker {
 			//first open the model and get the correct parameters. 
 			soundSpotModel = new SoundSpotModel(soundSpotParams.modelPath); 
 
-			//create the DL params. 
+			//create the DL parameters.
 			SoundSpotParams dlParams = new SoundSpotParams(soundSpotModel.getRawParamsString());
 
 			this.modelTransforms =  model2DLTransforms(dlParams); 
+			soundSpotParams.defaultSegmentLen = dlParams.seglen; //the segment length in microseconds. 
+			soundSpotParams.numClasses = dlParams.classNames.length; 
+			soundSpotParams.classNames = dlParams.classNames; 
+
 			//TODO
 			//need to load the classifier metadata here...
-
+			//System.out.println("Model transforms: " + this.modelTransforms.size());
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -82,35 +86,37 @@ public class SoundSpotWorker {
 	 * @param iChan - the channel to run the data on. 
 	 * @return the model to run. 
 	 */
-	public SoundSpotResult runModel(GroupedRawData rawDataUnit, int iChan) {
+	public SoundSpotResult runModel(GroupedRawData rawDataUnit, float sampleRate, int iChan) {
 
 		try {
 			//		PamCalendar.isSoundFile(); 
-			//		
 			//		// create an audio data object from the raw data chunk
 			long timeStart = System.nanoTime(); 
 
 			AudioData soundData  = new AudioData(rawDataUnit.getRawData()[iChan], sampleRate); 
-			
+
+			//			for (int i=0; i<modelTransforms.size(); i++) {
+			//				System.out.println("Transfrom type: " + modelTransforms.get(i).getDLTransformType()); 
+			//			}
+
 			//set the sound in the first transform. 
 			((WaveTransform) modelTransforms.get(0)).setWaveData(soundData); 
 
+			//System.out.println("Model transforms:no. " + modelTransforms.size()+ "  " + soundData.getLengthInSeconds() + " Decimate Params: " + ((WaveTransform) modelTransforms.get(0)).getParams()[0]);
 
 			DLTransform transform = modelTransforms.get(0); 
-			for (int i=1; i<modelTransforms.size(); i++) {
+			for (int i=0; i<modelTransforms.size(); i++) {
 				transform = modelTransforms.get(i).transformData(transform); 
 			}
 
+			//the tr
 			double[][] transformedData = ((FreqTransform) transform).getSpecTransfrom().getTransformedData(); 
 
-
 			float[] output = null; 
-			for (int i=0; i<10; i++) {
-				long time1 = System.currentTimeMillis();
-				output = soundSpotModel.runModel(DLUtils.toFloatArray(transformedData)); 
-				long time2 = System.currentTimeMillis();
-				System.out.println("Time to run model: " + (time2-time1) + " ms"); 
-			}
+			long time1 = System.currentTimeMillis();
+			output = soundSpotModel.runModel(DLUtils.toFloatArray(transformedData)); 
+			long time2 = System.currentTimeMillis();
+			System.out.println("Time to run model: " + (time2-time1) + " ms for spec of len: " + transformedData.length); 
 
 			float[] prob = new float[output.length]; 
 			for (int j=0; j<output.length; j++) {
@@ -119,14 +125,12 @@ public class SoundSpotWorker {
 				//                    pred = int(prob >= ARGS.threshold)		    	
 				//softmax function
 				prob[j] = (float) DLUtils.softmax(output[j], output); 
-				//System.out.println("The probability is: " + prob[j]); 
+				System.out.println("The probability is: " + prob[j]); 
 			}
-			
-			//does this pass binary classification
-						
 
+			//does this pass binary classification
 			long timeEnd = System.nanoTime(); 
-			
+
 			SoundSpotResult soundSpotResult =  new SoundSpotResult(prob); 
 			soundSpotResult.setAnalysisTime((timeEnd-timeStart)/1000/1000/1000);
 
@@ -166,7 +170,7 @@ public class SoundSpotWorker {
 	public void closeModel() {
 		model.destroy();
 	}
-	
+
 	public ArrayList<DLTransform> getModelTransforms() {
 		return modelTransforms;
 	}
@@ -197,8 +201,17 @@ public class SoundSpotWorker {
 		transforms.add(new FreqTransform(DLTransformType.SPECNORMALISE, dlParams.min_level_dB, dlParams.ref_level_dB)); 
 		transforms.add(new FreqTransform(DLTransformType.SPECCLAMP, dlParams.clampMin, dlParams.clampMax)); 
 
+
 		return transforms; 
 
+	}
+
+	/**
+	 * Get the currently loaded mode. 
+	 * @return - the currently loaded mode. 
+	 */
+	public SoundSpotModel getModel() {
+		return soundSpotModel;
 	}
 
 }

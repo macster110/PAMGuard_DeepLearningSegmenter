@@ -13,6 +13,7 @@ import javafx.scene.control.TitledPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import pamViewFX.fxNodes.PamBorderPane;
+import pamViewFX.fxNodes.PamGridPane;
 import pamViewFX.fxNodes.PamHBox;
 import pamViewFX.fxNodes.PamSpinner;
 
@@ -40,6 +41,8 @@ public class SimpleTransformPane extends DLTransformPane {
 	 */
 	protected static int prefSpinnerWidth = 100; 
 
+	int nParamCol=10; 
+
 
 	/**
 	 * 
@@ -47,7 +50,18 @@ public class SimpleTransformPane extends DLTransformPane {
 	 * @param paramNames
 	 */
 	public SimpleTransformPane(SimpleTransform simpleTransfrom, String...paramNames) {
-		this(simpleTransfrom, paramNames, null); 
+		this(simpleTransfrom, paramNames, null, 10); 
+	}
+	
+	/**
+	 * Create a settings pane for a SimpleTransform
+	 * @param simpleTransfrom
+	 * @param paramNames
+	 * @param unitNames
+	 */
+	public SimpleTransformPane(SimpleTransform simpleTransfrom, String[] paramNames, String[] unitNames) {
+		this(simpleTransfrom, paramNames, unitNames, 10); 
+
 	}
 
 	/**
@@ -56,30 +70,25 @@ public class SimpleTransformPane extends DLTransformPane {
 	 * @param paramNames
 	 * @param unitNames
 	 */
-	public SimpleTransformPane(SimpleTransform simpleTransfrom, String[] paramNames, String[] unitNames) {
+	public SimpleTransformPane(SimpleTransform simpleTransfrom, String[] paramNames, String[] unitNames, int nColumns) {
 		this.simpleTransfrom = simpleTransfrom; 
-		this.setCenter(createPane(simpleTransfrom, paramNames,unitNames) ); 
-
+		this.setCenter(createPane(simpleTransfrom, paramNames,unitNames,nColumns) ); 
 	}
 
-	/**
-	 * Create the pane. 
-	 * @return the pane. 
-	 */
-	protected Node createPane(SimpleTransform simpleTransfrom, String[] paramNames, String[] unitNames) {
+	protected Node createPane(SimpleTransform simpleTransfrom, String[] paramNames, String[] unitNames, int nColumns) {
 
 		
-		
-		PamHBox hBox = new PamHBox(); 
-		hBox.setSpacing(5);
-		hBox.setAlignment(Pos.CENTER_LEFT);
-		hBox.setPadding(new Insets(5,5.,5.,15));
+		PamGridPane gridPane = new PamGridPane(); 
+
+		gridPane.setPadding(new Insets(5,5.,5.,15));
 
 
 		PamSpinner<Number> spinner; 
-		
-//		hBox.getChildren().add(new Label(simpleTransfrom.getDLTransformType().toString())); 
 
+		//			hBox.getChildren().add(new Label(simpleTransfrom.getDLTransformType().toString())); 
+
+		int row = 0; 
+		int column = 0; 
 		if  (simpleTransfrom.getParams()!=null) {
 			for (int i=0; i<simpleTransfrom.getParams().length; i++) {
 				spinner = new PamSpinner<Number>(0.0, Integer.MAX_VALUE, 2, 0.01);
@@ -87,23 +96,30 @@ public class SimpleTransformPane extends DLTransformPane {
 				spinner.setEditable(true);
 				spinner.getStyleClass().add(Spinner.STYLE_CLASS_SPLIT_ARROWS_HORIZONTAL);
 
-				if (unitNames==null || unitNames[i]==null) {
-					hBox.getChildren().addAll(new Label(paramNames[i]), spinner); 
+				gridPane.add(new Label(paramNames[i]), column , row); 
+				gridPane.add(spinner, column+1, row);
+				if (unitNames!=null && unitNames[i]!=null) {
+					gridPane.add(new Label(unitNames[i]), column+2 , row); 
 				}
-				else {
-					hBox.getChildren().addAll(new Label(paramNames[i]), spinner, new Label(unitNames[i])); 
+				
+				//System.out.println("New line: " + i + "  " + nParamCol + "  " +  i%nParamCol); 
+
+				if (i%nParamCol == 0 ) {
+					row++; 
+					column=0; 
 				}
 			}
+
 		}
-		
-		TitledPane titledPane = new TitledPane(simpleTransfrom.getDLTransformType().toString(), hBox); 
-		
-//		PamBorderPane borderPane = new PamBorderPane(); 
-//		borderPane.setTop(new Label(simpleTransfrom.getDLTransformType().toString()));
-//		borderPane.setCenter(hBox);
-		
+
+		TitledPane titledPane = new TitledPane(simpleTransfrom.getDLTransformType().toString(), gridPane); 
+
+		//			PamBorderPane borderPane = new PamBorderPane(); 
+		//			borderPane.setTop(new Label(simpleTransfrom.getDLTransformType().toString()));
+		//			borderPane.setCenter(hBox);
+
 		titledPane.setExpanded(false);
-	 	
+
 
 		return titledPane;  
 

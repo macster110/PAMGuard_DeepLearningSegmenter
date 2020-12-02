@@ -35,11 +35,13 @@ public class DLDataUnit extends PamDataUnit {
 
 	public DLDataUnit(DataUnitBaseData baseData, float[] data) {
 		super(baseData);
+		//System.out.println("DLDataUnit: " + this.getChannelBitmap()); 
 		this.modelResult = new GenericModelResult(data); 
 	}
 
 	public DLDataUnit(DataUnitBaseData baseData, ModelResult modelResult) {
 		super(baseData);
+		//System.out.println("DLDataUnit: " + this.getChannelBitmap()); 
 		this.modelResult = modelResult; 
 	}
 
