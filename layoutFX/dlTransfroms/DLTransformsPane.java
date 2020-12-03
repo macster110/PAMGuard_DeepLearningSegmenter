@@ -97,6 +97,7 @@ public class DLTransformsPane extends PamBorderPane {
 		//create a pane for each transform
 		for (int i=0; i<dlTransforms.size() ; i++) {
 			dlTransformPanes.add(DataTransformPaneFactory.getSettingsPane(dlTransforms.get(i))); 
+			dlTransformPanes.get(i).setParams(dlTransforms.get(i));
 		}
 		draggablelistPane = new PamDraggableList<DLTransformPane> (dlTransformPanes);
 

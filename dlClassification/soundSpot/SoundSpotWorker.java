@@ -8,12 +8,14 @@ import org.jamdev.jtorch4pam.transforms.FreqTransform;
 import org.jamdev.jtorch4pam.transforms.SimpleTransform;
 import org.jamdev.jtorch4pam.transforms.WaveTransform;
 import org.jamdev.jtorch4pam.transforms.DLTransform.DLTransformType;
+import org.jamdev.jtorch4pam.transforms.DLTransformsFactory;
 import org.jamdev.jtorch4pam.utils.DLUtils;
 import org.jamdev.jtorch4pam.wavFiles.AudioData;
 import org.pytorch.Module;
 import org.pytorch.Tensor;
 
 import PamUtils.PamArrayUtils;
+import PamView.dialog.warn.WarnOnce;
 import rawDeepLearningClassifer.segmenter.SegmenterProcess.GroupedRawData;
 
 
@@ -62,9 +64,15 @@ public class SoundSpotWorker {
 		try {
 			//first open the model and get the correct parameters. 
 			soundSpotModel = new SoundSpotModel(soundSpotParams.modelPath); 
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			//WarnOnce.showWarning(null, "Model Load Error", "There was an error loading the model file.", WarnOnce.OK_OPTION); 
+		}
 
+		try {
 			//create the DL parameters.
-			SoundSpotParams dlParams = new SoundSpotParams(soundSpotModel.getRawParamsString());
+			SoundSpotParams dlParams = new SoundSpotParams(soundSpotModel.getTransformsString());
 
 			this.modelTransforms =  model2DLTransforms(dlParams); 
 			soundSpotParams.defaultSegmentLen = dlParams.seglen; //the segment length in microseconds. 
@@ -77,6 +85,7 @@ public class SoundSpotWorker {
 		}
 		catch (Exception e) {
 			e.printStackTrace();
+			//WarnOnce.showWarning(null, "Model Metadata Error", "There was an error extracting the metadata from the model.", WarnOnce.OK_OPTION); 
 		}
 	}
 
@@ -187,19 +196,19 @@ public class SoundSpotWorker {
 	 */
 	public ArrayList<DLTransform> model2DLTransforms(SoundSpotParams dlParams) {
 
-		ArrayList<DLTransform> transforms = new ArrayList<DLTransform>(); 
+		ArrayList<DLTransform> transforms = DLTransformsFactory.makeDLTransforms(dlParams.dlTransforms); 
 
-		//waveform transforms. 
-		transforms.add(new WaveTransform(DLTransformType.DECIMATE, dlParams.sR)); 
-		transforms.add(new WaveTransform(DLTransformType.PREEMPHSIS, dlParams.preemphases)); 
-		//transforms.add(new WaveTransform(soundData, DLTransformType.TRIM, samplesChunk[0], samplesChunk[1])); 
-
-		//frequency transforms. 
-		transforms.add(new FreqTransform(DLTransformType.SPECTROGRAM, dlParams.n_fft, dlParams.hop_length)); 
-		transforms.add(new FreqTransform(DLTransformType.SPECCROPINTERP, dlParams.fmin, dlParams.fmax, dlParams.n_freq_bins)); 
-		transforms.add(new FreqTransform(DLTransformType.SPEC2DB)); 
-		transforms.add(new FreqTransform(DLTransformType.SPECNORMALISE, dlParams.min_level_dB, dlParams.ref_level_dB)); 
-		transforms.add(new FreqTransform(DLTransformType.SPECCLAMP, dlParams.clampMin, dlParams.clampMax)); 
+		//		//waveform transforms. 
+		//		transforms.add(new WaveTransform(DLTransformType.DECIMATE, dlParams.sR)); 
+		//		transforms.add(new WaveTransform(DLTransformType.PREEMPHSIS, dlParams.preemphases)); 
+		//		//transforms.add(new WaveTransform(soundData, DLTransformType.TRIM, samplesChunk[0], samplesChunk[1])); 
+		//
+		//		//frequency transforms. 
+		//		transforms.add(new FreqTransform(DLTransformType.SPECTROGRAM, dlParams.n_fft, dlParams.hop_length)); 
+		//		transforms.add(new FreqTransform(DLTransformType.SPECCROPINTERP, dlParams.fmin, dlParams.fmax, dlParams.n_freq_bins)); 
+		//		transforms.add(new FreqTransform(DLTransformType.SPEC2DB)); 
+		//		transforms.add(new FreqTransform(DLTransformType.SPECNORMALISE, dlParams.min_level_dB, dlParams.ref_level_dB)); 
+		//		transforms.add(new FreqTransform(DLTransformType.SPECCLAMP, dlParams.clampMin, dlParams.clampMax)); 
 
 
 		return transforms; 
