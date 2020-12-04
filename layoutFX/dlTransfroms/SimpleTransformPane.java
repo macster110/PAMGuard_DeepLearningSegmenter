@@ -39,7 +39,7 @@ public class SimpleTransformPane extends DLTransformPane {
 	/**
 	 * The default spinner width. 
 	 */
-	protected static int prefSpinnerWidth = 100; 
+	protected static int prefSpinnerWidth = 80; 
 
 	int nParamCol=10; 
 
@@ -104,7 +104,7 @@ public class SimpleTransformPane extends DLTransformPane {
 				}
 
 				spinner = new PamSpinner<Number>(0.0, Integer.MAX_VALUE, 2, 0.01);
-				spinner.setPrefWidth(prefSpinnerWidth);
+				//spinner.setPrefWidth(prefSpinnerWidth);
 				spinner.setEditable(true);
 				spinner.getStyleClass().add(Spinner.STYLE_CLASS_SPLIT_ARROWS_HORIZONTAL);
 				spinners.add(spinner); 

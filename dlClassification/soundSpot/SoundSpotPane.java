@@ -119,7 +119,7 @@ public class SoundSpotPane extends SettingsPane<PamSoundSpotParams> {
 
 		Label classiferInfoLabel = new Label("SoundSpot Classifier"); 
 		//PamGuiManagerFX.titleFont2style(classiferInfoLabel);
-		Font font= Font.font(null, FontWeight.BOLD, 12);
+		Font font= Font.font(null, FontWeight.BOLD, 11);
 		classiferInfoLabel.setFont(font);
 
 		/**Basic classifier info**/
@@ -228,7 +228,7 @@ public class SoundSpotPane extends SettingsPane<PamSoundSpotParams> {
 	private void defaultSegmentLenChanged() {
 		if (paramsClone.defaultSegmentLen != null && usedefaultSeg.isSelected()) {
 
-			int defaultsamples = (int) this.soundSpotClassifier.microSeconds2Samples(paramsClone.defaultSegmentLen); 
+			int defaultsamples = (int) this.soundSpotClassifier.millis2Samples(paramsClone.defaultSegmentLen); 
 			//work out the window length in samples
 			soundSpotClassifier.getRawSettingsPane().getSegmentLenSpinner().getValueFactory().setValue(defaultsamples);
 			soundSpotClassifier.getRawSettingsPane().getHopLenSpinner().getValueFactory().setValue((int) defaultsamples/2);

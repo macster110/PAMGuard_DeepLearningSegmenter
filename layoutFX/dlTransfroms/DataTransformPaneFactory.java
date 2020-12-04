@@ -64,7 +64,7 @@ public class DataTransformPaneFactory {
 			break;
 		case SPEC2DB:
 			settingsPane = new LabelTransfromPane(dlTransfrom, DLTransformType.SPEC2DB.toString()); 
-			settingsPane.setPadding(new Insets(0,0,0,25));
+			settingsPane.setPadding(new Insets(0,0,0,20));
 
 			break;
 		case SPECCLAMP:
@@ -85,7 +85,7 @@ public class DataTransformPaneFactory {
 
 			break;
 		case SPECTROGRAM:
-			settingsPane = new SimpleTransformPane((SimpleTransform) dlTransfrom, new String[]{"FFT Length ", "FFT Hop"},  new String[]{"samples ", "samples"}); 
+			settingsPane = new SimpleTransformPane((SimpleTransform) dlTransfrom, new String[]{"FFT Length ", "FFT Hop"},  new String[]{"", ""}); 
 			((SimpleTransformPane) settingsPane).setSpinnerMinMaxValues(0, 4, Integer.MAX_VALUE,   4);
 			((SimpleTransformPane) settingsPane).setSpinnerMinMaxValues(1, 4, Integer.MAX_VALUE,   4);
 //			//make an FFT spinner here with doubling FFT lengths - DOES NOT WORK FOR SOME REASON...

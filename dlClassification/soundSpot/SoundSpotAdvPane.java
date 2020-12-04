@@ -1,6 +1,9 @@
 package rawDeepLearningClassifer.dlClassification.soundSpot;
 
+import java.util.ArrayList;
+
 import org.controlsfx.control.ToggleSwitch;
+import org.jamdev.jtorch4pam.transforms.DLTransform;
 
 import PamController.SettingsPane;
 import javafx.geometry.Insets;
@@ -11,6 +14,7 @@ import javafx.scene.layout.Pane;
 import pamViewFX.fxNodes.PamBorderPane;
 import pamViewFX.fxNodes.PamHBox;
 import pamViewFX.fxNodes.PamVBox;
+import rawDeepLearningClassifer.layoutFX.dlTransfroms.DLTransformImage;
 import rawDeepLearningClassifer.layoutFX.dlTransfroms.DLTransformsPane;
 
 
@@ -55,6 +59,12 @@ public class SoundSpotAdvPane extends SettingsPane<PamSoundSpotParams> {
 	 * Pane which holds and allows users to edit dlTransforms; 
 	 */
 	private DLTransformsPane transfromPane;
+	
+	
+	/**
+	 * The DL transfroms image. 
+	 */
+	private DLTransformImage dlImage; 
 
 
 	public SoundSpotAdvPane() {
@@ -63,7 +73,9 @@ public class SoundSpotAdvPane extends SettingsPane<PamSoundSpotParams> {
 		
 		defaultTogglePane = createTogglePane(); 
 		transfromPane = new DLTransformsPane(); 
+		dlImage = new SoundSpotDLimagePane(); 
 		mainPane.setPadding(new Insets(5,5,5,5));
+		
 	}
 	
 	private Pane createTogglePane() {
@@ -81,6 +93,7 @@ public class SoundSpotAdvPane extends SettingsPane<PamSoundSpotParams> {
 		holderPane.getChildren().addAll(toggleSwitch, new Label( "Use default model settings"));
 		
 		return holderPane; 
+	
 	}
 
 	/**
@@ -99,11 +112,12 @@ public class SoundSpotAdvPane extends SettingsPane<PamSoundSpotParams> {
 	}
 
 	@Override
-	public void setParams(PamSoundSpotParams input) {
-		if (input.dlTransfroms==null) {
+	public void setParams(PamSoundSpotParams params) {
+		if (params.dlTransfroms==null) {
 			mainPane.setTop(null);
 			mainPane.setCenter(new Label("A model must be loaded before \n "
 					+ "advanced settings are available"));
+			mainPane.setBottom(null);
 		}
 		else {
 			mainPane.setTop(defaultTogglePane);
@@ -112,7 +126,9 @@ public class SoundSpotAdvPane extends SettingsPane<PamSoundSpotParams> {
 			BorderPane.setMargin(defaultTogglePane, new Insets(5));
 			transfromPane.setDisable(true);
 			toggleSwitch.setSelected(true);
-			transfromPane.setTransforms(input.dlTransfroms);
+			transfromPane.setTransforms(params.dlTransfroms); 
+			//set the image 
+			mainPane.setBottom(dlImage);
 		}
 		
 	}
@@ -142,6 +158,22 @@ public class SoundSpotAdvPane extends SettingsPane<PamSoundSpotParams> {
 
 	public void setDefaultParams(PamSoundSpotParams defaultParams) {
 		this.defaultParams = defaultParams;
+	}
+	
+	
+	public class SoundSpotDLimagePane extends DLTransformImage {
+
+		@Override
+		public ArrayList<DLTransform> getDLTransforms() {
+			return transfromPane.getDLTransforms();
+		}
+
+		@Override
+		public int getSoundLen() {
+//TODO
+			return 1274;
+		}
+		
 	}
 
 

@@ -61,7 +61,7 @@ public class PamSoundSpotParams implements Serializable, Cloneable {
 	public transient ArrayList<DLTransform> dlTransfroms = null;
 
 	/**
-	 * The default segment length of the model in microseconds. 
+	 * The default segment length of the model in milliseconds. 
 	 */
 	public 	Double defaultSegmentLen = null;
 

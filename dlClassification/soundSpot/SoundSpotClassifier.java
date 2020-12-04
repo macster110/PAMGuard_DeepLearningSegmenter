@@ -293,10 +293,10 @@ public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 	}
 	
 	/**
-	 * Get the number of samples for microseconds. Based on the smaple rate of the parent datablock. 
+	 * Get the number of samples for microseconds. Based on the sample rate of the parent data block. 
 	 */
-	public double microSeconds2Samples(double microseconds) {
-		return microseconds*this.dlControl.getSegmenter().getSampleRate()/1000.0/1000.0;
+	public double millis2Samples(double microseconds) {
+		return microseconds*this.dlControl.getSegmenter().getSampleRate()/1000.0;
 	}
 
 }
