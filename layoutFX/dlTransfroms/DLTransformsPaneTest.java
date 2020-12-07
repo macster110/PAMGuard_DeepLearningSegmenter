@@ -5,9 +5,6 @@ import java.util.ArrayList;
 import org.jamdev.jtorch4pam.SoundSpot.SoundSpotParams;
 import org.jamdev.jtorch4pam.transforms.DLTransform;
 import org.jamdev.jtorch4pam.transforms.DLTransformsFactory;
-import org.jamdev.jtorch4pam.transforms.DLTransform.DLTransformType;
-import org.jamdev.jtorch4pam.transforms.FreqTransform;
-import org.jamdev.jtorch4pam.transforms.WaveTransform;
 import org.jamdev.jtorch4pam.utils.DLUtils;
 import org.jamdev.jtorch4pam.wavFiles.AudioData;
 
@@ -17,7 +14,6 @@ import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import pamViewFX.fxNodes.PamBorderPane;
-import pamViewFX.fxStyles.PamStylesManagerFX;
 
 /**
  * Test the dl transfroms pane. 
@@ -49,20 +45,17 @@ public class DLTransformsPaneTest extends Application {
 		ArrayList<DLTransform> transforms  = DLTransformsFactory.makeDLTransforms(dlParams.dlTransforms);
 
 		//create the 
-		DLTransformsPane dlTarnsformsPane = new DLTransformsPane();
+		DLImageTransformPane dlTarnsformsPane = new DLImageTransformPane();
 		//dlTarnsformsPane.getStylesheets().add(PamStylesManagerFX.getPamStylesManagerFX().getCurStyle().getGUICSS());
 
 		dlTarnsformsPane.setTransforms(transforms);
 		dlTarnsformsPane.setPadding(new Insets(5,5,5,5));
 
-		DLTransfromImagePane transformImage = new DLTransfromImagePane(dlTarnsformsPane); 
-		transformImage.setPadding(new Insets(5,5,5,5));
-
+		
 		//hold everything together. 
 		PamBorderPane borderPane = new PamBorderPane(); 
-		borderPane.setTop(dlTarnsformsPane); 
-		borderPane.setCenter(transformImage);
-		BorderPane.setMargin(transformImage, new Insets(10, 0,0,0));
+		borderPane.setCenter(dlTarnsformsPane);
+		BorderPane.setMargin(dlTarnsformsPane, new Insets(10, 0,0,0));
 
 
 		primaryStage.setScene(new Scene(borderPane, 890, 570));
@@ -82,15 +75,13 @@ public class DLTransformsPaneTest extends Application {
 			this.dLTransformsPane=dLTransformsPane; 
 			this.newSettings();
 		}
+		
 		@Override
 		public ArrayList<DLTransform> getDLTransforms() {
 			return dLTransformsPane.getDLTransforms();
 		}
 
-		@Override
-		public int getSoundLen() {
-			return 1274;
-		}
+		
 	}
 
 }

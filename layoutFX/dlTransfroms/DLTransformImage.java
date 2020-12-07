@@ -31,6 +31,7 @@ import rawDeepLearningClassifer.layoutFX.exampleSounds.ExampleSoundFactory;
 import rawDeepLearningClassifer.layoutFX.exampleSounds.ExampleSoundFactory.ExampleSoundType;
 
 /**
+ * 
  * Shows preview spectrogram or waveform for a DL transforms
  * 
  * @author Jamie Macaulay 
@@ -55,12 +56,12 @@ public abstract class DLTransformImage extends PamBorderPane{
 	private ChoiceBox<ExampleSoundType> speciesChoiceBox;
 
 	/**
-	 * Choice box to select which transfrom to preview. 
+	 * Choice box to select which transform to preview. 
 	 */
 	private ChoiceBox<DLTransform> transformschoiceBox; 
 
 	/**
-	 * Example slund factory. 
+	 * Example sound factory. 
 	 */
 	private ExampleSoundFactory exampleSoundFactory = new ExampleSoundFactory();
 
@@ -71,7 +72,7 @@ public abstract class DLTransformImage extends PamBorderPane{
 
 
 	/**
-	 * The current 1D transfrom data. 
+	 * The current 1D transform data. 
 	 */
 	private double [] data1D = null; 
 
@@ -79,7 +80,6 @@ public abstract class DLTransformImage extends PamBorderPane{
 	 * The current two dimensional transform data. 
 	 */
 	private double[][] data2D = null;
-
 
 	/**
 	 * The current example sounds - contains the raw waveform. 
@@ -144,7 +144,7 @@ public abstract class DLTransformImage extends PamBorderPane{
 			plotPane.repaint();
 		});
 
-		//create a colourslider for the spectrgram
+		//create a colour slider for the spectrogram
 		colRangeSlider = new ColourRangeSlider(Orientation.VERTICAL); 
 		colRangeSlider.setColourArrayType(ColourArrayType.FIRE);
 		colRangeSlider.setShowTickLabels(true);
@@ -182,17 +182,17 @@ public abstract class DLTransformImage extends PamBorderPane{
 		this.setCenter(plotPane);
 		BorderPane.setMargin(colRangeSlider, new Insets(40,5,0,5));
 		plotPane.setRight(colRangeSlider);
-		
-		
+
+
 		//BIT OF A HACK but works to align the range slider wiht the axis. 
 		timeSlider.translateXProperty().bind(plotPane.getAxisPane(Side.LEFT).widthProperty());
 		plotPane.setBottom(timeSlider);
-		
+
 		timeSlider.maxWidthProperty().bind(plotPane.getPlotCanvas().widthProperty().add(5));
-		
+
 		BorderPane.setAlignment(timeLabel, Pos.CENTER);
 		this.setBottom(timeLabel);
-		
+
 	}
 
 
@@ -202,21 +202,25 @@ public abstract class DLTransformImage extends PamBorderPane{
 	private void calcTimeBins(float sampleRate) {
 		timeBins[0] = (int) (sampleRate*(timeSlider.getLowValue()/1000.0));
 		timeBins[1] = (int) (sampleRate*(timeSlider.getHighValue()/1000.0));
-		
+
 		this.plotPane.getAxis(Side.TOP).setMinVal(timeSlider.getLowValue());
 		this.plotPane.getAxis(Side.TOP).setMaxVal(timeSlider.getHighValue());
-		
+
 		timeLabel.setText(String.format("Segment size %.0f (samples)",  this.exampleSound.getSampleRate()*((timeSlider.getHighValue()-timeSlider.getLowValue())/1000.0)));
 	}
+
 
 	/**
 	 * Called whenever there are new settings. 
 	 */
 	public void newSettings() {
-		transformschoiceBox.getItems().addAll(FXCollections.observableArrayList(getDLTransforms())); 
+		transformschoiceBox.getItems().clear();
+		if (getDLTransforms()!=null && getDLTransforms().size()>0) {
+			transformschoiceBox.getItems().addAll(FXCollections.observableArrayList(getDLTransforms()));
+			transformschoiceBox.getSelectionModel().select(0);
+			//listener should handle drawing stuff. 
+		}
 	}
-
-
 
 
 	/**
@@ -224,12 +228,6 @@ public abstract class DLTransformImage extends PamBorderPane{
 	 * @param dlTransform
 	 */
 	public abstract ArrayList<DLTransform> getDLTransforms(); 
-
-	/**
-	 * Gett the length in bins of the sound that should be used 
-	 * @return
-	 */
-	public abstract int getSoundLen(); 
 
 
 	/**
@@ -243,7 +241,7 @@ public abstract class DLTransformImage extends PamBorderPane{
 
 	private void updateExampleSound(ExampleSoundType exampleSoundType) {
 		this.exampleSound = exampleSoundFactory.getExampleSound(exampleSoundType); 
-			
+
 		//update the time slider to show the correct time. 
 		double maxMillis = 1000.0*exampleSound.getWave().length/exampleSound.getSampleRate(); 
 		this.timeSlider.setMin(0.0);
@@ -255,15 +253,13 @@ public abstract class DLTransformImage extends PamBorderPane{
 		this.plotPane.getAxis(Side.TOP).setLabel("Time (ms)");
 		this.plotPane.getAxis(Side.TOP).setMinVal(0);
 		this.plotPane.getAxis(Side.TOP).setMaxVal(maxMillis);
-
-
-
+		
 	}
 
 	/**
 	 * Update the transform image to the latest selected transform and data params. 
 	 */
-	private void updateTransformImage() {
+	public void updateTransformImage() {
 
 		if  (this.exampleSound==null)  return; 
 
@@ -303,8 +299,19 @@ public abstract class DLTransformImage extends PamBorderPane{
 				colRangeSlider.setHighValue(minMax[1]);
 				colRangeSlider.setMajorTickUnit((minMax[1]-minMax[0])/3.0);
 
-				plotPane.getAxis(Side.LEFT).setLabel("Frequency");
+				double[] freqLims= ((FreqTransform) currentTransform).getFreqlims(); 
 
+				if (freqLims[1]<1000.0) {
+					plotPane.getAxis(Side.LEFT).setLabel("Frequency (Hz)");
+					plotPane.getAxis(Side.LEFT).setMinVal(freqLims[0]);
+					plotPane.getAxis(Side.LEFT).setMaxVal(freqLims[1]);
+				}
+				else {
+					plotPane.getAxis(Side.LEFT).setLabel("Frequency (kHz)");
+					plotPane.getAxis(Side.LEFT).setMinVal(freqLims[0]/1000.0);
+					plotPane.getAxis(Side.LEFT).setMaxVal(freqLims[1]/1000.0);
+				}
+				
 				specImage = new SpectrogramImage(data2D, colArray, PamArrayUtils.minmax(data2D), false); 
 				transformsR = ((FreqTransform) currentTransform).getSpecTransfrom().getSpectrgram().getSampleRate(); 
 			}
@@ -315,13 +322,13 @@ public abstract class DLTransformImage extends PamBorderPane{
 				plotPane.getAxis(Side.LEFT).setLabel("Amplitude");
 
 				colRangeSlider.setDisable(true);
-				
+
 				data1D = ((WaveTransform) currentTransform).getWaveData().getScaledSampleAmpliudes(); 
 				data1DminMax= PamArrayUtils.minmax(data1D); 
-				
+
 				plotPane.getAxis(Side.LEFT).setMinVal(data1DminMax[0]);
 				plotPane.getAxis(Side.LEFT).setMaxVal(data1DminMax[1]);
-				
+
 				transformsR =  ((WaveTransform) currentTransform).getWaveData().getSampleRate(); 
 
 				//System.out.println("Spec wave data: " + ((WaveTransform) currentTransform).getWaveData().getScaledSampleAmpliudes()[10]); 
@@ -359,12 +366,12 @@ public abstract class DLTransformImage extends PamBorderPane{
 				double[] dataTrim = Arrays.copyOfRange(data1D, timeBins[0], timeBins[1]); 
 				double dataRange = (data1DminMax[1]- data1DminMax[0]); 
 				for (int i=0; i<dataTrim.length-1; i++) {
-					
+
 					x1 = (i/(double) dataTrim.length)*getPlotCanvas().getWidth(); 
 					x2 = ((i+1)/(double) dataTrim.length)*getPlotCanvas().getWidth(); 
-					
+
 					//System.out.println(" Canvas Width: x2: " + x2 + " cwidth: " +  getPlotCanvas().getWidth()+ "Trim: " + dataTrim[i]); 
-					
+
 					y1=  ((dataTrim[i]- data1DminMax[0])/(dataRange))*getPlotCanvas().getHeight(); 
 					y2=  ((dataTrim[i+1]- data1DminMax[0])/(dataRange))*getPlotCanvas().getHeight(); 
 

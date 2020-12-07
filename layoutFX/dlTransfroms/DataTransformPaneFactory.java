@@ -3,23 +3,11 @@ package rawDeepLearningClassifer.layoutFX.dlTransfroms;
 import org.jamdev.jtorch4pam.transforms.DLTransform;
 import org.jamdev.jtorch4pam.transforms.SimpleTransform;
 
-import fftManager.layoutFX.FFTPaneFX;
-
 import org.jamdev.jtorch4pam.transforms.DLTransform.DLTransformType;
-import org.jamdev.jtorch4pam.transforms.FreqTransform;
-
+import org.jamdev.jtorch4pam.transforms.DLTransformsFactory;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.Node;
-import javafx.scene.control.Label;
-import javafx.scene.control.Spinner;
-import javafx.scene.control.SpinnerValueFactory;
-import javafx.scene.control.TitledPane;
-import pamViewFX.fxNodes.PamGridPane;
-import pamViewFX.fxNodes.PamHBox;
-import pamViewFX.fxNodes.PamSpinner;
 
 /**
  * 
@@ -32,16 +20,16 @@ public class DataTransformPaneFactory {
 	
 	
 	/**
-	 * Create a step list of FFTlength sizes for a spinner
-	 * @return the step list. 
+	 * Get the settings pane for a DLTransfrom type. This creates a default pane with default settings based on the sample rate. 
+	 * @param dlTransfromType - the transform type. 
+	 * @param sR- the samplwe rate - this is required by some transforms. 
+	 * @return the DlTransfrom Settings Pane. 
 	 */
-	public static ObservableList<Number> createStepList() {
-		ObservableList<Number> stepSizeListLength=FXCollections.observableArrayList();
-		for (int i=2; i<15; i++){
-			stepSizeListLength.add((int) Math.pow(2,i));
-			
-		}
-		return stepSizeListLength;
+	public static DLTransformPane getSettingsPane(DLTransformType dlTransfromType, float sR) {
+		
+		DLTransform dlTransform = DLTransformsFactory.makeDLTransform(dlTransfromType, sR); 
+		
+		return getSettingsPane(dlTransform); 
 	}
 
 
@@ -85,8 +73,8 @@ public class DataTransformPaneFactory {
 
 			break;
 		case SPECTROGRAM:
-			settingsPane = new SimpleTransformPane((SimpleTransform) dlTransfrom, new String[]{"FFT Length ", "FFT Hop"},  new String[]{"", ""}); 
-			((SimpleTransformPane) settingsPane).setSpinnerMinMaxValues(0, 4, Integer.MAX_VALUE,   4);
+			settingsPane = new FFTTransformPane((SimpleTransform) dlTransfrom, new String[]{"FFT Length ", "FFT Hop"},  new String[]{"", ""}); 
+//			((SimpleTransformPane) settingsPane).setSpinnerMinMaxValues(0, 4, Integer.MAX_VALUE,   4);
 			((SimpleTransformPane) settingsPane).setSpinnerMinMaxValues(1, 4, Integer.MAX_VALUE,   4);
 //			//make an FFT spinner here with doubling FFT lengths - DOES NOT WORK FOR SOME REASON...
 //			((SimpleTransformPane) settingsPane).getSpinners().get(0).setValueFactory(new SpinnerValueFactory.ListSpinnerValueFactory<>(createStepList()));

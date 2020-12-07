@@ -4,22 +4,14 @@ import java.util.ArrayList;
 
 import org.jamdev.jtorch4pam.transforms.*;
 
-import com.mysql.cj.result.IntegerValueFactory;
-
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TitledPane;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
-import pamViewFX.fxNodes.PamBorderPane;
 import pamViewFX.fxNodes.PamGridPane;
-import pamViewFX.fxNodes.PamHBox;
 import pamViewFX.fxNodes.PamSpinner;
-import pamViewFX.fxNodes.picker.NumberSpinner;
 
 /**
  * Pane for a simple transform. This is a DLTransfrom which has a list of Numbers as parameters. 
@@ -47,6 +39,7 @@ public class SimpleTransformPane extends DLTransformPane {
 	 * A list of the spinners. 
 	 */
 	public ArrayList<Spinner<Number>> spinners; 
+	
 
 	/**
 	 * 
@@ -79,7 +72,9 @@ public class SimpleTransformPane extends DLTransformPane {
 		this.nParamCol=nColumns; 
 		this.setCenter(createPane(simpleTransfrom, paramNames,unitNames,nColumns) ); 
 	}
-
+	
+	
+	
 	protected Node createPane(SimpleTransform simpleTransfrom, String[] paramNames, String[] unitNames, int nColumns) {
 
 
@@ -103,11 +98,14 @@ public class SimpleTransformPane extends DLTransformPane {
 					column=0; 
 				}
 
-				spinner = new PamSpinner<Number>(0.0, Integer.MAX_VALUE, 2, 0.01);
+				spinner =  createSpinner(i);  
 				//spinner.setPrefWidth(prefSpinnerWidth);
 				spinner.setEditable(true);
 				spinner.getStyleClass().add(Spinner.STYLE_CLASS_SPLIT_ARROWS_HORIZONTAL);
 				spinners.add(spinner); 
+				spinner.valueProperty().addListener((obsVal, oldVal, newVal)->{
+					this.notifySettingsListeners();
+				});
 
 				gridPane.add(new Label(paramNames[i]), column , row); 
 				gridPane.add(spinner, column+1, row);
@@ -135,6 +133,15 @@ public class SimpleTransformPane extends DLTransformPane {
 
 		return titledPane;  
 
+	}
+	
+	/**
+	 * Create a PAM spinner. Can be overriden to change default spinner types etc. 
+	 * @param - the spinner index i.e. i = 1 is the second spinner to be created for the second parameter. 
+	 * @return a new spinner
+	 */
+	protected PamSpinner<Number> createSpinner(int i) {
+		return new PamSpinner<Number>(0.0, Integer.MAX_VALUE, 2, 0.01);
 	}
 
 	/**
@@ -177,6 +184,7 @@ public class SimpleTransformPane extends DLTransformPane {
 		return spinners;
 	}
 
+	@Override
 	public SimpleTransform getParams(DLTransform currParams) {
 
 		SimpleTransform simpleTransform = (SimpleTransform) currParams;
@@ -201,7 +209,7 @@ public class SimpleTransformPane extends DLTransformPane {
 		SimpleTransform simpleTransform = (SimpleTransform) input;
 		
 		for (int i=0; i<spinners.size(); i++) {
-			System.out.println("Set params: " + input.getDLTransformType() + " param val: " + simpleTransform.getParams()[i] + "  " + (simpleTransform.getParams()[i] instanceof Float)); 
+			//System.out.println("Set params: " + input.getDLTransformType() + " param val: " + simpleTransform.getParams()[i] + "  " + (simpleTransform.getParams()[i] instanceof Float)); 
 			if (simpleTransform.getParams()[i] instanceof Float) {
 				spinners.get(i).getValueFactory().setValue(simpleTransform.getParams()[i].doubleValue());
 
@@ -215,10 +223,9 @@ public class SimpleTransformPane extends DLTransformPane {
 
 	@Override
 	public DLTransform getDLTransform() {
-		return this.simpleTransfrom;
+		return this.getParams(simpleTransfrom) ;
 	}
 
-
-
+	
 
 }

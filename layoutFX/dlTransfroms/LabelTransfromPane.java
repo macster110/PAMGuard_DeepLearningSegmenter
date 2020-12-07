@@ -9,9 +9,13 @@ import javafx.scene.layout.BorderPane;
 class LabelTransfromPane extends DLTransformPane {
 
 	private DLTransform dlTransfrom;
+	
+
+	private String name; 
 
 	public LabelTransfromPane(DLTransform dlTransfrom, String name) {
 		super(); 
+		this.name = name; 
 		this.dlTransfrom = dlTransfrom; 
 		Label label = new Label(name); 
 		this.setLeft(label); 
@@ -34,5 +38,7 @@ class LabelTransfromPane extends DLTransformPane {
 	public void setParams(DLTransform dlTransform) {
 		// TODO Auto-generated method stub
 	}
+
+	
 	
 }

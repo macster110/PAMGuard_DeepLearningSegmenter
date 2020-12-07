@@ -14,6 +14,7 @@ import javafx.scene.layout.Pane;
 import pamViewFX.fxNodes.PamBorderPane;
 import pamViewFX.fxNodes.PamHBox;
 import pamViewFX.fxNodes.PamVBox;
+import rawDeepLearningClassifer.layoutFX.dlTransfroms.DLImageTransformPane;
 import rawDeepLearningClassifer.layoutFX.dlTransfroms.DLTransformImage;
 import rawDeepLearningClassifer.layoutFX.dlTransfroms.DLTransformsPane;
 
@@ -58,7 +59,7 @@ public class SoundSpotAdvPane extends SettingsPane<PamSoundSpotParams> {
 	/**
 	 * Pane which holds and allows users to edit dlTransforms; 
 	 */
-	private DLTransformsPane transfromPane;
+	private DLImageTransformPane transfromPane;
 	
 	
 	/**
@@ -72,8 +73,7 @@ public class SoundSpotAdvPane extends SettingsPane<PamSoundSpotParams> {
 		mainPane = new PamBorderPane(); 
 		
 		defaultTogglePane = createTogglePane(); 
-		transfromPane = new DLTransformsPane(); 
-		dlImage = new SoundSpotDLimagePane(); 
+		transfromPane = new DLImageTransformPane(); 
 		mainPane.setPadding(new Insets(5,5,5,5));
 		
 	}
@@ -161,20 +161,5 @@ public class SoundSpotAdvPane extends SettingsPane<PamSoundSpotParams> {
 	}
 	
 	
-	public class SoundSpotDLimagePane extends DLTransformImage {
-
-		@Override
-		public ArrayList<DLTransform> getDLTransforms() {
-			return transfromPane.getDLTransforms();
-		}
-
-		@Override
-		public int getSoundLen() {
-//TODO
-			return 1274;
-		}
-		
-	}
-
 
 }
