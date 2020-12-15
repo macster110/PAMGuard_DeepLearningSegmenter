@@ -34,7 +34,9 @@ Installing the PAMGuard plugin is easy and detailed on the [PAMGuard website](ht
 ### Adding to PAMGuard's data model
 The module is  straightforward to use. Go to _ _File ->Add Modules -> Classifiers -> Deep Learning Segmener_ _ . This will add the module to the PAMGuard data model. Once the module has been added to the data model go to  _ _Settings -> Deep Learning Segmenter_ _ to open the module settings. Select the channels, window length, hop size and deep leanring model and you are ready to start analysing data. A PAMGuard settings files which simulates and localises simulated dolphin whistles using the OrcaSpot model is located in the resources folder. 
 
-<center><img src="resources/PG_DL_settings.png" width="1024"></center>
+<p align="center">
+<center><img src="resources/PG_DL_settings.png" width="512"></center>
+</p>
 
 An example the user interface for loading a model. The module allows a users to select a model framework and then load a model file. The model will geenrate a list of transforms that convert the raw sound data to a suitbale input. Users have the option to edit transforms associated with a loaded model if necessary. 
 
