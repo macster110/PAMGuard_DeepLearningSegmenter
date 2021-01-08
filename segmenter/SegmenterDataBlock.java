@@ -18,5 +18,9 @@ public class SegmenterDataBlock extends PamDataBlock<GroupedRawData> {
 		this.setNaturalLifetimeMillis(5000); //do not want to keep the data for very long  - it's raw data segmnents so memory intensive
 	}
 
+	public boolean shouldNotify() {
+		//need this to notify classifier in viewer mode. 
+		return true;
+	}
 
 }

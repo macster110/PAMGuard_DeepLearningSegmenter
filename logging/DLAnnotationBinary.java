@@ -35,8 +35,10 @@ public class DLAnnotationBinary extends AnnotationBinaryHandler<DLAnnotation> {
 
 	@Override
 	public AnnotationBinaryData getAnnotationBinaryData(PamDataUnit pamDataUnit, DataAnnotation annotation) {
+		//System.out.println("DLAnnotationBinary: Saving DL annotation results:"); 
+
 		DLAnnotation ba = (DLAnnotation) annotation;
-		DLDetection dlDetection = (DLDetection) pamDataUnit;
+		
 
 		//write the number of results for reading back
 		try {
@@ -47,12 +49,12 @@ public class DLAnnotationBinary extends AnnotationBinaryHandler<DLAnnotation> {
 				bos.reset();
 			}
 
-			dos.writeShort(dlDetection.getModelResults().size());
+			dos.writeShort(ba.getModelResults().size());
 			
 //			System.out.println("DLAnnotationBinary.Number of model result to saves: " + dlDetection.getModelResults().size() + "  " + ba.getModelResults().size()); 
 
-			for (int i=0; i<dlDetection.getModelResults().size(); i++) {
-				ModelResultBinaryFactory.getPackedData(dlDetection.getModelResults().get(i), dos, 	ModelResultBinaryFactory.getType(dlDetection.getModelResults().get(i)));
+			for (int i=0; i<ba.getModelResults().size(); i++) {
+				ModelResultBinaryFactory.getPackedData(ba.getModelResults().get(i), dos, 	ModelResultBinaryFactory.getType(ba.getModelResults().get(i)));
 			}
 
 			AnnotationBinaryData abd = new AnnotationBinaryData(BinaryStore.CURRENT_FORMAT, (short) 1, 
@@ -69,7 +71,9 @@ public class DLAnnotationBinary extends AnnotationBinaryHandler<DLAnnotation> {
 	@Override
 	public DLAnnotation setAnnotationBinaryData(PamDataUnit pamDataUnit,
 			AnnotationBinaryData annotationBinaryData) {
-		//System.out.println("MatchedClickAnnotationBinary: Extracting threshold from matched click: "); 
+		//System.out.println("DLAnnotationBinary: Extracting DL annotation results:"); 
+		
+		
 		DataInputStream dis = new DataInputStream(new ByteArrayInputStream(annotationBinaryData.data));
 
 		int version = annotationBinaryData.annotationVersion; //1 for original single template, 2 for multi template

@@ -100,7 +100,7 @@ public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 		 * If a sound file is being analysed then SoundSpot can go as slow as it wants. if used in real time
 		 * then there is a buffer with a maximum queue size. 
 		 */
-		if (PamCalendar.isSoundFile() && !forceQueue) {
+		if ((PamCalendar.isSoundFile() && !forceQueue) || dlControl.isViewer()) {
 			//run the model 
 			SoundSpotResult modelResult = getSoundSpotWorker().runModel(groupedRawData, groupedRawData.getParentDataBlock().getSampleRate(), 0); 
 			return modelResult; //returns to the classifier. 
@@ -190,7 +190,7 @@ public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 
 	@Override
 	public void prepModel() {
-		System.out.println("PrepModel! !!!");
+		//System.out.println("PrepModel! !!!");
 		getSoundSpotWorker().prepModel(soundSpotParmas);
 		if (!soundSpotParmas.useDefaultTransfroms) {
 			//set cusotm transforms in the model. 
@@ -295,8 +295,16 @@ public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 	/**
 	 * Get the number of samples for microseconds. Based on the sample rate of the parent data block. 
 	 */
-	public double millis2Samples(double microseconds) {
-		return microseconds*this.dlControl.getSegmenter().getSampleRate()/1000.0;
+	public double millis2Samples(double millis) {
+		//System.out.println("Samplerate: " + this.dlControl.getSegmenter().getSampleRate() ); 
+		return millis*this.dlControl.getSegmenter().getSampleRate()/1000.0;
+	}
+
+
+	@Override
+	public String getClassNames() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

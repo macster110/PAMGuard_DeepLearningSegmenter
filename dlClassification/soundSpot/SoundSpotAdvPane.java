@@ -1,10 +1,6 @@
 package rawDeepLearningClassifer.dlClassification.soundSpot;
 
-import java.util.ArrayList;
-
 import org.controlsfx.control.ToggleSwitch;
-import org.jamdev.jtorch4pam.transforms.DLTransform;
-
 import PamController.SettingsPane;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -13,10 +9,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import pamViewFX.fxNodes.PamBorderPane;
 import pamViewFX.fxNodes.PamHBox;
-import pamViewFX.fxNodes.PamVBox;
 import rawDeepLearningClassifer.layoutFX.dlTransfroms.DLImageTransformPane;
 import rawDeepLearningClassifer.layoutFX.dlTransfroms.DLTransformImage;
-import rawDeepLearningClassifer.layoutFX.dlTransfroms.DLTransformsPane;
 
 
 /**
@@ -63,7 +57,7 @@ public class SoundSpotAdvPane extends SettingsPane<PamSoundSpotParams> {
 	
 	
 	/**
-	 * The DL transfroms image. 
+	 * The DL transforms image. 
 	 */
 	private DLTransformImage dlImage; 
 

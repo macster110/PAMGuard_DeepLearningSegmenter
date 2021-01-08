@@ -36,7 +36,7 @@ public class PamSoundSpotParams implements Serializable, Cloneable {
 	/**
 	 * Use defualt transforms
 	 */
-	public boolean useDefaultTransfroms; 
+	public boolean useDefaultTransfroms = false; 
 
 	
 	/**

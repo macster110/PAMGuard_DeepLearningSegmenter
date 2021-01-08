@@ -110,6 +110,12 @@ public class OrcaSpotModelResult implements ModelResult {
 		return newString;
 	}
 
+	@Override
+	public String[] classNames() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 }
 

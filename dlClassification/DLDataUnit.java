@@ -2,6 +2,7 @@ package rawDeepLearningClassifer.dlClassification;
 
 import PamguardMVC.DataUnitBaseData;
 import PamguardMVC.PamDataUnit;
+import rawDeepLearningClassifer.dlClassification.genericModel.GenericModelResult;
 
 /**
  * A data unit created from classification results of DL model. this data unit holds one model results, i.e. 

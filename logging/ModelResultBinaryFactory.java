@@ -6,9 +6,9 @@ import java.io.IOException;
 
 import PamUtils.PamArrayUtils;
 import binaryFileStorage.BinaryHeader;
-import rawDeepLearningClassifer.dlClassification.GenericModelResult;
 import rawDeepLearningClassifer.dlClassification.ModelResult;
 import rawDeepLearningClassifer.dlClassification.dummyClassifier.DummyModelResult;
+import rawDeepLearningClassifer.dlClassification.genericModel.GenericModelResult;
 import rawDeepLearningClassifer.dlClassification.soundSpot.SoundSpotResult;
 
 /**

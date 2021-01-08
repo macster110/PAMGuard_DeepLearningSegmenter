@@ -49,7 +49,7 @@ public class SoundSpotUI implements DLCLassiferModelUI {
 
 	@Override
 	public void setParams() {
-		 getSettingsPane() .setParams(soundSpotClassifier.getSoundSpotParams());
+		 getSettingsPane().setParams(soundSpotClassifier.getSoundSpotParams());
 		
 	}
 

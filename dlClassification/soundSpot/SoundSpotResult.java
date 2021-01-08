@@ -63,4 +63,10 @@ public class SoundSpotResult implements ModelResult {
 		return PamArrayUtils.array2String(prob, 1, "/n"); 
 	}
 
+	@Override
+	public String[] classNames() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

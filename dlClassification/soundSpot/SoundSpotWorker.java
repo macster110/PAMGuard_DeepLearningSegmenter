@@ -5,21 +5,19 @@ import org.jamdev.jtorch4pam.SoundSpot.SoundSpotModel;
 import org.jamdev.jtorch4pam.SoundSpot.SoundSpotParams;
 import org.jamdev.jtorch4pam.transforms.DLTransform;
 import org.jamdev.jtorch4pam.transforms.FreqTransform;
-import org.jamdev.jtorch4pam.transforms.SimpleTransform;
 import org.jamdev.jtorch4pam.transforms.WaveTransform;
-import org.jamdev.jtorch4pam.transforms.DLTransform.DLTransformType;
 import org.jamdev.jtorch4pam.transforms.DLTransformsFactory;
 import org.jamdev.jtorch4pam.utils.DLUtils;
 import org.jamdev.jtorch4pam.wavFiles.AudioData;
 import org.pytorch.Module;
 import org.pytorch.Tensor;
 
-import PamUtils.PamArrayUtils;
-import PamView.dialog.warn.WarnOnce;
+import PamUtils.PamCalendar;
 import rawDeepLearningClassifer.segmenter.SegmenterProcess.GroupedRawData;
 
 
 /**
+ * 
  * Runs the deep learning model and performs feature extraction. 
  * 
  * @author Jamie Macaulay 
@@ -118,14 +116,15 @@ public class SoundSpotWorker {
 				transform = modelTransforms.get(i).transformData(transform); 
 			}
 
-			//the tr
+			//the transformed data
 			double[][] transformedData = ((FreqTransform) transform).getSpecTransfrom().getTransformedData(); 
 
 			float[] output = null; 
 			long time1 = System.currentTimeMillis();
 			output = soundSpotModel.runModel(DLUtils.toFloatArray(transformedData)); 
 			long time2 = System.currentTimeMillis();
-			System.out.println("Time to run model: " + (time2-time1) + " ms for spec of len: " + transformedData.length); 
+			
+			//System.out.println(PamCalendar.formatDBDateTime(rawDataUnit.getTimeMilliseconds(), true) + " Time to run model: " + (time2-time1) + " ms for spec of len: " + transformedData.length); 
 
 			float[] prob = new float[output.length]; 
 			for (int j=0; j<output.length; j++) {
@@ -134,7 +133,7 @@ public class SoundSpotWorker {
 				//                    pred = int(prob >= ARGS.threshold)		    	
 				//softmax function
 				prob[j] = (float) DLUtils.softmax(output[j], output); 
-				System.out.println("The probability is: " + prob[j]); 
+				//System.out.println("The probability is: " + prob[j]); 
 			}
 
 			//does this pass binary classification

@@ -54,4 +54,10 @@ public class DummyClassifier implements DLClassiferModel{
 		return 2;
 	}
 
+	@Override
+	public String getClassNames() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

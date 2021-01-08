@@ -15,6 +15,12 @@ public interface ModelResult {
 	 * @return the prediction.
 	 */
 	public float[] getPrediction(); 
+	
+	/**
+	 * Get the class names associated with this result. Can be null. 
+	 * @return a list of the class names for the result. Can be null or an array the same length as getPrediciton(); 
+	 */
+	public String[] classNames(); 
 
 	/**
 	 * Check whether binary classification has passed. 
@@ -27,6 +33,8 @@ public interface ModelResult {
 	 * @return the analysis time. 
 	 */
 	public double getAnalysisTime(); 
+	
+	
 	
 	/**
 	 * String representation of the result

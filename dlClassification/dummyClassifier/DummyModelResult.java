@@ -36,5 +36,11 @@ public class DummyModelResult implements ModelResult {
 	public String getResultString() {
 		return "Dummy result: " + probability;
 	}
+
+	@Override
+	public String[] classNames() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 }

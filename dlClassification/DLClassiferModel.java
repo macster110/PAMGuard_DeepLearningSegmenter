@@ -52,6 +52,12 @@ public interface DLClassiferModel {
 	 * @return the number of output classes. 
 	 */
 	public int getNumClasses();
+	
+	/**
+	 * Get the number of output classes. 
+	 * @return the number of output classes. 
+	 */
+	public String getClassNames();
 
 
 }

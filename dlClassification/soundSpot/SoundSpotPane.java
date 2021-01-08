@@ -15,12 +15,10 @@ import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.FileChooser;
@@ -227,8 +225,17 @@ public class SoundSpotPane extends SettingsPane<PamSoundSpotParams> {
 	 */
 	private void defaultSegmentLenChanged() {
 		if (paramsClone.defaultSegmentLen != null && usedefaultSeg.isSelected()) {
+			
+			System.out.println("Defualt segment length: " + paramsClone.defaultSegmentLen); 
 
-			int defaultsamples = (int) this.soundSpotClassifier.millis2Samples(paramsClone.defaultSegmentLen); 
+			//cannot use because, if the parent datablock has changed, samplerate will be out of date. 
+//			int defaultsamples = (int) this.soundSpotClassifier.millis2Samples(paramsClone.defaultSegmentLen); 
+			
+			
+			float sR = soundSpotClassifier.getRawSettingsPane().getSelectedParentDataBlock().getSampleRate(); 
+			
+			int defaultsamples =  (int) (paramsClone.defaultSegmentLen.doubleValue()*sR/1000.0);
+			
 			//work out the window length in samples
 			soundSpotClassifier.getRawSettingsPane().getSegmentLenSpinner().getValueFactory().setValue(defaultsamples);
 			soundSpotClassifier.getRawSettingsPane().getHopLenSpinner().getValueFactory().setValue((int) defaultsamples/2);
@@ -310,6 +317,8 @@ public class SoundSpotPane extends SettingsPane<PamSoundSpotParams> {
 		//		currParams.useCUDA = useCuda.isSelected(); 
 		
 		currParams = this.advSettingsPane.getParams(currParams);
+		
+		currParams.useDefaultTransfroms = this.usedefaultSeg.isSelected(); 
 
 		return currParams;
 	}
@@ -329,6 +338,9 @@ public class SoundSpotPane extends SettingsPane<PamSoundSpotParams> {
 			currentSelectedFile = new File(currentParams.modelPath);
 			newModelSelected( currentSelectedFile); 
 		}
+
+		usedefaultSeg.setSelected(currParams.useDefaultTransfroms); 
+		defaultSegmentLenChanged();
 
 		updatePathLabel(); 
 

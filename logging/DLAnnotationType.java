@@ -1,5 +1,6 @@
 package rawDeepLearningClassifer.logging;
 
+import PamView.symbol.AnnotationSymbolChooser;
 import annotation.CentralAnnotationsList;
 import annotation.DataAnnotationType;
 import annotation.binary.AnnotationBinaryHandler;
@@ -13,7 +14,7 @@ import rawDeepLearningClassifer.DLControl;
  */
 public class DLAnnotationType extends DataAnnotationType<DLAnnotation>  {
 		
-		public static final String NAME = "Deep learning result";
+		public static final String NAME = "Deep_learning_result";
 		
 		private DLAnnotationSQL dlAnnotationSQL;
 		
@@ -21,10 +22,13 @@ public class DLAnnotationType extends DataAnnotationType<DLAnnotation>  {
 
 		private DLControl dlControl;
 
+		private DLAnnotationSymbolChooser dlSymbolChooser;
+
 		public DLAnnotationType(DLControl mtControl) {
 			this.dlControl=mtControl;
 			dlAnnotationSQL = new DLAnnotationSQL(this);
 			dlAnnotationBinary = new DLAnnotationBinary(this);
+			dlSymbolChooser = new DLAnnotationSymbolChooser(); 
 			//add to annotations. 
 			CentralAnnotationsList.addAnnotationType(this);
 		}
@@ -58,6 +62,7 @@ public class DLAnnotationType extends DataAnnotationType<DLAnnotation>  {
 		 */
 		@Override
 		public AnnotationBinaryHandler<DLAnnotation> getBinaryHandler() {
+			//System.out.println("Get annotation binary handler: "); 
 			return dlAnnotationBinary;
 		}
 
@@ -66,7 +71,13 @@ public class DLAnnotationType extends DataAnnotationType<DLAnnotation>  {
 //		 */
 		@Override
 		public String getShortIdCode() {
-			return NAME;
+			return "DLRE";
+		}
+		
+	
+		@Override
+		public AnnotationSymbolChooser getSymbolChooser() {
+			return dlSymbolChooser;
 		}
 		
 		

@@ -3,14 +3,15 @@ package rawDeepLearningClassifer.dlClassification;
 import java.util.ArrayList;
 
 import PamDetection.RawDataUnit;
-import PamUtils.PamArrayUtils;
 import PamUtils.PamUtils;
 import PamView.GroupedSourceParameters;
 import PamView.PamDetectionOverlayGraphics;
 import PamguardMVC.DataUnitBaseData;
 import PamguardMVC.PamDataUnit;
+import PamguardMVC.PamInstantProcess;
 import PamguardMVC.PamObservable;
 import PamguardMVC.PamProcess;
+import annotation.DataAnnotationType;
 import rawDeepLearningClassifer.DLControl;
 import rawDeepLearningClassifer.layoutFX.DLDetectionGraphics;
 import rawDeepLearningClassifer.layoutFX.DLGraphics;
@@ -73,6 +74,8 @@ public class DLClassifyProcess extends PamProcess {
 
 	public DLClassifyProcess(DLControl dlControl, SegmenterDataBlock parentDataBlock) {
 		super(dlControl, parentDataBlock);
+		
+//		this.setParentDataBlock(parentDataBlock);
 
 		this.dlControl = dlControl; 
 
@@ -109,15 +112,13 @@ public class DLClassifyProcess extends PamProcess {
 	private void setupClassifierProcess() {
 
 		if (dlControl.getDLParams()==null) {
-			System.err.println("SegmenterProcess.setupSegmenter: The DLParams are null???"); 
-
+			System.err.println("SegmenterProcess.setupSegmenter: The DLParams are null???");
 		}
 
 		if (dlControl.getDLParams().groupedSourceParams==null) {
 			dlControl.getDLParams().groupedSourceParams = new GroupedSourceParameters(); 
 			System.err.println("Raw Deep Learning Classifier: The grouped source parameters were null. A new instance has been created: Possible de-serialization error.");
 		}
-
 
 		int[] chanGroups = dlControl.getDLParams().groupedSourceParams.getChannelGroups();
 
@@ -155,9 +156,12 @@ public class DLClassifyProcess extends PamProcess {
 	public void newData(PamObservable obs, PamDataUnit pamRawData) {
 
 		//the raw data units should appear in sequential channel order  
-		//		System.out.println("New raw data in: chan: " + PamUtils.getSingleChannel(pamRawData.getChannelBitmap()) + " Size: " +  pamRawData.getSampleDuration()); 
+	
 		GroupedRawData rawDataUnit = (GroupedRawData) pamRawData;
 
+//		System.out.println("New raw data in: chan: " + PamUtils.getSingleChannel(pamRawData.getChannelBitmap()) + 
+//				" Size: " +  pamRawData.getSampleDuration() + " first sample: " + rawDataUnit.getRawData()[0][0]); 
+		
 		//run the deep learning algorithm 
 		ModelResult modelResult = this.dlControl.getDLModel().runModel(rawDataUnit); 
 
@@ -184,8 +188,6 @@ public class DLClassifyProcess extends PamProcess {
 		dlDataUnit.setDurationInMilliseconds(pamRawData.getDurationInMilliseconds()); 
 
 		this.dlModelResultDataBlock.addPamData(dlDataUnit); //here
-
-
 
 		//need to implement multiple groups. 
 		for (int i=0; i<getSourceParams().countChannelGroups(); i++) {
@@ -220,22 +222,24 @@ public class DLClassifyProcess extends PamProcess {
 
 					}
 					else {
-						if (pamRawData.getParentDataUnit() instanceof RawDataUnit) {
-							//no binary classification thus the data unit is complete and buffer must be saved. 
-							DLDetection dlDetection  = makeDLDetection(groupDataBuffer[i], modelResultDataBuffer[i]); 
-							clearBuffer(i) ;
-							if (dlDetection!=null) {
-								this.dlDetectionDataBlock.addPamData(dlDetection);
-								System.out.println("Amplitude: " + dlDetection.getAmplitudeDB()  + "  " + dlDetection.getMeasuredAmplitudeType());
-							}
+						//no binary classification thus the data unit is complete and buffer must be saved. 
+						DLDetection dlDetection  = makeDLDetection(groupDataBuffer[i], modelResultDataBuffer[i]); 
+						clearBuffer(i) ;
+						if (dlDetection!=null) {
+							this.dlDetectionDataBlock.addPamData(dlDetection);
+							System.out.println("Amplitude: " + dlDetection.getAmplitudeDB()  + "  " + dlDetection.getMeasuredAmplitudeType());
 						}
+
 					}
 				}
 				else {
-					//need to go by the parent data unit for merging data, not the 
+					//need to go by the parent data unit for merging data not the segmentds. 
+					//System.out.println("Save click annotation 0 "); 
+
 					if (pamRawData.getParentDataUnit()!=lastParentDataUnit[i]) {
 						//save any data
 						if (groupDataBuffer[i].size()>0 && lastParentDataUnit[i]!=null) {
+							//System.out.println("Save click annotation 1 "); 
 							if (this.dlControl.getDLParams().forceSave) {
 								DLDetection dlDetection = makeDLDetection(groupDataBuffer[i],modelResultDataBuffer[i]);
 								clearBuffer(i);
@@ -258,6 +262,7 @@ public class DLClassifyProcess extends PamProcess {
 		}
 	}
 
+	
 	/**
 	 * Make a positive DL detection from a number of model results and corresponding chunks of raw sound data. 
 	 * @param groupDataBuffer - the raw data chunks (these may overlap). 
@@ -286,10 +291,6 @@ public class DLClassifyProcess extends PamProcess {
 		basicData.setMillisecondDuration(1000.*groupDataBuffer.size()*dlControl.getDLParams().sampleHop/this.sampleRate);
 		basicData.setSampleDuration((long) (groupDataBuffer.size()*dlControl.getDLParams().sampleHop));
 		
-		
-		
-
-
 		//		System.out.println("Model result: " + modelResult.size()); 
 		DLDetection dlDetection = new DLDetection(basicData, rawdata); 
 		addDLAnnotation(dlDetection, groupDataBuffer,modelResult); 
@@ -319,6 +320,9 @@ public class DLClassifyProcess extends PamProcess {
 	 * @return a DL detection with merged raw data. 
 	 */
 	private void addDLAnnotation(PamDataUnit parentDataUnit, ArrayList<GroupedRawData> groupDataBuffer, ArrayList<ModelResult> modelResult) {
+		
+		//System.out.println("DLClassifyProces: Add annnotation to  " + parentDataUnit); 
+
 		parentDataUnit.addDataAnnotation(new DLAnnotation(dlAnnotationType, modelResult)); 
 	}
 
@@ -366,6 +370,15 @@ public class DLClassifyProcess extends PamProcess {
 	 */
 	private GroupedSourceParameters getSourceParams() {
 		return dlControl.getDLParams().groupedSourceParams; 
+	}
+
+	/**
+	 * Get the DL annotation type. This handles adding annotations to data units 
+	 * with the deep learning results. 
+	 * @return the annotation type. 
+	 */
+	public DLAnnotationType getDLAnnotionType() {
+		return dlAnnotationType;
 	}
 
 }

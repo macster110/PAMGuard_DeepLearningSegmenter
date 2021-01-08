@@ -3,7 +3,6 @@ package rawDeepLearningClassifer;
 import PamController.PamController;
 import PamController.PamControllerInterface;
 import PamController.SettingsPane;
-import fftManager.layoutFX.FFTPaneFX;
 import pamViewFX.PamControlledGUIFX;
 
 /**

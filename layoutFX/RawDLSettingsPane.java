@@ -308,4 +308,12 @@ public class RawDLSettingsPane  extends SettingsPane<RawDLParams>{
 		// TODO Auto-generated method stub
 	}
 
+	/**
+	 * Get the data block currently selected in the pane. 
+	 * @return the data block currently selected in the pane. 
+	 */
+	public PamDataBlock getSelectedParentDataBlock() {
+		return sourcePane.getSource();
+	}
+
 }

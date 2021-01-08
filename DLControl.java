@@ -19,10 +19,7 @@ import PamView.PamSidePanel;
 import PamView.WrapperControlledGUISwing;
 import PamguardMVC.PamDataBlock;
 import PamguardMVC.PamRawDataBlock;
-import clickDetector.tdPlots.ClickDetSymbolManager;
 import dataPlotsFX.data.TDDataProviderRegisterFX;
-import dataPlotsFX.rawClipDataPlot.ClipPlotProviderFX;
-import detectionPlotFX.clickDDPlot.ClickDDPlotProvider;
 import detectionPlotFX.data.DDPlotRegister;
 import pamViewFX.fxNodes.pamDialogFX.PamDialogFX2AWT;
 import rawDeepLearningClassifer.dataPlotFX.DLDetectionPlotProvider;
@@ -30,12 +27,13 @@ import rawDeepLearningClassifer.ddPlotFX.RawDLDDPlotProvider;
 import rawDeepLearningClassifer.dlClassification.DLClassiferModel;
 import rawDeepLearningClassifer.dlClassification.DLClassifyProcess;
 import rawDeepLearningClassifer.dlClassification.dummyClassifier.DummyClassifier;
-import rawDeepLearningClassifer.dlClassification.orcaSpot.OrcaSpotClassifier;
+//import rawDeepLearningClassifer.dlClassification.orcaSpot.OrcaSpotClassifier;
 import rawDeepLearningClassifer.dlClassification.soundSpot.SoundSpotClassifier;
 import rawDeepLearningClassifer.layoutFX.DLSidePanelSwing;
 import rawDeepLearningClassifer.layoutFX.DLSymbolManager;
 import rawDeepLearningClassifer.layoutFX.RawDLSettingsPane;
 import rawDeepLearningClassifer.logging.DLResultBinarySource;
+import rawDeepLearningClassifer.offline.DLOfflineProcess;
 import rawDeepLearningClassifer.logging.DLDataUnitDatagram;
 import rawDeepLearningClassifer.logging.DLDetectionBinarySource;
 import rawDeepLearningClassifer.logging.DLDetectionDatagram;
@@ -52,6 +50,23 @@ import rawDeepLearningClassifer.segmenter.SegmenterProcess;
  */
 @SuppressWarnings("deprecation")
 public class DLControl extends PamControlledUnit implements PamSettings {
+	
+	/**
+	 * Flag for processing start
+	 */
+	public static final int PROCESSING_START = 0;
+
+	/**
+	 * Flag to indicate a setup is required
+	 */
+	public static final int NEW_PARAMS = 1;
+
+	/*
+	 * Called whenever processing has ended. This allows algorithms to save currently 
+	 * held click trains etc once processing has completed. 
+	 */
+	public static final int PROCESSING_END = 2;
+
 
 	/**
 	 * List of different deep learning models that are available. 
@@ -106,7 +121,13 @@ public class DLControl extends PamControlledUnit implements PamSettings {
 	/**
 	 * The binary data source for detection data
 	 */
-	private DLDetectionBinarySource dlDetectionBinarySource; 
+	private DLDetectionBinarySource dlDetectionBinarySource;
+	
+
+	/**
+	 * The DL offline process. 
+	 */
+	private DLOfflineProcess dlOfflineProcess; 
 
 
 	/**
@@ -140,7 +161,11 @@ public class DLControl extends PamControlledUnit implements PamSettings {
 
 		dlModels.add(new SoundSpotClassifier(this)); 
 		dlModels.add(new DummyClassifier()); 
-		dlModels.add(new OrcaSpotClassifier(this)); 
+		//dlModels.add(new OrcaSpotClassifier(this)); //removed soon.
+	
+		if (this.isViewer) {
+			dlOfflineProcess = new DLOfflineProcess(this);
+		}; 
 
 		//register click detector for the javafx display. 
 		TDDataProviderRegisterFX.getInstance().registerDataInfo(new DLDetectionPlotProvider(this, dlClassifyProcess.getDLDetectionDatablock()));
@@ -152,6 +177,8 @@ public class DLControl extends PamControlledUnit implements PamSettings {
 		//ensure everything is updated. 
 		updateParams(rawDLParmas); 
 	}
+
+
 
 
 	/**
@@ -178,9 +205,15 @@ public class DLControl extends PamControlledUnit implements PamSettings {
 	 */
 	private void updateParams(RawDLParams newParams) {
 		this.rawDLParmas = newParams; 
-
+		
 		this.segmenterProcess.setupSegmenter(); 
 		this.dlClassifyProcess.setupProcess();
+		
+		//this is a bit of a hack. Annotations are added to data units but the datablock knows nothing about them
+		//unless the annotation type is set in the datablock. This is required for things like symbol choosers that 
+		//may need to know a data block contains a certian type of annotation. 
+		
+		this.getParentDataBlock().addDataAnnotationType(dlClassifyProcess.getDLAnnotionType());
 
 		if (dlSidePanel!=null) {
 			dlSidePanel.setupPanel(); 
@@ -240,37 +273,9 @@ public class DLControl extends PamControlledUnit implements PamSettings {
 		return settingsPane; 
 	}
 
-
-	@Override
-	public JMenuItem createDetectionMenu(Frame parentFrame) {
-		JMenu menu = new JMenu("Raw Deep Learning Classifier"); 
-
-		JMenuItem menuItem = new JMenuItem("Settings..."); 
-		menuItem.addActionListener((action)->{
-			showSettingsDialog(parentFrame); 
-		});
-		menu.add(menuItem);
-
-		//		if (this.isViewer) {
-		//			menuItem = new JMenuItem("Reclassy clicks..."); 
-		//			menuItem.addActionListener((action)->{
-		//				this.mtOfflineProcess.showOfflineDialog(parentFrame);
-		//			});
-		//			menu.add(menuItem);
-		//		}
-		//		
-		return menu; 
-	}
-
-
-
-	@Override
-	public PamSidePanel getSidePanel() {
-		if (dlSidePanel ==null) {
-			dlSidePanel = new DLSidePanelSwing(this); 
-		}
-		return dlSidePanel;
-	}
+	/****----Baked in Swing stuff----*****/
+	
+	//Swing components should not be in the control class but that is way PG is at the moment. 
 
 	/**
 	 * Show settings dialog. 
@@ -289,6 +294,36 @@ public class DLControl extends PamControlledUnit implements PamSettings {
 		if (newParams!=null) {
 			updateParams(newParams); 
 		}
+	}
+
+
+	@Override
+	public PamSidePanel getSidePanel() {
+		if (dlSidePanel ==null) {
+			dlSidePanel = new DLSidePanelSwing(this); 
+		}
+		return dlSidePanel;
+	}
+	
+	@Override
+	public JMenuItem createDetectionMenu(Frame parentFrame) {
+		JMenu menu = new JMenu("Raw Deep Learning Classifier"); 
+
+		JMenuItem menuItem = new JMenuItem("Settings..."); 
+		menuItem.addActionListener((action)->{
+			showSettingsDialog(parentFrame); 
+		});
+		menu.add(menuItem);
+
+		if (this.isViewer) {
+			menuItem = new JMenuItem("Reclassify detections..."); 
+			menuItem.addActionListener((action)->{
+				this.dlOfflineProcess.showOfflineDialog(parentFrame);
+			});
+			menu.add(menuItem);
+		}
+		
+		return menu; 
 	}
 
 
@@ -348,6 +383,19 @@ public class DLControl extends PamControlledUnit implements PamSettings {
 	public int getNumClasses() {
 		return  getDLModel().getNumClasses(); 
 		
+	}
+	
+	/**
+	 * Called whenever offline processing is occurring 
+	 * @param processingFlag
+	 */
+	public void update(int processingFlag) {
+		switch (processingFlag) {
+		case DLControl.PROCESSING_END:
+			//force the click detector to repaint. 
+			break;
+		}
+
 	}
 
 }

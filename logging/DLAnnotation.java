@@ -35,6 +35,7 @@ public class DLAnnotation extends DataAnnotation<DLAnnotationType> {
 
 	@Override
 	public String toString() {
+		
 		String results = "<html>"; 
 
 		if (modelResults==null) {
@@ -59,7 +60,6 @@ public class DLAnnotation extends DataAnnotation<DLAnnotationType> {
 		}
 		
 		results += "</html>"; 
-
 
 		return results;
 	}

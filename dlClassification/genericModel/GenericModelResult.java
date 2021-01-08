@@ -1,4 +1,6 @@
-package rawDeepLearningClassifer.dlClassification;
+package rawDeepLearningClassifer.dlClassification.genericModel;
+
+import rawDeepLearningClassifer.dlClassification.ModelResult;
 
 /**
  * A generic model result. Primarily used for datagrams etc where
@@ -41,6 +43,12 @@ public class GenericModelResult implements ModelResult {
 
 	@Override
 	public String getResultString() {
+		return null;
+	}
+
+	@Override
+	public String[] classNames() {
+		// TODO Auto-generated method stub
 		return null;
 	}
 

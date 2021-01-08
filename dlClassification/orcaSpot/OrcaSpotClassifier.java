@@ -322,4 +322,10 @@ public class OrcaSpotClassifier implements DLClassiferModel, PamSettings {
 		return 1;
 	}
 
+	@Override
+	public String getClassNames() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
