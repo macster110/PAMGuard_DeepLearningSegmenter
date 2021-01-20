@@ -187,7 +187,7 @@ public class RawDLSettingsPane  extends SettingsPane<RawDLParams>{
 					stage.sizeToScene();
 				}
 			}
-
+			//this.dlControl.getAnnotationType().getSymbolModifier(symbolChooser).
 		});
 
 		vBox.getChildren().add(dlModelBox);

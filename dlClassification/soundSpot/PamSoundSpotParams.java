@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.jamdev.jtorch4pam.transforms.DLTransform;
 
+import rawDeepLearningClassifer.dlClassification.DLClassName;
 import rawDeepLearningClassifer.layoutFX.dlTransfroms.DLTransformPane;
 import rawDeepLearningClassifer.layoutFX.dlTransfroms.DLTransformParams;
 
@@ -21,7 +22,7 @@ public class PamSoundSpotParams implements Serializable, Cloneable {
 	/**
 	 * 
 	 */
-	public static final long serialVersionUID = 2L;
+	public static final long serialVersionUID = 3L;
 	
 	/**
 	 * The model path
@@ -68,7 +69,7 @@ public class PamSoundSpotParams implements Serializable, Cloneable {
 	/**
 	 * The class names. e.g. porpoise, noise, bat
 	 */
-	public String[] classNames; 
+	public DLClassName[] classNames; 
 
 
 	

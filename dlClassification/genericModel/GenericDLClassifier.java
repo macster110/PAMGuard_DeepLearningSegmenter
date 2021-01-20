@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import PamController.PamControlledUnitSettings;
 import PamController.PamSettings;
+import rawDeepLearningClassifer.dlClassification.DLClassName;
 import rawDeepLearningClassifer.dlClassification.DLClassiferModel;
 import rawDeepLearningClassifer.dlClassification.ModelResult;
 import rawDeepLearningClassifer.layoutFX.DLCLassiferModelUI;
@@ -91,7 +92,7 @@ public class GenericDLClassifier implements DLClassiferModel, PamSettings {
 	}
 
 	@Override
-	public String getClassNames() {
+	public DLClassName[] getClassNames() {
 		// TODO Auto-generated method stub
 		return null;
 	}

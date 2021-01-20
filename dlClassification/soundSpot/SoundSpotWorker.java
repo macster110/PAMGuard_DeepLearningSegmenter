@@ -13,6 +13,7 @@ import org.pytorch.Module;
 import org.pytorch.Tensor;
 
 import PamUtils.PamCalendar;
+import rawDeepLearningClassifer.DLControl;
 import rawDeepLearningClassifer.segmenter.SegmenterProcess.GroupedRawData;
 
 
@@ -58,7 +59,7 @@ public class SoundSpotWorker {
 	/**
 	 * Prepare the model 
 	 */
-	public void prepModel(PamSoundSpotParams soundSpotParams) {
+	public void prepModel(PamSoundSpotParams soundSpotParams, DLControl dlControl) {
 		try {
 			//first open the model and get the correct parameters. 
 			soundSpotModel = new SoundSpotModel(soundSpotParams.modelPath); 
@@ -75,8 +76,20 @@ public class SoundSpotWorker {
 			this.modelTransforms =  model2DLTransforms(dlParams); 
 			soundSpotParams.defaultSegmentLen = dlParams.seglen; //the segment length in microseconds. 
 			soundSpotParams.numClasses = dlParams.classNames.length; 
-			soundSpotParams.classNames = dlParams.classNames; 
 
+//			if (dlParams.classNames!=null) {
+//				for (int i = 0; i<dlParams.classNames.length; i++) {
+//					System.out.println("Class name " + i + "  "  + dlParams.classNames[i]); 
+//				}
+//			}
+			soundSpotParams.classNames = dlControl.getClassNameManager().makeClassNames(dlParams.classNames); 
+
+			
+//			if (dlParams.classNames!=null) {
+//				for (int i = 0; i<soundSpotParams.classNames.length; i++) {
+//					System.out.println("Class name " + i + "  "  + soundSpotParams.classNames[i].className + " ID " + soundSpotParams.classNames[i].ID ); 
+//				}
+//			}
 			//TODO
 			//need to load the classifier metadata here...
 			//System.out.println("Model transforms: " + this.modelTransforms.size());
@@ -123,7 +136,7 @@ public class SoundSpotWorker {
 			long time1 = System.currentTimeMillis();
 			output = soundSpotModel.runModel(DLUtils.toFloatArray(transformedData)); 
 			long time2 = System.currentTimeMillis();
-			
+
 			//System.out.println(PamCalendar.formatDBDateTime(rawDataUnit.getTimeMilliseconds(), true) + " Time to run model: " + (time2-time1) + " ms for spec of len: " + transformedData.length); 
 
 			float[] prob = new float[output.length]; 

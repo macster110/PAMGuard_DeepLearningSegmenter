@@ -111,7 +111,7 @@ public class OrcaSpotModelResult implements ModelResult {
 	}
 
 	@Override
-	public String[] classNames() {
+	public short[] getClassNames() {
 		// TODO Auto-generated method stub
 		return null;
 	}

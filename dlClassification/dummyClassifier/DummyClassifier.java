@@ -2,6 +2,7 @@ package rawDeepLearningClassifer.dlClassification.dummyClassifier;
 
 import java.io.Serializable;
 
+import rawDeepLearningClassifer.dlClassification.DLClassName;
 import rawDeepLearningClassifer.dlClassification.DLClassiferModel;
 import rawDeepLearningClassifer.dlClassification.ModelResult;
 import rawDeepLearningClassifer.layoutFX.DLCLassiferModelUI;
@@ -55,7 +56,7 @@ public class DummyClassifier implements DLClassiferModel{
 	}
 
 	@Override
-	public String getClassNames() {
+	public DLClassName[] getClassNames() {
 		// TODO Auto-generated method stub
 		return null;
 	}

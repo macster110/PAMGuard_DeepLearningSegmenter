@@ -10,6 +10,7 @@ import PamController.PamControlledUnitSettings;
 import PamController.PamSettingManager;
 import PamController.PamSettings;
 import rawDeepLearningClassifer.DLControl;
+import rawDeepLearningClassifer.dlClassification.DLClassName;
 import rawDeepLearningClassifer.dlClassification.DLClassiferModel;
 import rawDeepLearningClassifer.dlClassification.DLDataUnit;
 import rawDeepLearningClassifer.dlClassification.DLDetection;
@@ -323,7 +324,7 @@ public class OrcaSpotClassifier implements DLClassiferModel, PamSettings {
 	}
 
 	@Override
-	public String getClassNames() {
+	public DLClassName[] getClassNames() {
 		// TODO Auto-generated method stub
 		return null;
 	}

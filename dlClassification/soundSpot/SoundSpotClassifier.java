@@ -7,17 +7,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.jamdev.jtorch4pam.SoundSpot.SoundSpotParams;
-import org.jamdev.jtorch4pam.transforms.DLTransform;
-import org.jamdev.jtorch4pam.transforms.DLTransform.DLTransformType;
-import org.jamdev.jtorch4pam.transforms.FreqTransform;
-import org.jamdev.jtorch4pam.transforms.WaveTransform;
-
 import PamController.PamControlledUnitSettings;
 import PamController.PamSettingManager;
 import PamController.PamSettings;
 import PamUtils.PamCalendar;
 import rawDeepLearningClassifer.DLControl;
+import rawDeepLearningClassifer.dlClassification.DLClassName;
 import rawDeepLearningClassifer.dlClassification.DLClassiferModel;
 import rawDeepLearningClassifer.dlClassification.ModelResult;
 import rawDeepLearningClassifer.layoutFX.DLCLassiferModelUI;
@@ -40,8 +35,8 @@ import warnings.WarningSystem;
  *
  */
 public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
-	
-	
+
+
 	/**
 	 * The maximum queue size. 
 	 */
@@ -52,13 +47,12 @@ public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 	 */
 	private DLControl dlControl;
 
-
 	/**
 	 * The user interface for sound spot. 
 	 */
 	private SoundSpotUI soundSpotUI; 
 
-	
+
 	/**
 	 * Holds a list of segmented raw data units which need to be classified. 
 	 */
@@ -74,14 +68,13 @@ public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 	 * The deep learning model worker.
 	 */
 	private SoundSpotWorker soundSpotWorker;
-	
+
 	/**
 	 * True to force the classifier to use a queue - used for simulating real time operation. 
 	 */
 	private boolean forceQueue = false; 
 
-	PamWarning soundSpotWarning = new PamWarning("SoundSpotClassifier", "",
-			2); 
+	PamWarning soundSpotWarning = new PamWarning("SoundSpotClassifier", "",2); 
 
 
 
@@ -93,7 +86,7 @@ public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 		PamSettingManager.getInstance().registerSettings(this);
 	}
 
-	
+
 	@Override
 	public ModelResult runModel(GroupedRawData groupedRawData) {
 		/**
@@ -102,7 +95,10 @@ public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 		 */
 		if ((PamCalendar.isSoundFile() && !forceQueue) || dlControl.isViewer()) {
 			//run the model 
-			SoundSpotResult modelResult = getSoundSpotWorker().runModel(groupedRawData, groupedRawData.getParentDataBlock().getSampleRate(), 0); 
+			SoundSpotResult modelResult = getSoundSpotWorker().runModel(groupedRawData, 
+					groupedRawData.getParentDataBlock().getSampleRate(), 0); 
+			modelResult.setClassNameID(getClassNameIDs() ); 
+
 			return modelResult; //returns to the classifier. 
 		}
 		else {
@@ -115,8 +111,8 @@ public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 		}
 		return null;
 	}
-	
-	
+
+
 	/**
 	 * Get the sound spot worker. 
 	 * @returnthe sound spot worker. 
@@ -128,11 +124,11 @@ public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 		return soundSpotWorker; 
 	}
 
-	
+
 	public class TaskThread extends Thread {
 
 		private AtomicBoolean run = new AtomicBoolean(true);
-		
+
 		TaskThread() {
 			super("TaskThread");
 			if (soundSpotWorker == null) {
@@ -158,7 +154,9 @@ public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 						//						System.out.println("ORCASPOT THREAD: " + "The queue size is " + queue.size()); 
 						GroupedRawData groupedRawData = queue.remove(0);
 
-						SoundSpotResult modelResult = getSoundSpotWorker().runModel(groupedRawData,groupedRawData.getParentDataBlock().getSampleRate(), 0); 
+						SoundSpotResult modelResult = getSoundSpotWorker().runModel(groupedRawData,
+								groupedRawData.getParentDataBlock().getSampleRate(), 0); 
+						modelResult.setClassNameID(getClassNameIDs() ); 
 
 						newResult(modelResult, groupedRawData);
 
@@ -176,7 +174,20 @@ public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 		}
 
 	}
-	
+
+	/**
+	 * Get the class name IDs
+	 * @return an array of class name IDs
+	 */
+	private short[] getClassNameIDs() {
+		if (soundSpotParmas.classNames==null || soundSpotParmas.classNames.length<=0) return null; 
+		short[] nameIDs = new short[soundSpotParmas.classNames.length]; 
+		for (int i = 0 ; i<soundSpotParmas.classNames.length; i++) {
+			nameIDs[i] = soundSpotParmas.classNames[i].ID; 
+		}
+		return nameIDs; 
+	}
+
 	/**
 	 * Send a new result form the thread queue to the process. 
 	 * @param modelResult - the model result;
@@ -184,19 +195,19 @@ public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 	 */
 	private void newResult(SoundSpotResult modelResult, GroupedRawData groupedRawData) {
 		this.dlControl.getDLClassifyProcess().newModelResult(modelResult, groupedRawData);
-		
+
 	}
-	
+
 
 	@Override
 	public void prepModel() {
 		//System.out.println("PrepModel! !!!");
-		getSoundSpotWorker().prepModel(soundSpotParmas);
+		getSoundSpotWorker().prepModel(soundSpotParmas, dlControl);
 		if (!soundSpotParmas.useDefaultTransfroms) {
 			//set cusotm transforms in the model. 
 			getSoundSpotWorker().setModelTransforms(soundSpotParmas.dlTransfroms);
 		}
-		
+
 		if (	getSoundSpotWorker().getModel()==null) {
 			soundSpotWarning.setWarningMessage("There is no loaded classifier model. SoundSpot disabled.");
 			WarningSystem.getWarningSystem().addWarning(soundSpotWarning);
@@ -205,7 +216,7 @@ public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 
 	@Override
 	public void closeModel() {
-		
+
 
 	}
 
@@ -274,24 +285,20 @@ public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 	 */
 	public void setSoundSpotParams(PamSoundSpotParams soundSpotParmas) {
 		this.soundSpotParmas=soundSpotParmas; 
-		
+
 	}
 
-	@Override
-	public int getNumClasses() {
-		return this.soundSpotParmas.numClasses;
-	}
 
 
 	public void newModelSelected(File file) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	public RawDLSettingsPane getRawSettingsPane() {
 		return this.dlControl.getSettingsPane();
 	}
-	
+
 	/**
 	 * Get the number of samples for microseconds. Based on the sample rate of the parent data block. 
 	 */
@@ -300,11 +307,20 @@ public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 		return millis*this.dlControl.getSegmenter().getSampleRate()/1000.0;
 	}
 
+	@Override
+	public int getNumClasses() {
+		return this.soundSpotParmas.numClasses;
+	}
 
 	@Override
-	public String getClassNames() {
-		// TODO Auto-generated method stub
-		return null;
+	public DLClassName[] getClassNames() {
+		return soundSpotParmas.classNames;
 	}
+
+
+	public DLControl getDLControl() {
+		return dlControl;
+	}
+
 
 }

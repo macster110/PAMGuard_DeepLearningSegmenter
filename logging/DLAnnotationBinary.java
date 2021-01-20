@@ -82,9 +82,7 @@ public class DLAnnotationBinary extends AnnotationBinaryHandler<DLAnnotation> {
 		try {
 
 			int numModels  = dis.readShort(); 
-			
 //			System.out.println("DLAnnotationBinary.Number of model results: " + numModels); 
-
 			for (int i =0; i<numModels; i++) {
 				modelResults.add(ModelResultBinaryFactory.sinkData(dis)); 
 			}

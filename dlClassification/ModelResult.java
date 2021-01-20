@@ -17,10 +17,11 @@ public interface ModelResult {
 	public float[] getPrediction(); 
 	
 	/**
-	 * Get the class names associated with this result. Can be null. 
-	 * @return a list of the class names for the result. Can be null or an array the same length as getPrediciton(); 
+	 * Get the class name IDs associated with this result. Can be null. @see DLClassNameManager to get strings of 
+	 * class names. 
+	 * @return a list of the class name ID for the result. Can be null or an array the same length as getPrediciton(); 
 	 */
-	public String[] classNames(); 
+	public short[] getClassNames(); 
 
 	/**
 	 * Check whether binary classification has passed. 
@@ -34,8 +35,7 @@ public interface ModelResult {
 	 */
 	public double getAnalysisTime(); 
 	
-	
-	
+
 	/**
 	 * String representation of the result
 	 * @return a string of the result. 

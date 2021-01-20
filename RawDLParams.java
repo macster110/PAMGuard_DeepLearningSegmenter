@@ -1,8 +1,10 @@
 package rawDeepLearningClassifer;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 import PamView.GroupedSourceParameters;
+import rawDeepLearningClassifer.dlClassification.DLClassName;
 
 /**
  * Basic parameters for deep learning module. 
@@ -14,7 +16,7 @@ public class RawDLParams implements Serializable, Cloneable {
 	/**
 	 * 
 	 */
-	public static final long serialVersionUID = 2L;
+	public static final long serialVersionUID = 3L;
 
 	/**
 	 * The currently selected Deep Learning model. 
@@ -51,6 +53,27 @@ public class RawDLParams implements Serializable, Cloneable {
 	 */
 	public boolean forceSave = false; 
 	
+	
+	/**
+	 * Uuuruggh. Spent a lot of time thinking about this. Different models have
+	 * different class names. If we change model then the class names may change.
+	 * Previously annotated data will then be messed up. But, in a giant dataset
+	 * that may be an issue. Perhaps users wish to run a new model on some chunk of
+	 * data without messing up all the other classified detection which have used
+	 * that module. So store the data in binary files? That is super inefficient as
+	 * the same string is stored many times. So instead store a short which
+	 * identifies the string that sits in this table. Everytime a new model is added
+	 * add new classnames. Note that this means we have a maximum of 32k names - we
+	 * will come to that issue when it arises...
+	 */
+	public ArrayList<DLClassName> classNameMap = new ArrayList<DLClassName>(); 
+	
+
+	/**
+	 * The class name index. i.e. the number of unique class names that have been added. 
+	 */
+	public short classNameIndex = 0; 
+
 	
 	
 	@Override

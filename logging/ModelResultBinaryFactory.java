@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import PamUtils.PamArrayUtils;
 import binaryFileStorage.BinaryHeader;
+import rawDeepLearningClassifer.dlClassification.DLClassiferModel;
 import rawDeepLearningClassifer.dlClassification.ModelResult;
 import rawDeepLearningClassifer.dlClassification.dummyClassifier.DummyModelResult;
 import rawDeepLearningClassifer.dlClassification.genericModel.GenericModelResult;
@@ -69,6 +70,17 @@ public class ModelResultBinaryFactory {
 				dos.writeShort((short) (scale*probabilities[i]));
 			}
 
+			if (modelResult.getClassNames()==null) {
+				dos.writeShort(0);
+			}
+			else {
+				dos.writeShort(modelResult.getClassNames().length);
+				for (int i = 0; i < modelResult.getClassNames().length; i++) {
+					dos.writeShort((short) modelResult.getClassNames()[i]);
+				}
+			}
+
+
 			//specific settings for different modules 
 			switch (type) {
 			case SOUND_SPOT:
@@ -96,7 +108,7 @@ public class ModelResultBinaryFactory {
 		try {
 
 			//System.out.println("Make model result: "); 
-			
+
 			int type = dis.readByte(); 
 			boolean isBinary = dis.readBoolean(); 
 			double scale = dis.readFloat();
@@ -105,12 +117,20 @@ public class ModelResultBinaryFactory {
 			for (int i = 0; i < nSpecies; i++) {
 				data[i] = (float) (dis.readShort() / scale);
 			}
+			
+			//the class names. 
+			int nClass =  dis.readShort(); 
+			short[] classID = new short[nClass];
+			for (int i = 0; i < nClass; i++) {
+				classID[i] =  dis.readShort(); 
+			}
+			
 
 			ModelResult result; 
 			//specific settings for different modules 
 			switch (type) {
 			case SOUND_SPOT:
-				result = new SoundSpotResult(data, isBinary);  
+				result = new SoundSpotResult(data, classID, isBinary);  
 				break; 
 			case DUMMY_RESULT:
 				result = new DummyModelResult(data);  
@@ -120,7 +140,7 @@ public class ModelResultBinaryFactory {
 				result = new GenericModelResult(data, isBinary); 
 				break; 
 			}
-			
+
 			//System.out.println("New model result: "+ type); 
 
 			return result; 

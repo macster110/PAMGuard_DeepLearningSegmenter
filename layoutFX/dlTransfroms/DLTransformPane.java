@@ -14,7 +14,7 @@ import pamViewFX.fxSettingsPanes.SettingsListener;
  * @author Jamie macaulay
  *
  */
-public abstract class DLTransformPane extends PamBorderPane implements  DynamicSettings {
+public abstract class DLTransformPane extends PamBorderPane implements DynamicSettings {
 	
 	ArrayList<SettingsListener> settingsListeners = new ArrayList<SettingsListener>();
 	

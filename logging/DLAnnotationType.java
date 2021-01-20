@@ -1,11 +1,13 @@
 package rawDeepLearningClassifer.logging;
 
-import PamView.symbol.AnnotationSymbolChooser;
+import PamView.symbol.PamSymbolChooser;
+import PamView.symbol.modifier.SymbolModifier;
 import annotation.CentralAnnotationsList;
 import annotation.DataAnnotationType;
 import annotation.binary.AnnotationBinaryHandler;
 import generalDatabase.SQLLoggingAddon;
 import rawDeepLearningClassifer.DLControl;
+import rawDeepLearningClassifer.dataPlotFX.DLSymbolModifier;
 
 /**
  * Annotation type for data from the matched click classifier. 
@@ -32,7 +34,8 @@ public class DLAnnotationType extends DataAnnotationType<DLAnnotation>  {
 			//add to annotations. 
 			CentralAnnotationsList.addAnnotationType(this);
 		}
-
+		
+		
 		@Override
 		public String getAnnotationName() {
 			return NAME;
@@ -69,17 +72,22 @@ public class DLAnnotationType extends DataAnnotationType<DLAnnotation>  {
 //		/* (non-Javadoc)
 //		 * @see annotation.DataAnnotationType#getShortIdCode()
 //		 */
-		@Override
-		public String getShortIdCode() {
-			return "DLRE";
-		}
+//		@Override
+//		public String getShortIdCode() {
+//			return "DLRE";
+//		}
 		
 	
+
 		@Override
-		public AnnotationSymbolChooser getSymbolChooser() {
-			return dlSymbolChooser;
+		public DLSymbolModifier getSymbolModifier(PamSymbolChooser symbolChooser) {
+			return new DLSymbolModifier(symbolChooser, this);
 		}
 		
+		public DLControl getDlControl() {
+			return dlControl;
+		}
+
 		
 
 

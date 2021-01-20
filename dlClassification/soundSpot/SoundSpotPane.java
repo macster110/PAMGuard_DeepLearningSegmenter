@@ -224,9 +224,9 @@ public class SoundSpotPane extends SettingsPane<PamSoundSpotParams> {
 	 * The default segment len changed. 
 	 */
 	private void defaultSegmentLenChanged() {
-		if (paramsClone.defaultSegmentLen != null && usedefaultSeg.isSelected()) {
+		if (paramsClone!=null && paramsClone.defaultSegmentLen != null && usedefaultSeg.isSelected()) {
 			
-			System.out.println("Defualt segment length: " + paramsClone.defaultSegmentLen); 
+			//System.out.println("Defualt segment length: " + paramsClone.defaultSegmentLen); 
 
 			//cannot use because, if the parent datablock has changed, samplerate will be out of date. 
 //			int defaultsamples = (int) this.soundSpotClassifier.millis2Samples(paramsClone.defaultSegmentLen); 
@@ -257,7 +257,7 @@ public class SoundSpotPane extends SettingsPane<PamSoundSpotParams> {
 
 		paramsClone = new PamSoundSpotParams(); 
 		//prep the model with current parameters; 
-		this.soundSpotClassifier.getSoundSpotWorker().prepModel(getParams(paramsClone));
+		this.soundSpotClassifier.getSoundSpotWorker().prepModel(getParams(paramsClone), soundSpotClassifier.getDLControl());
 		//get the model tansforms calculated from the model by SoundSpoyWorker and apply them to our temporary params clone. 
 		paramsClone.dlTransfroms = this.soundSpotClassifier.getSoundSpotWorker().getModelTransforms(); 
 		///set the advanced pane parameters. 

@@ -24,6 +24,8 @@ import detectionPlotFX.data.DDPlotRegister;
 import pamViewFX.fxNodes.pamDialogFX.PamDialogFX2AWT;
 import rawDeepLearningClassifer.dataPlotFX.DLDetectionPlotProvider;
 import rawDeepLearningClassifer.ddPlotFX.RawDLDDPlotProvider;
+import rawDeepLearningClassifer.dlClassification.DLClassName;
+import rawDeepLearningClassifer.dlClassification.DLClassNameManager;
 import rawDeepLearningClassifer.dlClassification.DLClassiferModel;
 import rawDeepLearningClassifer.dlClassification.DLClassifyProcess;
 import rawDeepLearningClassifer.dlClassification.dummyClassifier.DummyClassifier;
@@ -34,6 +36,7 @@ import rawDeepLearningClassifer.layoutFX.DLSymbolManager;
 import rawDeepLearningClassifer.layoutFX.RawDLSettingsPane;
 import rawDeepLearningClassifer.logging.DLResultBinarySource;
 import rawDeepLearningClassifer.offline.DLOfflineProcess;
+import rawDeepLearningClassifer.logging.DLAnnotationType;
 import rawDeepLearningClassifer.logging.DLDataUnitDatagram;
 import rawDeepLearningClassifer.logging.DLDetectionBinarySource;
 import rawDeepLearningClassifer.logging.DLDetectionDatagram;
@@ -48,7 +51,6 @@ import rawDeepLearningClassifer.segmenter.SegmenterProcess;
  * @author Jamie Macaulay 
  *
  */
-@SuppressWarnings("deprecation")
 public class DLControl extends PamControlledUnit implements PamSettings {
 	
 	/**
@@ -72,7 +74,7 @@ public class DLControl extends PamControlledUnit implements PamSettings {
 	 * List of different deep learning models that are available. 
 	 */
 	private ArrayList<DLClassiferModel> dlModels = new ArrayList<DLClassiferModel>();
-
+	
 	/**
 	 * The settings pane. 
 	 */
@@ -127,7 +129,9 @@ public class DLControl extends PamControlledUnit implements PamSettings {
 	/**
 	 * The DL offline process. 
 	 */
-	private DLOfflineProcess dlOfflineProcess; 
+	private DLOfflineProcess dlOfflineProcess;
+
+	private DLClassNameManager dlClassNameManager; 
 
 
 	/**
@@ -136,7 +140,7 @@ public class DLControl extends PamControlledUnit implements PamSettings {
 	 */
 	public DLControl(String unitName) {
 		super("Deep Learning Classifier", unitName);
-
+		
 		PamRawDataBlock rawDataBlock = PamController.getInstance().
 				getRawDataBlock(rawDLParmas.groupedSourceParams.getDataSource());
 
@@ -145,6 +149,9 @@ public class DLControl extends PamControlledUnit implements PamSettings {
 
 		//classify the raw data segments. 
 		addPamProcess(dlClassifyProcess = new DLClassifyProcess(this, segmenterProcess.getSegmenterDataBlock()));
+		
+		
+		dlClassNameManager = new DLClassNameManager(this); 
 		
 		//add storage options etc. 
 		dlBinaryDataSource = new DLResultBinarySource(dlClassifyProcess); 
@@ -173,6 +180,9 @@ public class DLControl extends PamControlledUnit implements PamSettings {
 		DDPlotRegister.getInstance().registerDataInfo(new RawDLDDPlotProvider(this, dlClassifyProcess.getDLDetectionDatablock()));
 		//load the previous settings
 		PamSettingManager.getInstance().registerSettings(this);
+		
+		//because this was added after some settings classes have already been serialized
+		if (rawDLParmas.classNameMap==null) rawDLParmas.classNameMap = new ArrayList<DLClassName>(); 
 	
 		//ensure everything is updated. 
 		updateParams(rawDLParmas); 
@@ -396,6 +406,18 @@ public class DLControl extends PamControlledUnit implements PamSettings {
 			break;
 		}
 
+	}
+
+	public DLClassNameManager getClassNameManager() {
+		return this.dlClassNameManager;
+	}
+	
+	/**
+	 * Convenience function to get the DLAnnotationType from the DLClassification process. 
+	 * @return the DLAnnotationType
+	 */
+	public DLAnnotationType getAnnotationType() {
+		return this.dlClassifyProcess.getDLAnnotionType(); 
 	}
 
 }

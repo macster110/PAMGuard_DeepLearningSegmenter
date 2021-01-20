@@ -84,7 +84,7 @@ public class SoundSpotAdvPane extends SettingsPane<PamSoundSpotParams> {
 		});
 		toggleSwitch.setSelected(true);
 		
-		holderPane.getChildren().addAll(toggleSwitch, new Label( "Use default model settings"));
+		holderPane.getChildren().addAll(toggleSwitch, new Label("Use default model settings"));
 		
 		return holderPane; 
 	
