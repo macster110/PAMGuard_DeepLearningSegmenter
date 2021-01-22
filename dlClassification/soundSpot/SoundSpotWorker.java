@@ -12,14 +12,15 @@ import org.jamdev.jtorch4pam.wavFiles.AudioData;
 import org.pytorch.Module;
 import org.pytorch.Tensor;
 
-import PamUtils.PamCalendar;
 import rawDeepLearningClassifer.DLControl;
 import rawDeepLearningClassifer.segmenter.SegmenterProcess.GroupedRawData;
 
 
 /**
  * 
- * Runs the deep learning model and performs feature extraction. 
+ * Runs the deep learning model and performs feature extraction.
+ * <p>
+ *  
  * 
  * @author Jamie Macaulay 
  *
@@ -37,7 +38,7 @@ public class SoundSpotWorker {
 	private Module model;
 
 	/**
-	 * The samplerate
+	 * The sample rate.
 	 */
 	private float sampleRate;
 
@@ -46,12 +47,15 @@ public class SoundSpotWorker {
 	 */
 	private ArrayList<DLTransform> modelTransforms;
 
-
 	/**
-	 * Sound spot model
+	 * Sound spot model. 
 	 */
 	private SoundSpotModel soundSpotModel; 
 
+
+	/**
+	 * SoundSpotWorker constructor. 
+	 */
 	public SoundSpotWorker() {
 
 	}
@@ -77,19 +81,28 @@ public class SoundSpotWorker {
 			soundSpotParams.defaultSegmentLen = dlParams.seglen; //the segment length in microseconds. 
 			soundSpotParams.numClasses = dlParams.classNames.length; 
 
-//			if (dlParams.classNames!=null) {
-//				for (int i = 0; i<dlParams.classNames.length; i++) {
-//					System.out.println("Class name " + i + "  "  + dlParams.classNames[i]); 
-//				}
-//			}
+			//ok 0 the other values are not user selectable but this is. If we relaod the same model we probably want to keep it....
+			//So this is a little bt of a hack but will probably be OK in most cases. 
+			if (soundSpotParams.binaryClassification==null || soundSpotParams.binaryClassification.length!=soundSpotParams.numClasses) {
+				soundSpotParams.binaryClassification = new boolean[soundSpotParams.numClasses]; 
+				for (int i=0; i<soundSpotParams.binaryClassification.length; i++) {
+					soundSpotParams.binaryClassification[i] = true; //set default to true. 
+				}
+			}
+
+
+			//			if (dlParams.classNames!=null) {
+			//				for (int i = 0; i<dlParams.classNames.length; i++) {
+			//					System.out.println("Class name " + i + "  "  + dlParams.classNames[i]); 
+			//				}
+			//			}
 			soundSpotParams.classNames = dlControl.getClassNameManager().makeClassNames(dlParams.classNames); 
 
-			
-//			if (dlParams.classNames!=null) {
-//				for (int i = 0; i<soundSpotParams.classNames.length; i++) {
-//					System.out.println("Class name " + i + "  "  + soundSpotParams.classNames[i].className + " ID " + soundSpotParams.classNames[i].ID ); 
-//				}
-//			}
+			//			if (dlParams.classNames!=null) {
+			//				for (int i = 0; i<soundSpotParams.classNames.length; i++) {
+			//					System.out.println("Class name " + i + "  "  + soundSpotParams.classNames[i].className + " ID " + soundSpotParams.classNames[i].ID ); 
+			//				}
+			//			}
 			//TODO
 			//need to load the classifier metadata here...
 			//System.out.println("Model transforms: " + this.modelTransforms.size());

@@ -91,4 +91,13 @@ public class SoundSpotResult implements ModelResult {
 		this.classNameID = classNameID; 
 	}
 
+	/**
+	 * Set the binary classification. 
+	 * @param binaryResult - the binary classification. 
+	 */
+	public void setBinaryClassification(boolean binaryResult) {
+		this.binaryPass=binaryResult; 
+		
+	}
+
 }

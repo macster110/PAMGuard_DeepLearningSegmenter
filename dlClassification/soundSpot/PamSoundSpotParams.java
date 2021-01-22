@@ -22,7 +22,7 @@ public class PamSoundSpotParams implements Serializable, Cloneable {
 	/**
 	 * 
 	 */
-	public static final long serialVersionUID = 3L;
+	public static final long serialVersionUID = 4L;
 	
 	/**
 	 * The model path
@@ -48,7 +48,7 @@ public class PamSoundSpotParams implements Serializable, Cloneable {
 	/*
 	 * the number of output classes. 
 	 */
-	public int numClasses = 2; 
+	public int numClasses = 0; 
 	
 	/**
 	 * List of transforms for the raw data e.g. filtering, spectrogram, spectrogram normalisation etc. This is only used for saving serialised settings
@@ -71,7 +71,10 @@ public class PamSoundSpotParams implements Serializable, Cloneable {
 	 */
 	public DLClassName[] classNames; 
 
-
+	/**
+	 * Which classes to apply binary classification to. 
+	 */
+	public boolean[] binaryClassification; 
 	
 	@Override
 	public PamSoundSpotParams clone() {

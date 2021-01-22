@@ -57,7 +57,7 @@ public class DLDetectionBinarySource extends BinaryDataSource {
 
 	@Override
 	public String getStreamName() {
-		return "Deep_Learning";
+		return "DL_detection";
 	}
 
 	@Override

@@ -3,6 +3,7 @@ package rawDeepLearningClassifer.dlClassification;
 import java.util.ArrayList;
 
 import PamDetection.RawDataUnit;
+import PamUtils.PamArrayUtils;
 import PamUtils.PamUtils;
 import PamView.GroupedSourceParameters;
 import PamView.PamDetectionOverlayGraphics;
@@ -74,8 +75,8 @@ public class DLClassifyProcess extends PamProcess {
 
 	public DLClassifyProcess(DLControl dlControl, SegmenterDataBlock parentDataBlock) {
 		super(dlControl, parentDataBlock);
-		
-//		this.setParentDataBlock(parentDataBlock);
+
+		//		this.setParentDataBlock(parentDataBlock);
 
 		this.dlControl = dlControl; 
 
@@ -156,19 +157,40 @@ public class DLClassifyProcess extends PamProcess {
 	public void newData(PamObservable obs, PamDataUnit pamRawData) {
 
 		//the raw data units should appear in sequential channel order  
-	
+
 		GroupedRawData rawDataUnit = (GroupedRawData) pamRawData;
 
-//		System.out.println("New raw data in: chan: " + PamUtils.getSingleChannel(pamRawData.getChannelBitmap()) + 
-//				" Size: " +  pamRawData.getSampleDuration() + " first sample: " + rawDataUnit.getRawData()[0][0]); 
-		
-		//run the deep learning algorithm 
-		ModelResult modelResult = this.dlControl.getDLModel().runModel(rawDataUnit); 
+		if (checkGroupData(rawDataUnit)) { 
 
-		if (modelResult!=null) {
-			//if the model is null there may be a buffer on a different thread 
-			newModelResult(modelResult, rawDataUnit); 
+			//		System.out.println("New raw data in: chan: " + PamUtils.getSingleChannel(pamRawData.getChannelBitmap()) + 
+			//				" Size: " +  pamRawData.getSampleDuration() + " first sample: " + rawDataUnit.getRawData()[0][0]); 
+
+			//run the deep learning algorithm 
+			ModelResult modelResult = this.dlControl.getDLModel().runModel(rawDataUnit); 
+
+			if (modelResult!=null) {
+				//if the model is null there may be a buffer on a different thread 
+				newModelResult(modelResult, rawDataUnit); 
+			}
 		}
+	}
+
+	/**
+	 * Check grouped data before passing it to the classifications. Checks are:
+	 * <p>
+	 * Is everything zero? If so there is no information so discard.  
+	 * @param rawDataUnit - the raw data unit
+	 * @return true if the data unit can be passed to the localiser. 
+	 */
+	private boolean checkGroupData(GroupedRawData rawDataUnit) {
+		
+		if (PamArrayUtils.sum(rawDataUnit.getRawData())==0) {
+			System.out.println("DLCLassifyProcess: Warning: the input data was all zero - no passing to DL Process: "); 
+			return false; 
+		}
+		
+
+		return true;
 	}
 
 	/**
@@ -233,7 +255,7 @@ public class DLClassifyProcess extends PamProcess {
 					}
 				}
 				else {
-					//need to go by the parent data unit for merging data not the segmentds. 
+					//need to go by the parent data unit for merging data not the segments. 
 					//System.out.println("Save click annotation 0 "); 
 
 					if (pamRawData.getParentDataUnit()!=lastParentDataUnit[i]) {
@@ -245,7 +267,7 @@ public class DLClassifyProcess extends PamProcess {
 								clearBuffer(i);
 								if (dlDetection!=null) {
 									this.dlDetectionDataBlock.addPamData(dlDetection);
-									
+
 								}
 							}
 							else {
@@ -262,7 +284,7 @@ public class DLClassifyProcess extends PamProcess {
 		}
 	}
 
-	
+
 	/**
 	 * Make a positive DL detection from a number of model results and corresponding chunks of raw sound data. 
 	 * @param groupDataBuffer - the raw data chunks (these may overlap). 
@@ -290,7 +312,7 @@ public class DLClassifyProcess extends PamProcess {
 		DataUnitBaseData basicData  = groupDataBuffer.get(0).getBasicData().clone(); 
 		basicData.setMillisecondDuration(1000.*groupDataBuffer.size()*dlControl.getDLParams().sampleHop/this.sampleRate);
 		basicData.setSampleDuration((long) (groupDataBuffer.size()*dlControl.getDLParams().sampleHop));
-		
+
 		//		System.out.println("Model result: " + modelResult.size()); 
 		DLDetection dlDetection = new DLDetection(basicData, rawdata); 
 		addDLAnnotation(dlDetection, groupDataBuffer,modelResult); 
@@ -320,7 +342,7 @@ public class DLClassifyProcess extends PamProcess {
 	 * @return a DL detection with merged raw data. 
 	 */
 	private void addDLAnnotation(PamDataUnit parentDataUnit, ArrayList<GroupedRawData> groupDataBuffer, ArrayList<ModelResult> modelResult) {
-		
+
 		//System.out.println("DLClassifyProces: Add annnotation to  " + parentDataUnit); 
 
 		parentDataUnit.addDataAnnotation(new DLAnnotation(dlAnnotationType, modelResult)); 

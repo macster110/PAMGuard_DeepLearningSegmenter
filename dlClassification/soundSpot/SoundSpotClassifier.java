@@ -89,6 +89,9 @@ public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 
 	@Override
 	public ModelResult runModel(GroupedRawData groupedRawData) {
+		
+//		System.out.println("SoundSpotClassifier: PamCalendar.isSoundFile(): " 
+//		+ PamCalendar.isSoundFile() + "   " + (PamCalendar.isSoundFile() && !forceQueue));
 		/**
 		 * If a sound file is being analysed then SoundSpot can go as slow as it wants. if used in real time
 		 * then there is a buffer with a maximum queue size. 
@@ -97,7 +100,8 @@ public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 			//run the model 
 			SoundSpotResult modelResult = getSoundSpotWorker().runModel(groupedRawData, 
 					groupedRawData.getParentDataBlock().getSampleRate(), 0); 
-			modelResult.setClassNameID(getClassNameIDs() ); 
+			modelResult.setClassNameID(getClassNameIDs()); 
+			modelResult.setBinaryClassification(isBinaryResult(modelResult)); 
 
 			return modelResult; //returns to the classifier. 
 		}
@@ -112,6 +116,20 @@ public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 		return null;
 	}
 
+	/**
+	 * Check whether a model passes a binary test...
+	 * @param modelResult - the model results
+	 * @return the model results. 
+	 */
+	private boolean isBinaryResult(SoundSpotResult modelResult) {
+		for (int i=0; i<modelResult.getPrediction().length; i++) {
+			if (modelResult.getPrediction()[i]>soundSpotParmas.threshold && soundSpotParmas.binaryClassification[i]) {
+				System.out.println("SoundSpotClassifier: prediciton: " + i + " passed threshold with val: " + modelResult.getPrediction()[i]); 
+				return true; 
+			}
+		}
+		return  false;
+	}
 
 	/**
 	 * Get the sound spot worker. 

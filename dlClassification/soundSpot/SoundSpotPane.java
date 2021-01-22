@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
 
+import org.controlsfx.control.CheckComboBox;
 import org.controlsfx.control.PopOver;
 import org.controlsfx.control.ToggleSwitch;
 
@@ -95,7 +96,9 @@ public class SoundSpotPane extends SettingsPane<PamSoundSpotParams> {
 	 */
 	private ToggleSwitch usedefaultSeg; 
 
-	private PamSoundSpotParams paramsClone; 
+	private PamSoundSpotParams paramsClone;
+
+	private CheckComboBox<String> speciesIDBox; 
 
 	public SoundSpotPane(SoundSpotClassifier soundSpotClassifier) {
 		super(null);
@@ -138,7 +141,6 @@ public class SoundSpotPane extends SettingsPane<PamSoundSpotParams> {
 				fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
 			}
 
-
 			File file = fileChooser.showOpenDialog(null); 
 
 			if (file==null) {
@@ -148,7 +150,7 @@ public class SoundSpotPane extends SettingsPane<PamSoundSpotParams> {
 			newModelSelected(file); 
 
 			updatePathLabel(); 
-
+			setClassNames(this.paramsClone);  
 		});
 
 		PamHBox hBox = new PamHBox(); 
@@ -167,7 +169,7 @@ public class SoundSpotPane extends SettingsPane<PamSoundSpotParams> {
 		advSettingsBox.setSpacing(5);
 		advSettingsBox.getChildren().addAll(new Label("Advanced"), advButton); 
 		advSettingsBox.setAlignment(Pos.CENTER);
-		
+
 		usedefaultSeg = new ToggleSwitch (); 
 		usedefaultSeg.selectedProperty().addListener((obsval, oldval, newval)->{
 			defaultSegmentLenChanged(); 
@@ -177,7 +179,7 @@ public class SoundSpotPane extends SettingsPane<PamSoundSpotParams> {
 		//there is no label. This is a work around. 
 		usedefaultSeg.setMaxWidth(20); 
 
-	
+
 		PamHBox defaultSegBox = new PamHBox(); 
 		defaultSegBox.setSpacing(5);
 		defaultSegBox.getChildren().addAll(usedefaultSeg, new Label("Use default segment length")); 
@@ -205,11 +207,17 @@ public class SoundSpotPane extends SettingsPane<PamSoundSpotParams> {
 		gridPane.setHgap(5);
 		gridPane.setVgap(5);
 
-		gridPane.add(new Label("Min. probability"), 0, 0);
+		gridPane.add(new Label("Min. prediction"), 0, 0);
 		gridPane.add(detectionSpinner = new PamSpinner<Double>(0.0, 1.0, 0.9, 0.1), 1, 0);
-		detectionSpinner.setPrefWidth(100);
+		detectionSpinner.setPrefWidth(60);
 		detectionSpinner.setEditable(true);
 		detectionSpinner.getStyleClass().add(Spinner.STYLE_CLASS_SPLIT_ARROWS_HORIZONTAL);
+
+		gridPane.add(new Label(""), 2, 0);
+		speciesIDBox = new CheckComboBox<String>(); 
+		gridPane.add(speciesIDBox, 3, 0);
+		speciesIDBox.setMaxWidth(100);
+		speciesIDBox.setPrefWidth(100);
 
 		PamVBox vBox = new PamVBox(); 
 		vBox.setSpacing(5);
@@ -225,17 +233,17 @@ public class SoundSpotPane extends SettingsPane<PamSoundSpotParams> {
 	 */
 	private void defaultSegmentLenChanged() {
 		if (paramsClone!=null && paramsClone.defaultSegmentLen != null && usedefaultSeg.isSelected()) {
-			
+
 			//System.out.println("Defualt segment length: " + paramsClone.defaultSegmentLen); 
 
 			//cannot use because, if the parent datablock has changed, samplerate will be out of date. 
-//			int defaultsamples = (int) this.soundSpotClassifier.millis2Samples(paramsClone.defaultSegmentLen); 
-			
-			
+			//			int defaultsamples = (int) this.soundSpotClassifier.millis2Samples(paramsClone.defaultSegmentLen); 
+
+
 			float sR = soundSpotClassifier.getRawSettingsPane().getSelectedParentDataBlock().getSampleRate(); 
-			
+
 			int defaultsamples =  (int) (paramsClone.defaultSegmentLen.doubleValue()*sR/1000.0);
-			
+
 			//work out the window length in samples
 			soundSpotClassifier.getRawSettingsPane().getSegmentLenSpinner().getValueFactory().setValue(defaultsamples);
 			soundSpotClassifier.getRawSettingsPane().getHopLenSpinner().getValueFactory().setValue((int) defaultsamples/2);
@@ -315,11 +323,19 @@ public class SoundSpotPane extends SettingsPane<PamSoundSpotParams> {
 
 		currParams.threshold = detectionSpinner.getValue(); 
 		//		currParams.useCUDA = useCuda.isSelected(); 
-		
-		currParams = this.advSettingsPane.getParams(currParams);
-		
-		currParams.useDefaultTransfroms = this.usedefaultSeg.isSelected(); 
 
+		currParams = this.advSettingsPane.getParams(currParams);
+
+		currParams.useDefaultTransfroms = this.usedefaultSeg.isSelected(); 
+		
+		boolean[] speciesClass = new boolean[this.paramsClone.numClasses]; 
+		for (int i=0; i< speciesClass.length; i++) {
+			//System.out.println("Hello get: " + speciesIDBox.getItemBooleanProperty(i).get()); 
+			speciesClass[i] = speciesIDBox.getItemBooleanProperty(i).get(); 
+		}
+		
+		currParams.binaryClassification = speciesClass;
+	
 		return currParams;
 	}
 
@@ -338,11 +354,39 @@ public class SoundSpotPane extends SettingsPane<PamSoundSpotParams> {
 			currentSelectedFile = new File(currentParams.modelPath);
 			newModelSelected( currentSelectedFile); 
 		}
-
+		
+	
+		setClassNames(currParams);
+		
 		usedefaultSeg.setSelected(currParams.useDefaultTransfroms); 
 		defaultSegmentLenChanged();
 
 		updatePathLabel(); 
+
+	}
+	
+	/**
+	 * Set the class names in the class name combo box. 
+	 * @param currParams
+	 */
+	private void setClassNames(PamSoundSpotParams currParams) {
+		speciesIDBox.getItems().clear();
+		
+		int classNamesLen = 0 ; 
+		if (currParams.classNames!=null) classNamesLen = currParams.classNames.length; 
+			
+		for (int i=0; i<Math.max(classNamesLen, currParams.numClasses); i++) {
+			if (currParams.classNames!=null && currParams.classNames.length>i && currParams.classNames[i]!=null) {
+				speciesIDBox.getItems().add(currParams.classNames[i].className); 
+			}
+			else {
+				speciesIDBox.getItems().add("Class: " + i); 
+			}
+		}
+		
+		for (int i=0; i<speciesIDBox.getItems().size(); i++) {
+			speciesIDBox.getItemBooleanProperty(i).set(currParams.binaryClassification[i]);
+		}
 
 	}
 
