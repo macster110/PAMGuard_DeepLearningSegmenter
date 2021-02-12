@@ -1,6 +1,6 @@
 package rawDeepLearningClassifer.layoutFX.dlTransfroms;
 
-import org.jamdev.jtorch4pam.transforms.DLTransform;
+import org.jamdev.jdl4pam.transforms.DLTransform;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;

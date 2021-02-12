@@ -155,9 +155,9 @@ public class DLSymbolOptionPane extends StandardSymbolModifierPane {
 		
 		DLClassName[] classNames = dlSymbolModifier.getDLAnnotType().getDlControl().getDLModel().getClassNames(); 
 		
-		for (int i =0; i<classNames.length; i++) {
-			System.out.println("DLSymbolOptionsPane: classNames: " + i + "  " + classNames[i].className); 
-		}
+//		for (int i =0; i<classNames.length; i++) {
+//			System.out.println("DLSymbolOptionsPane: classNames: " + i + "  " + classNames[i].className); 
+//		}
 
 		int nClass = dlSymbolModifier.getDLAnnotType().getDlControl().getDLModel().getNumClasses(); 
 

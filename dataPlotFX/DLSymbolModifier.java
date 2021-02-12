@@ -113,6 +113,8 @@ public class DLSymbolModifier extends SymbolModifier {
 		if (passed || !dlSymbolOptions.showOnlyBinary) {
 			//work out probability colour...
 			
+			checkColourArray(); 
+			
 			maxValue=(maxValue - dlSymbolOptions.clims[0])/(dlSymbolOptions.clims[1]-dlSymbolOptions.clims[0]);
 
 			//System.out.println("Get max index: maxIndex" + maxIndex + " freq: " + freq + " pwr len: " + powerSpectrum.length);
@@ -133,7 +135,7 @@ public class DLSymbolModifier extends SymbolModifier {
 	 * Check the correct colour array is being used and, if not, change it. 
 	 */
 	public void checkColourArray() {
-		if (this.colourArrayType!=dlSymbolOptions.colArray) {
+		if (this.colourArrayType!=dlSymbolOptions.colArray || colourArrayType==null) {
 			colourArray = ColourArray.createStandardColourArray(128, dlSymbolOptions.colArray); 
 			this.colourArrayType=dlSymbolOptions.colArray; 
 		}

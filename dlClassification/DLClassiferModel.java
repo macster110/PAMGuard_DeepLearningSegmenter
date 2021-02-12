@@ -1,63 +1,80 @@
 package rawDeepLearningClassifer.dlClassification;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
+import rawDeepLearningClassifer.DLControl;
 import rawDeepLearningClassifer.layoutFX.DLCLassiferModelUI;
 import rawDeepLearningClassifer.segmenter.SegmenterProcess.GroupedRawData;
 
 /**
- * The classifier model. Each classifier must satisfy this interface. 
+ * The classifier model. Each classifier must satisfy this interface.
  * 
  * @author Jamie Macaulay
  *
  */
 public interface DLClassiferModel {
-	
+
 	/**
-	 * Run the deep learning model and return a model result. 
-	 * @return the deep learning model. 
+	 * Run the deep learning model on a list of grouped raw data units and return a
+	 * corresponding list of model results.
+	 * <p>
+	 * Note the reason we use list is that often it is more efficient to get a model
+	 * to predict a stacked group of inputs rather than one at a time.
+	 * 
+	 * @return the deep learning model.
 	 */
-	public ModelResult runModel(GroupedRawData rawDataUnit); 
-	
+	public ArrayList<? extends ModelResult> runModel(ArrayList<GroupedRawData> rawDataUnit);
+
 	/**
-	 * Prepare the model. This is called on PAMGuard start up. 
+	 * Prepare the model. This is called on PAMGuard start up.
 	 */
-	public void prepModel(); 
-	
+	public void prepModel();
+
 	/**
-	 * Called whenever PAMGuard stops.  
+	 * Called whenever PAMGuard stops.
 	 */
-	public void closeModel(); 
-	
+	public void closeModel();
+
 	/**
-	 * Get the name of the model. 
-	 * @return the name of the model. 
+	 * Get the name of the model.
+	 * 
+	 * @return the name of the model.
 	 */
-	public String getName(); 
-	
+	public String getName();
+
 	/**
-	 * Get any UI components for the model. Can be null. 
+	 * Get any UI components for the model. Can be null.
+	 * 
 	 * @return UI components for the model.
 	 */
-	public DLCLassiferModelUI getModelUI(); 
-	
+	public DLCLassiferModelUI getModelUI();
+
 	/**
-	 * A settings object that can be saved. 
-	 * @return the settings object. 
+	 * A settings object that can be saved.
+	 * 
+	 * @return the settings object.
 	 */
 	public Serializable getDLModelSettings();
-	
+
 	/**
-	 * Get the number of output classes. 
-	 * @return the number of output classes. 
+	 * Get the number of output classes.
+	 * 
+	 * @return the number of output classes.
 	 */
 	public int getNumClasses();
-	
+
 	/**
-	 * Get the number of output classes. 
-	 * @return the number of output classes. 
+	 * Get the number of output classes.
+	 * 
+	 * @return the number of output classes.
 	 */
 	public DLClassName[] getClassNames();
 
+	/**
+	 * Reference to the dlControl
+	 * @return
+	 */
+	public DLControl getDLControl();
 
 }

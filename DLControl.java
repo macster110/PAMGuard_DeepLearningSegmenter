@@ -29,6 +29,7 @@ import rawDeepLearningClassifer.dlClassification.DLClassNameManager;
 import rawDeepLearningClassifer.dlClassification.DLClassiferModel;
 import rawDeepLearningClassifer.dlClassification.DLClassifyProcess;
 import rawDeepLearningClassifer.dlClassification.dummyClassifier.DummyClassifier;
+import rawDeepLearningClassifer.dlClassification.genericModel.GenericDLClassifier;
 //import rawDeepLearningClassifer.dlClassification.orcaSpot.OrcaSpotClassifier;
 import rawDeepLearningClassifer.dlClassification.soundSpot.SoundSpotClassifier;
 import rawDeepLearningClassifer.layoutFX.DLSidePanelSwing;
@@ -52,7 +53,7 @@ import rawDeepLearningClassifer.segmenter.SegmenterProcess;
  *
  */
 public class DLControl extends PamControlledUnit implements PamSettings {
-	
+
 	/**
 	 * Flag for processing start
 	 */
@@ -74,7 +75,7 @@ public class DLControl extends PamControlledUnit implements PamSettings {
 	 * List of different deep learning models that are available. 
 	 */
 	private ArrayList<DLClassiferModel> dlModels = new ArrayList<DLClassiferModel>();
-	
+
 	/**
 	 * The settings pane. 
 	 */
@@ -124,7 +125,7 @@ public class DLControl extends PamControlledUnit implements PamSettings {
 	 * The binary data source for detection data
 	 */
 	private DLDetectionBinarySource dlDetectionBinarySource;
-	
+
 
 	/**
 	 * The DL offline process. 
@@ -140,7 +141,7 @@ public class DLControl extends PamControlledUnit implements PamSettings {
 	 */
 	public DLControl(String unitName) {
 		super("Deep Learning Classifier", unitName);
-		
+
 		PamRawDataBlock rawDataBlock = PamController.getInstance().
 				getRawDataBlock(rawDLParmas.groupedSourceParams.getDataSource());
 
@@ -149,15 +150,15 @@ public class DLControl extends PamControlledUnit implements PamSettings {
 
 		//classify the raw data segments. 
 		addPamProcess(dlClassifyProcess = new DLClassifyProcess(this, segmenterProcess.getSegmenterDataBlock()));
-		
-		
+
+
 		dlClassNameManager = new DLClassNameManager(this); 
-		
+
 		//add storage options etc. 
 		dlBinaryDataSource = new DLResultBinarySource(dlClassifyProcess); 
 		dlClassifyProcess.getDLResultDataBlock().setBinaryDataSource(dlBinaryDataSource);
 		dlClassifyProcess.getDLResultDataBlock().setDatagramProvider(new DLDataUnitDatagram(this));
-				
+
 		dlDetectionBinarySource = new DLDetectionBinarySource(this, dlClassifyProcess.getDLDetectionDatablock()); 
 		dlClassifyProcess.getDLDetectionDatablock().setBinaryDataSource(dlDetectionBinarySource);
 		dlClassifyProcess.getDLDetectionDatablock().setDatagramProvider(new DLDetectionDatagram(this));
@@ -166,10 +167,12 @@ public class DLControl extends PamControlledUnit implements PamSettings {
 
 		/*****Add new deep learning models here****/
 
+		dlModels.add(new GenericDLClassifier(this)); 
 		dlModels.add(new SoundSpotClassifier(this)); 
-		dlModels.add(new DummyClassifier()); 
+
+		//dlModels.add(new DummyClassifier()); 
 		//dlModels.add(new OrcaSpotClassifier(this)); //removed soon.
-	
+
 		if (this.isViewer) {
 			dlOfflineProcess = new DLOfflineProcess(this);
 		}; 
@@ -180,10 +183,10 @@ public class DLControl extends PamControlledUnit implements PamSettings {
 		DDPlotRegister.getInstance().registerDataInfo(new RawDLDDPlotProvider(this, dlClassifyProcess.getDLDetectionDatablock()));
 		//load the previous settings
 		PamSettingManager.getInstance().registerSettings(this);
-		
+
 		//because this was added after some settings classes have already been serialized
 		if (rawDLParmas.classNameMap==null) rawDLParmas.classNameMap = new ArrayList<DLClassName>(); 
-	
+
 		//ensure everything is updated. 
 		updateParams(rawDLParmas); 
 	}
@@ -215,14 +218,14 @@ public class DLControl extends PamControlledUnit implements PamSettings {
 	 */
 	private void updateParams(RawDLParams newParams) {
 		this.rawDLParmas = newParams; 
-		
+
 		this.segmenterProcess.setupSegmenter(); 
 		this.dlClassifyProcess.setupProcess();
-		
+
 		//this is a bit of a hack. Annotations are added to data units but the datablock knows nothing about them
 		//unless the annotation type is set in the datablock. This is required for things like symbol choosers that 
 		//may need to know a data block contains a certian type of annotation. 
-		
+
 		this.getParentDataBlock().addDataAnnotationType(dlClassifyProcess.getDLAnnotionType());
 
 		if (dlSidePanel!=null) {
@@ -284,7 +287,7 @@ public class DLControl extends PamControlledUnit implements PamSettings {
 	}
 
 	/****----Baked in Swing stuff----*****/
-	
+
 	//Swing components should not be in the control class but that is way PG is at the moment. 
 
 	/**
@@ -314,25 +317,35 @@ public class DLControl extends PamControlledUnit implements PamSettings {
 		}
 		return dlSidePanel;
 	}
-	
+
 	@Override
 	public JMenuItem createDetectionMenu(Frame parentFrame) {
-		JMenu menu = new JMenu("Raw Deep Learning Classifier"); 
-
-		JMenuItem menuItem = new JMenuItem("Settings..."); 
-		menuItem.addActionListener((action)->{
-			showSettingsDialog(parentFrame); 
-		});
-		menu.add(menuItem);
-
+		JMenuItem menu; 
 		if (this.isViewer) {
+			menu = new JMenu("Raw Deep Learning Classifier"); 
+
+			JMenuItem menuItem = new JMenuItem("Settings..."); 
+			menuItem.addActionListener((action)->{
+				showSettingsDialog(parentFrame); 
+			});
+			menu.add(menuItem);
+
 			menuItem = new JMenuItem("Reclassify detections..."); 
 			menuItem.addActionListener((action)->{
 				this.dlOfflineProcess.showOfflineDialog(parentFrame);
 			});
 			menu.add(menuItem);
 		}
-		
+
+		else {
+			menu = new JMenuItem(); 
+			//no need for nested menus if there is only one option. 
+			menu.setText("Raw Deep Learning Classifier...");
+			menu.addActionListener((action)->{
+				showSettingsDialog(parentFrame); 
+			});
+		}
+
 		return menu; 
 	}
 
@@ -345,8 +358,8 @@ public class DLControl extends PamControlledUnit implements PamSettings {
 	public DLClassifyProcess getDLClassifyProcess() {
 		return this.dlClassifyProcess;
 	}
-	
-	
+
+
 	/**
 	 * Get the GUI for the PAMControlled unit. This has multiple GUI options 
 	 * which are instantiated depending on the view type. 
@@ -375,7 +388,7 @@ public class DLControl extends PamControlledUnit implements PamSettings {
 	}
 
 
-	
+
 	/**
 	 * Get the parent data block.   
 	 * @return the parent data block. 
@@ -392,9 +405,9 @@ public class DLControl extends PamControlledUnit implements PamSettings {
 	 */
 	public int getNumClasses() {
 		return  getDLModel().getNumClasses(); 
-		
+
 	}
-	
+
 	/**
 	 * Called whenever offline processing is occurring 
 	 * @param processingFlag
@@ -411,7 +424,7 @@ public class DLControl extends PamControlledUnit implements PamSettings {
 	public DLClassNameManager getClassNameManager() {
 		return this.dlClassNameManager;
 	}
-	
+
 	/**
 	 * Convenience function to get the DLAnnotationType from the DLClassification process. 
 	 * @return the DLAnnotationType

@@ -2,7 +2,7 @@ package rawDeepLearningClassifer.layoutFX.dlTransfroms;
 
 import java.util.ArrayList;
 
-import org.jamdev.jtorch4pam.transforms.*;
+import org.jamdev.jdl4pam.transforms.*;
 
 import javafx.geometry.Insets;
 import javafx.scene.Node;

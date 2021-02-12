@@ -4,10 +4,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jamdev.jtorch4pam.transforms.DLTransform;
+import org.jamdev.jdl4pam.transforms.DLTransform;
 
 import rawDeepLearningClassifer.dlClassification.DLClassName;
-import rawDeepLearningClassifer.layoutFX.dlTransfroms.DLTransformPane;
 import rawDeepLearningClassifer.layoutFX.dlTransfroms.DLTransformParams;
 
 /**

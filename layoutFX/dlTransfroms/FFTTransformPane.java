@@ -1,6 +1,6 @@
 package rawDeepLearningClassifer.layoutFX.dlTransfroms;
 
-import org.jamdev.jtorch4pam.transforms.SimpleTransform;
+import org.jamdev.jdl4pam.transforms.SimpleTransform;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

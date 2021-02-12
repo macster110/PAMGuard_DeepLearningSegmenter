@@ -70,7 +70,7 @@ public class DLDetection extends PamDataUnit implements PamDetection, RawDataHol
 	 */
 	public DLDetection(DataUnitBaseData baseData, double[][] waveData) {
 		super(baseData);
-		System.out.println("Load DL deteciton: " + this.getChannelBitmap());
+		//System.out.println("Load DL deteciton: " + this.getChannelBitmap());
 		this.waveData=waveData; 
 		rawDataTransforms= new RawDataTransforms(this); 
 		setAmplitude();//must set amplitude as this is not stored in binary files. 

@@ -1,18 +1,21 @@
 package rawDeepLearningClassifer.dlClassification.genericModel;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 import PamController.PamControlledUnitSettings;
 import PamController.PamSettings;
+import rawDeepLearningClassifer.DLControl;
 import rawDeepLearningClassifer.dlClassification.DLClassName;
 import rawDeepLearningClassifer.dlClassification.DLClassiferModel;
 import rawDeepLearningClassifer.dlClassification.ModelResult;
+import rawDeepLearningClassifer.dlClassification.soundSpot.PamSoundSpotParams;
 import rawDeepLearningClassifer.layoutFX.DLCLassiferModelUI;
 import rawDeepLearningClassifer.segmenter.SegmenterProcess.GroupedRawData;
 
 
 /**
- * A generic model - can be called with any classifier...
+ * A generic model - can be load any model but requires manaully setting model metadaata. 
  * @author Jamie Macaulay
  * 
  *
@@ -20,11 +23,19 @@ import rawDeepLearningClassifer.segmenter.SegmenterProcess.GroupedRawData;
 public class GenericDLClassifier implements DLClassiferModel, PamSettings {
 
 	
-	@Override
-	public ModelResult runModel(GroupedRawData rawDataUnit) {
-		// TODO Auto-generated method stub
-		return null;
+	private DLControl dlControl;
+	
+	private GenericModelParams genericModelParams = new GenericModelParams();
+
+	private DLCLassiferModelUI genericModelUI; 
+
+
+	public GenericDLClassifier(DLControl dlControl) {
+		this.dlControl=dlControl; 
+		
+		genericModelUI = new GenericModelUI(this); 
 	}
+	
 
 	@Override
 	public void prepModel() {
@@ -38,22 +49,6 @@ public class GenericDLClassifier implements DLClassiferModel, PamSettings {
 		// TODO Auto-generated method stub
 	}
 
-	@Override
-	public String getName() {
-		return "Generic Model";
-	}
-
-	@Override
-	public DLCLassiferModelUI getModelUI() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Serializable getDLModelSettings() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public int getNumClasses() {
@@ -63,38 +58,88 @@ public class GenericDLClassifier implements DLClassiferModel, PamSettings {
 	
 	@Override
 	public String getUnitName() {
-		// TODO Auto-generated method stub
-		return null;
+		return dlControl.getUnitName()+"_generic_model"; 
 	}
 
 	@Override
 	public String getUnitType() {
-		// TODO Auto-generated method stub
-		return null;
+		return dlControl.getUnitType()+"_generic_model";
 	}
 
-	@Override
-	public Serializable getSettingsReference() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public long getSettingsVersion() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public boolean restoreSettings(PamControlledUnitSettings pamControlledUnitSettings) {
-		// TODO Auto-generated method stub
-		return false;
-	}
 
 	@Override
 	public DLClassName[] getClassNames() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+
+	@Override
+	public ArrayList<? extends ModelResult> runModel(ArrayList<GroupedRawData> rawDataUnit) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public DLControl getDLControl() {
+		return dlControl;
+	}
+	
+	
+	@Override
+	public String getName() {
+		return "Generic Model";
+	}
+
+	@Override
+	public DLCLassiferModelUI getModelUI() {
+		return genericModelUI;
+	}
+
+	@Override
+	public Serializable getDLModelSettings() {
+		return genericModelParams;
+	}
+	
+	@Override
+	public Serializable getSettingsReference() {
+		if (genericModelParams==null) {
+			genericModelParams = new GenericModelParams(); 
+		}
+		System.out.println("SoundSpot have been saved. : " + genericModelParams.modelPath); 
+		return genericModelParams;
+
+	}
+
+	@Override
+	public long getSettingsVersion() {
+		return PamSoundSpotParams.serialVersionUID;
+	}
+
+	@Override
+	public boolean restoreSettings(PamControlledUnitSettings pamControlledUnitSettings) {
+		GenericModelParams newParameters = (GenericModelParams) pamControlledUnitSettings.getSettings();
+		if (newParameters!=null) {
+			genericModelParams = (GenericModelParams) newParameters.clone();
+			System.out.println("SoundSpot have been restored. : " + genericModelParams.modelPath); 
+		}
+		else genericModelParams = new GenericModelParams(); 
+		return true;
+	}
+
+	/**
+	 * Get the sound spot parameters. 
+	 * @return sound spot parameters. 
+	 */
+	public GenericModelParams getGenericDLParams() {
+		return genericModelParams;
+	}
+
+
+	public void setSoundSpotParams(PamSoundSpotParams clone) {
+		// TODO Auto-generated method stub
+		
 	}
 
 

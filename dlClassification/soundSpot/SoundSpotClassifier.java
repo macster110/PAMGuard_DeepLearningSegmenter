@@ -36,7 +36,6 @@ import warnings.WarningSystem;
  */
 public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 
-
 	/**
 	 * The maximum queue size. 
 	 */
@@ -56,7 +55,7 @@ public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 	/**
 	 * Holds a list of segmented raw data units which need to be classified. 
 	 */
-	private List<GroupedRawData> queue = Collections.synchronizedList(new ArrayList<GroupedRawData>());
+	private List<ArrayList<GroupedRawData>> queue = Collections.synchronizedList(new ArrayList<ArrayList<GroupedRawData>>());
 
 	/**
 	 * Sound spot parameters. 
@@ -74,9 +73,10 @@ public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 	 */
 	private boolean forceQueue = false; 
 
+	/**
+	 * Sound spot wanring. 
+	 */
 	PamWarning soundSpotWarning = new PamWarning("SoundSpotClassifier", "",2); 
-
-
 
 	public SoundSpotClassifier(DLControl dlControl) {
 		this.dlControl=dlControl; 
@@ -88,20 +88,23 @@ public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 
 
 	@Override
-	public ModelResult runModel(GroupedRawData groupedRawData) {
-		
-//		System.out.println("SoundSpotClassifier: PamCalendar.isSoundFile(): " 
-//		+ PamCalendar.isSoundFile() + "   " + (PamCalendar.isSoundFile() && !forceQueue));
+	public ArrayList<SoundSpotResult> runModel(ArrayList<GroupedRawData> groupedRawData) {
+
+		//		System.out.println("SoundSpotClassifier: PamCalendar.isSoundFile(): " 
+		//		+ PamCalendar.isSoundFile() + "   " + (PamCalendar.isSoundFile() && !forceQueue));
 		/**
 		 * If a sound file is being analysed then SoundSpot can go as slow as it wants. if used in real time
 		 * then there is a buffer with a maximum queue size. 
 		 */
 		if ((PamCalendar.isSoundFile() && !forceQueue) || dlControl.isViewer()) {
 			//run the model 
-			SoundSpotResult modelResult = getSoundSpotWorker().runModel(groupedRawData, 
-					groupedRawData.getParentDataBlock().getSampleRate(), 0); 
-			modelResult.setClassNameID(getClassNameIDs()); 
-			modelResult.setBinaryClassification(isBinaryResult(modelResult)); 
+			ArrayList<SoundSpotResult> modelResult = getSoundSpotWorker().runModel(groupedRawData, 
+					groupedRawData.get(0).getParentDataBlock().getSampleRate(), 0); 
+
+			for (int i =0; i<modelResult.size(); i++) {
+				modelResult.get(i).setClassNameID(getClassNameIDs()); 
+				modelResult.get(i).setBinaryClassification(isBinaryResult(modelResult.get(i))); 
+			}
 
 			return modelResult; //returns to the classifier. 
 		}
@@ -170,13 +173,16 @@ public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 				try {
 					if (queue.size()>0) {
 						//						System.out.println("ORCASPOT THREAD: " + "The queue size is " + queue.size()); 
-						GroupedRawData groupedRawData = queue.remove(0);
+						ArrayList<GroupedRawData> groupedRawData = queue.remove(0);
 
-						SoundSpotResult modelResult = getSoundSpotWorker().runModel(groupedRawData,
-								groupedRawData.getParentDataBlock().getSampleRate(), 0); 
-						modelResult.setClassNameID(getClassNameIDs() ); 
+						ArrayList<SoundSpotResult> modelResult = getSoundSpotWorker().runModel(groupedRawData, 
+								groupedRawData.get(0).getParentDataBlock().getSampleRate(), 0); 
 
-						newResult(modelResult, groupedRawData);
+						for (int i =0; i<modelResult.size(); i++) {
+							modelResult.get(i).setClassNameID(getClassNameIDs()); 
+							modelResult.get(i).setBinaryClassification(isBinaryResult(modelResult.get(i))); 
+							newResult(modelResult.get(i), groupedRawData.get(i));
+						}
 
 					}
 					else {

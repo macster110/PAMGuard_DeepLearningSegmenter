@@ -77,7 +77,12 @@ public class DLAnnotationType extends DataAnnotationType<DLAnnotation>  {
 //			return "DLRE";
 //		}
 		
-	
+		@Override
+		public String getShortIdCode() {
+			//DLRE or Delt 
+			return "Delt"; 
+		}
+
 
 		@Override
 		public DLSymbolModifier getSymbolModifier(PamSymbolChooser symbolChooser) {

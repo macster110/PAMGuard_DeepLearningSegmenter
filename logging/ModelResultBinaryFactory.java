@@ -125,7 +125,10 @@ public class ModelResultBinaryFactory {
 				classID[i] =  dis.readShort(); 
 			}
 			
+			
+			System.out.println("ModelResultBinaryFactory Type: " + type); 
 
+			
 			ModelResult result; 
 			//specific settings for different modules 
 			switch (type) {

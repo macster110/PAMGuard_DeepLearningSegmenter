@@ -4,6 +4,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
+import java.util.ArrayList;
 
 import org.controlsfx.control.CheckComboBox;
 import org.controlsfx.control.PopOver;
@@ -32,6 +33,7 @@ import pamViewFX.fxNodes.PamGridPane;
 import pamViewFX.fxNodes.PamHBox;
 import pamViewFX.fxNodes.PamSpinner;
 import pamViewFX.fxNodes.PamVBox;
+import rawDeepLearningClassifer.dlClassification.DLClassiferModel;
 
 /**
  * Settings pane for SoundSpot
@@ -39,7 +41,7 @@ import pamViewFX.fxNodes.PamVBox;
  * @author Jamie Macaulay
  *
  */
-public class SoundSpotPane extends SettingsPane<PamSoundSpotParams> {
+public abstract class StandardModelPane extends SettingsPane<PamSoundSpotParams> {
 
 	/**
 	 * The main pane for the Soundspot sETTINGS
@@ -89,7 +91,7 @@ public class SoundSpotPane extends SettingsPane<PamSoundSpotParams> {
 	/**
 	 * The sound spot classifier. 
 	 */
-	private SoundSpotClassifier soundSpotClassifier;
+	private DLClassiferModel soundSpotClassifier;
 
 	/**
 	 * Default segment length. 
@@ -98,16 +100,23 @@ public class SoundSpotPane extends SettingsPane<PamSoundSpotParams> {
 
 	private PamSoundSpotParams paramsClone;
 
-	private CheckComboBox<String> speciesIDBox; 
 
-	public SoundSpotPane(SoundSpotClassifier soundSpotClassifier) {
+	private CheckComboBox<String> speciesIDBox;
+
+	/**
+	 * The VBox. 
+	 */
+	private PamVBox vBoxHolder; 
+
+
+	public StandardModelPane(DLClassiferModel soundSpotClassifier) {
 		super(null);
 		this.soundSpotClassifier=soundSpotClassifier; 
 		mainPane = createPane(); 
 		//the directory chooser. 
 		fileChooser = new FileChooser();
 		fileChooser.setTitle("Classifier Model Location");
-		advSettingsPane= new SoundSpotAdvPane(); 
+		setAdvSettingsPane(new SoundSpotAdvPane()); 
 	}
 
 	/**
@@ -127,11 +136,11 @@ public class SoundSpotPane extends SettingsPane<PamSoundSpotParams> {
 		pathLabel = new Label("No classifier file selected"); 
 		PamButton pamButton = new PamButton("", PamGlyphDude.createPamGlyph(MaterialDesignIcon.FILE, PamGuiManagerFX.iconSize-3)); 
 		pamButton.setMinWidth(30);
-		pamButton.setTooltip(new Tooltip("Browse to selcect a .pk model file"));
+		pamButton.setTooltip(new Tooltip("Browse to selcect a model file"));
 
 		pamButton.setOnAction((action)->{
 
-			fileChooser.getExtensionFilters().add(new ExtensionFilter("Pytorch Model", "*.pk")); 
+			fileChooser.getExtensionFilters().addAll(getExtensionFilters()); 
 
 			Path path = currentSelectedFile.toPath();
 			if(path!=null && Files.exists(path, LinkOption.NOFOLLOW_LINKS)) {
@@ -219,14 +228,23 @@ public class SoundSpotPane extends SettingsPane<PamSoundSpotParams> {
 		speciesIDBox.setMaxWidth(100);
 		speciesIDBox.setPrefWidth(100);
 
-		PamVBox vBox = new PamVBox(); 
-		vBox.setSpacing(5);
-		vBox.getChildren().addAll(classiferInfoLabel, hBox, advSettings, classiferInfoLabel2, gridPane); 
+		vBoxHolder = new PamVBox(); 
+		vBoxHolder.setSpacing(5);
+		vBoxHolder.getChildren().addAll(classiferInfoLabel, hBox, advSettings, classiferInfoLabel2, gridPane); 
 
-		mainPane.setCenter(vBox);
+		mainPane.setCenter(vBoxHolder);
 
 		return mainPane; 
 	}
+	
+	
+	/**
+	 * Get a list of extension fitlers for the file dialog. 
+	 * e.g. 
+	 * new ExtensionFilter("Pytorch Model", "*.pk")
+	 * @return a list of extension fitlers for the file dialog. 
+	 */
+	public abstract ArrayList<ExtensionFilter> getExtensionFilters(); 
 
 	/**
 	 * The default segment len changed. 
@@ -240,40 +258,26 @@ public class SoundSpotPane extends SettingsPane<PamSoundSpotParams> {
 			//			int defaultsamples = (int) this.soundSpotClassifier.millis2Samples(paramsClone.defaultSegmentLen); 
 
 
-			float sR = soundSpotClassifier.getRawSettingsPane().getSelectedParentDataBlock().getSampleRate(); 
+			float sR = soundSpotClassifier.getDLControl().getSettingsPane().getSelectedParentDataBlock().getSampleRate(); 
 
 			int defaultsamples =  (int) (paramsClone.defaultSegmentLen.doubleValue()*sR/1000.0);
 
 			//work out the window length in samples
-			soundSpotClassifier.getRawSettingsPane().getSegmentLenSpinner().getValueFactory().setValue(defaultsamples);
-			soundSpotClassifier.getRawSettingsPane().getHopLenSpinner().getValueFactory().setValue((int) defaultsamples/2);
+			soundSpotClassifier.getDLControl().getSettingsPane().getSegmentLenSpinner().getValueFactory().setValue(defaultsamples);
+			soundSpotClassifier.getDLControl().getSettingsPane().getHopLenSpinner().getValueFactory().setValue((int) defaultsamples/2);
 
-			soundSpotClassifier.getRawSettingsPane().getSegmentLenSpinner().setDisable(true); 
+			soundSpotClassifier.getDLControl().getSettingsPane().getSegmentLenSpinner().setDisable(true); 
 		}
 		else {
-			soundSpotClassifier.getRawSettingsPane().getSegmentLenSpinner().setDisable(false); 
+			soundSpotClassifier.getDLControl().getSettingsPane().getSegmentLenSpinner().setDisable(false); 
 		}
 	}
 
 	/**
 	 * Called whenever a new model has been selected
-	 * @param file
+	 * @param file - the file. 
 	 */
-	private void newModelSelected(File file) {
-		currentSelectedFile = file; 
-		this.soundSpotClassifier.newModelSelected(file); 
-
-		paramsClone = new PamSoundSpotParams(); 
-		//prep the model with current parameters; 
-		this.soundSpotClassifier.getSoundSpotWorker().prepModel(getParams(paramsClone), soundSpotClassifier.getDLControl());
-		//get the model tansforms calculated from the model by SoundSpoyWorker and apply them to our temporary params clone. 
-		paramsClone.dlTransfroms = this.soundSpotClassifier.getSoundSpotWorker().getModelTransforms(); 
-		///set the advanced pane parameters. 
-		this.advSettingsPane.setParams(paramsClone);
-
-		//this is 
-
-	}
+	public abstract void newModelSelected(File file); 
 
 	/**
 	 * Sho0w the advanced settings. 
@@ -283,7 +287,7 @@ public class SoundSpotPane extends SettingsPane<PamSoundSpotParams> {
 
 		if (popOver==null) {
 			popOver = new PopOver(); 
-			popOver.setContentNode(advSettingsPane.getContentNode());
+			popOver.setContentNode(getAdvSettingsPane().getContentNode());
 		}
 
 		popOver.showingProperty().addListener((obs, old, newval)->{
@@ -324,7 +328,7 @@ public class SoundSpotPane extends SettingsPane<PamSoundSpotParams> {
 		currParams.threshold = detectionSpinner.getValue(); 
 		//		currParams.useCUDA = useCuda.isSelected(); 
 
-		currParams = this.advSettingsPane.getParams(currParams);
+		currParams = this.getAdvSettingsPane().getParams(currParams);
 
 		currParams.useDefaultTransfroms = this.usedefaultSeg.isSelected(); 
 		
@@ -348,7 +352,7 @@ public class SoundSpotPane extends SettingsPane<PamSoundSpotParams> {
 		detectionSpinner.getValueFactory().setValue(Double.valueOf(currParams.threshold));
 
 		//set the params on the advanced pane. 
-		this.advSettingsPane.setParams(currParams);
+		this.getAdvSettingsPane().setParams(currParams);
 
 		if (currentParams.modelPath!=null) {
 			currentSelectedFile = new File(currentParams.modelPath);
@@ -406,5 +410,32 @@ public class SoundSpotPane extends SettingsPane<PamSoundSpotParams> {
 
 	}
 
+	public PamSoundSpotParams getParamsClone() {
+		return paramsClone;
+	}
+
+	public void setParamsClone(PamSoundSpotParams paramsClone) {
+		this.paramsClone = paramsClone;
+	}
+	
+	public File getCurrentSelectedFile() {
+		return currentSelectedFile;
+	}
+
+	public void setCurrentSelectedFile(File currentSelectedFile) {
+		this.currentSelectedFile = currentSelectedFile;
+	}
+
+	public SoundSpotAdvPane getAdvSettingsPane() {
+		return advSettingsPane;
+	}
+
+	public void setAdvSettingsPane(SoundSpotAdvPane advSettingsPane) {
+		this.advSettingsPane = advSettingsPane;
+	}
+	
+	public PamVBox getVBoxHolder() {
+		return vBoxHolder;
+	}
 
 }

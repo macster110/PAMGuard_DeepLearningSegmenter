@@ -4,8 +4,8 @@ import java.io.IOException;
 
 import javax.sound.sampled.UnsupportedAudioFileException;
 
-import org.jamdev.jtorch4pam.utils.DLUtils;
-import org.jamdev.jtorch4pam.wavFiles.AudioData;
+import org.jamdev.jdl4pam.utils.DLUtils;
+import org.jamdev.jpamutils.wavFiles.AudioData;
 
 
 /**

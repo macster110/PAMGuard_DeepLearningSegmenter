@@ -1,14 +1,16 @@
 package rawDeepLearningClassifer.dlClassification.soundSpot;
 
 import java.util.ArrayList;
-import org.jamdev.jtorch4pam.SoundSpot.SoundSpotModel;
-import org.jamdev.jtorch4pam.SoundSpot.SoundSpotParams;
-import org.jamdev.jtorch4pam.transforms.DLTransform;
-import org.jamdev.jtorch4pam.transforms.FreqTransform;
-import org.jamdev.jtorch4pam.transforms.WaveTransform;
-import org.jamdev.jtorch4pam.transforms.DLTransformsFactory;
-import org.jamdev.jtorch4pam.utils.DLUtils;
-import org.jamdev.jtorch4pam.wavFiles.AudioData;
+import java.util.Arrays;
+
+import org.jamdev.jdl4pam.SoundSpot.SoundSpotModel;
+import org.jamdev.jdl4pam.SoundSpot.SoundSpotParams;
+import org.jamdev.jdl4pam.transforms.DLTransform;
+import org.jamdev.jdl4pam.transforms.FreqTransform;
+import org.jamdev.jdl4pam.transforms.WaveTransform;
+import org.jamdev.jdl4pam.transforms.DLTransformsFactory;
+import org.jamdev.jdl4pam.utils.DLUtils;
+import org.jamdev.jpamutils.wavFiles.AudioData;
 import org.pytorch.Module;
 import org.pytorch.Tensor;
 
@@ -119,56 +121,84 @@ public class SoundSpotWorker {
 	 * @param iChan - the channel to run the data on. 
 	 * @return the model to run. 
 	 */
-	public SoundSpotResult runModel(GroupedRawData rawDataUnit, float sampleRate, int iChan) {
+	public ArrayList<SoundSpotResult> runModel(ArrayList<GroupedRawData> rawDataUnits, float sampleRate, int iChan) {
 
 		try {
 			//		PamCalendar.isSoundFile(); 
 			//		// create an audio data object from the raw data chunk
 			long timeStart = System.nanoTime(); 
+			
+			//data input into the model - a stack of spectrogram images. 
+			float[][][] transformedDataStack = new float[rawDataUnits.size()][][]; 
 
-			AudioData soundData  = new AudioData(rawDataUnit.getRawData()[iChan], sampleRate); 
+			//geenrate the spectrogram stack. 
+			AudioData soundData; 
+			double[][] transformedData;
+			for (int j=0; j<rawDataUnits.size(); j++) {
 
-			//			for (int i=0; i<modelTransforms.size(); i++) {
-			//				System.out.println("Transfrom type: " + modelTransforms.get(i).getDLTransformType()); 
-			//			}
+				soundData  = new AudioData(rawDataUnits.get(j).getRawData()[iChan], sampleRate); 
 
-			//set the sound in the first transform. 
-			((WaveTransform) modelTransforms.get(0)).setWaveData(soundData); 
+				//			for (int i=0; i<modelTransforms.size(); i++) {
+				//				System.out.println("Transfrom type: " + modelTransforms.get(i).getDLTransformType()); 
+				//			}
 
-			//System.out.println("Model transforms:no. " + modelTransforms.size()+ "  " + soundData.getLengthInSeconds() + " Decimate Params: " + ((WaveTransform) modelTransforms.get(0)).getParams()[0]);
+				//set the sound in the first transform. 
+				((WaveTransform) modelTransforms.get(0)).setWaveData(soundData); 
 
-			DLTransform transform = modelTransforms.get(0); 
-			for (int i=0; i<modelTransforms.size(); i++) {
-				transform = modelTransforms.get(i).transformData(transform); 
+				//System.out.println("Model transforms:no. " + modelTransforms.size()+ "  " + soundData.getLengthInSeconds() + " Decimate Params: " + ((WaveTransform) modelTransforms.get(0)).getParams()[0]);
+
+				DLTransform transform = modelTransforms.get(0); 
+				for (int i =0; i<modelTransforms.size(); i++) {
+					transform = modelTransforms.get(i).transformData(transform); 
+				}
+
+				//the transformed data
+				transformedData = ((FreqTransform) transform).getSpecTransfrom().getTransformedData(); 
+				
+				transformedDataStack[j] = DLUtils.toFloatArray(transformedData); 
+
 			}
+			
 
-			//the transformed data
-			double[][] transformedData = ((FreqTransform) transform).getSpecTransfrom().getTransformedData(); 
-
+			//run the model. The output is the 
 			float[] output = null; 
 			long time1 = System.currentTimeMillis();
-			output = soundSpotModel.runModel(DLUtils.toFloatArray(transformedData)); 
+			output = soundSpotModel.runModel(transformedDataStack); 
 			long time2 = System.currentTimeMillis();
+
+			
+			int numclasses = (int) (output.length/transformedDataStack.length); 
 
 			//System.out.println(PamCalendar.formatDBDateTime(rawDataUnit.getTimeMilliseconds(), true) + " Time to run model: " + (time2-time1) + " ms for spec of len: " + transformedData.length); 
 
-			float[] prob = new float[output.length]; 
-			for (int j=0; j<output.length; j++) {
-				//python code for this. 
-				//	    	prob = torch.nn.functional.softmax(out).numpy()[n, 1]
-				//                    pred = int(prob >= ARGS.threshold)		    	
-				//softmax function
-				prob[j] = (float) DLUtils.softmax(output[j], output); 
-				//System.out.println("The probability is: " + prob[j]); 
+			ArrayList<SoundSpotResult> modelResults = new ArrayList<SoundSpotResult>(); 
+			float[] prob; 
+			float[] classOut; 
+			for (int i=0; i<transformedDataStack.length; i++) {
+				
+				classOut = Arrays.copyOfRange(output, i*numclasses, (i+1)*numclasses-1); 
+				
+				prob = new float[classOut.length]; 
+				
+				for (int j=0; j<classOut.length; j++) {
+					//python code for this. 
+					//	    	prob = torch.nn.functional.softmax(out).numpy()[n, 1]
+					//                    pred = int(prob >= ARGS.threshold)		    	
+					//softmax function
+					prob[j] = (float) DLUtils.softmax(classOut[j], classOut); 
+					//System.out.println("The probability is: " + prob[j]); 
+				}
+
+				//does this pass binary classification
+				long timeEnd = System.nanoTime(); 
+
+				SoundSpotResult soundSpotResult =  new SoundSpotResult(prob); 
+				soundSpotResult.setAnalysisTime((timeEnd-timeStart)/1000/1000/1000);
+				
+				modelResults.add(soundSpotResult);
 			}
-
-			//does this pass binary classification
-			long timeEnd = System.nanoTime(); 
-
-			SoundSpotResult soundSpotResult =  new SoundSpotResult(prob); 
-			soundSpotResult.setAnalysisTime((timeEnd-timeStart)/1000/1000/1000);
-
-			return soundSpotResult;
+			
+			return modelResults;
 
 		} 
 		catch (Exception e) {

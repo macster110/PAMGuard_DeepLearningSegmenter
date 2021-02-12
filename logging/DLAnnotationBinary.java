@@ -71,8 +71,7 @@ public class DLAnnotationBinary extends AnnotationBinaryHandler<DLAnnotation> {
 	@Override
 	public DLAnnotation setAnnotationBinaryData(PamDataUnit pamDataUnit,
 			AnnotationBinaryData annotationBinaryData) {
-		//System.out.println("DLAnnotationBinary: Extracting DL annotation results:"); 
-		
+		System.out.println("DLAnnotationBinary: Extracting DL annotation results:"); 
 		
 		DataInputStream dis = new DataInputStream(new ByteArrayInputStream(annotationBinaryData.data));
 
@@ -82,6 +81,8 @@ public class DLAnnotationBinary extends AnnotationBinaryHandler<DLAnnotation> {
 		try {
 
 			int numModels  = dis.readShort(); 
+			System.out.println("DLAnnotationBinary: Num models: " +  numModels); 
+
 //			System.out.println("DLAnnotationBinary.Number of model results: " + numModels); 
 			for (int i =0; i<numModels; i++) {
 				modelResults.add(ModelResultBinaryFactory.sinkData(dis)); 

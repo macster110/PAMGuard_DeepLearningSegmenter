@@ -2,7 +2,7 @@ package rawDeepLearningClassifer.layoutFX.dlTransfroms;
 
 import java.io.Serializable;
 
-import org.jamdev.jtorch4pam.transforms.DLTransform.DLTransformType;
+import org.jamdev.jdl4pam.transforms.DLTransform.DLTransformType;
 
 /**
  * Parameters that can be saved for a DL transform. 

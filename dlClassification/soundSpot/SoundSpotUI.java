@@ -17,7 +17,7 @@ public class SoundSpotUI implements DLCLassiferModelUI {
 	/**
 	 * Pane containing controls to set up the OrcaSPot classifier. 
 	 */
-	private SoundSpotPane soundSpotPane;
+	private SoundSpotModelPane soundSpotPane;
 	
 	/**
 	 * The sound spot classifier. 
@@ -35,7 +35,7 @@ public class SoundSpotUI implements DLCLassiferModelUI {
 	@Override
 	public SettingsPane<PamSoundSpotParams> getSettingsPane() {
 		if (soundSpotPane==null) {
-			soundSpotPane = new  SoundSpotPane(soundSpotClassifier); 
+			soundSpotPane = new  SoundSpotModelPane(soundSpotClassifier); 
 		}
 		return soundSpotPane;
 	}

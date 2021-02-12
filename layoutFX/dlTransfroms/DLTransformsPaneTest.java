@@ -2,11 +2,11 @@ package rawDeepLearningClassifer.layoutFX.dlTransfroms;
 
 import java.util.ArrayList;
 
-import org.jamdev.jtorch4pam.SoundSpot.SoundSpotParams;
-import org.jamdev.jtorch4pam.transforms.DLTransform;
-import org.jamdev.jtorch4pam.transforms.DLTransformsFactory;
-import org.jamdev.jtorch4pam.utils.DLUtils;
-import org.jamdev.jtorch4pam.wavFiles.AudioData;
+import org.jamdev.jdl4pam.SoundSpot.SoundSpotParams;
+import org.jamdev.jdl4pam.transforms.DLTransform;
+import org.jamdev.jdl4pam.transforms.DLTransformsFactory;
+import org.jamdev.jdl4pam.utils.DLUtils;
+import org.jamdev.jpamutils.wavFiles.AudioData;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;

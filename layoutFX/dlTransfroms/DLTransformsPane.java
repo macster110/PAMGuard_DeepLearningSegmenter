@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.jamdev.jtorch4pam.transforms.DLTransform;
-import org.jamdev.jtorch4pam.transforms.DLTransform.DLTransformType;
-import org.jamdev.jtorch4pam.transforms.FreqTransform;
-import org.jamdev.jtorch4pam.transforms.WaveTransform;
+import org.jamdev.jdl4pam.transforms.DLTransform;
+import org.jamdev.jdl4pam.transforms.DLTransform.DLTransformType;
+import org.jamdev.jdl4pam.transforms.FreqTransform;
+import org.jamdev.jdl4pam.transforms.WaveTransform;
 
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import javafx.geometry.Pos;

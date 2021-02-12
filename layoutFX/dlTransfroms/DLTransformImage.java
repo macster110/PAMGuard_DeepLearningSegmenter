@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.controlsfx.control.RangeSlider;
-import org.jamdev.jtorch4pam.transforms.DLTransform;
-import org.jamdev.jtorch4pam.transforms.DLTransform.DLTransformType;
-import org.jamdev.jtorch4pam.transforms.FreqTransform;
-import org.jamdev.jtorch4pam.transforms.WaveTransform;
-import org.jamdev.jtorch4pam.wavFiles.AudioData;
+import org.jamdev.jdl4pam.transforms.DLTransform;
+import org.jamdev.jdl4pam.transforms.DLTransform.DLTransformType;
+import org.jamdev.jdl4pam.transforms.FreqTransform;
+import org.jamdev.jdl4pam.transforms.WaveTransform;
+import org.jamdev.jpamutils.wavFiles.AudioData;
 
 import PamUtils.PamArrayUtils;
 import javafx.collections.FXCollections;

@@ -33,12 +33,12 @@ public class OrcaSpotClassifier implements DLClassiferModel, PamSettings {
 	 * The maximum allowed queue size;
 	 */
 	public final static int MAX_QUEUE_SIZE = 10 ; 
-	
+
 	/**
 	 * The data model control 
 	 */
 	private DLControl dlControl;
-	
+
 	/**
 	 * The OrcaSpot worker that does all the heavy lifting. 
 	 */
@@ -59,7 +59,7 @@ public class OrcaSpotClassifier implements DLClassiferModel, PamSettings {
 	 */
 	private OrcaSpotModelResult lastPrediction; 
 
-//	private static final int THREAD_POOL_SIZE = 1; //keep this for now
+	//	private static final int THREAD_POOL_SIZE = 1; //keep this for now
 
 	/**
 	 * Hiolds a list of segmeneted raw data units which need to be classified. 
@@ -96,14 +96,17 @@ public class OrcaSpotClassifier implements DLClassiferModel, PamSettings {
 	}
 
 	@Override
-	public ModelResult runModel(GroupedRawData rawDataUnit) {
+	public ArrayList<ModelResult> runModel(ArrayList<GroupedRawData> rawDataUnits) {
 
-		if (queue.size()>MAX_QUEUE_SIZE) {
-			//we are not doing well - clear the buffer
-			queue.clear();
+		for (GroupedRawData groupedRawData: rawDataUnits){
+			if (queue.size()>MAX_QUEUE_SIZE) {
+				//we are not doing well - clear the buffer
+				queue.clear();
+			}
+			queue.add(groupedRawData);
+
+
 		}
-		queue.add(rawDataUnit);
-
 		this.orcaSpotUI.notifyUpdate(-1);
 
 		return null; 
@@ -129,7 +132,7 @@ public class OrcaSpotClassifier implements DLClassiferModel, PamSettings {
 		if (orcaSpotParams.useClassifier & !orcaSpotParams.useDetector) mode = "2";
 		//use detector only 
 		if (!orcaSpotParams.useClassifier & orcaSpotParams.useDetector) mode = "0";
-		
+
 		if (mode==null) {
 			System.err.print("ORCASPOT: something very wrong: Mode is null??");
 		}
@@ -191,7 +194,7 @@ public class OrcaSpotClassifier implements DLClassiferModel, PamSettings {
 			modelResults.add(modelResult); 
 			dlControl.getDLClassifyProcess().getDLDetectionDatablock().addPamData(new DLDetection(groupedRawData.getTimeMilliseconds(), 
 					groupedRawData.getChannelBitmap(), groupedRawData.getStartSample(),
-				groupedRawData.getSampleDuration(), modelResults, null));
+					groupedRawData.getSampleDuration(), modelResults, null));
 		}
 
 		groupedRawData= null; //just in case 
@@ -203,7 +206,7 @@ public class OrcaSpotClassifier implements DLClassiferModel, PamSettings {
 	public class TaskThread extends Thread {
 
 		private AtomicBoolean run = new AtomicBoolean(true);
-		
+
 		private OrcaSpotWorkerExe2 orcaSpotWorker;
 
 		TaskThread() {
@@ -327,6 +330,11 @@ public class OrcaSpotClassifier implements DLClassiferModel, PamSettings {
 	public DLClassName[] getClassNames() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public DLControl getDLControl() {
+		return dlControl;
 	}
 
 }

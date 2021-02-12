@@ -263,7 +263,7 @@ public class SegmenterProcess extends PamProcess {
 	 * Segment a single new raw data chunk. This is for a discrete data chunk i.e. the data is not a continuous time 
 	 * series of acoustic data but a clip of some kind of that. 
 	 * @param pamDataUnit - the pam data unit containing the chunk of raw data. 
-	 * @param rawDataChunk - the raw chunk of dtaa form the data unit. 
+	 * @param rawDataChunk - the raw chunk of data from the data unit. 
 	 * @param forceSave - all segments to be saved, even if the segment is not full e.g. for clicks detections. 
 	 */
 	private synchronized void newRawDataChunk(PamDataUnit pamDataUnit, double[][] rawDataChunk) {
@@ -544,9 +544,9 @@ public class SegmenterProcess extends PamProcess {
 	}
 
 	/**
-	 * Check whether a raw data unit is full. A units is full if all channels have been filled with acoutic data. 
+	 * Check whether a raw data unit is full. A units is full if all channels have been filled with acoustic data. 
 	 * @param groupedRawData - the grouped raw data 
-	 * @return true if the grouped dtaa unit is full. 
+	 * @return true if the grouped data unit is full. 
 	 */
 	private boolean isRawGroupDataFull(GroupedRawData groupedRawData) {
 		if (groupedRawData==null) return false; 

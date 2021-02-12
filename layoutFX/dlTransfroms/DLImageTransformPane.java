@@ -2,8 +2,8 @@ package rawDeepLearningClassifer.layoutFX.dlTransfroms;
 
 import java.util.ArrayList;
 
-import org.jamdev.jtorch4pam.transforms.DLTransform;
-import org.jamdev.jtorch4pam.transforms.DLTransform.DLTransformType;
+import org.jamdev.jdl4pam.transforms.DLTransform;
+import org.jamdev.jdl4pam.transforms.DLTransform.DLTransformType;
 
 import pamViewFX.fxNodes.PamBorderPane;
 
