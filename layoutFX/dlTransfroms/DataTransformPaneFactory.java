@@ -53,7 +53,10 @@ public class DataTransformPaneFactory {
 		case SPEC2DB:
 			settingsPane = new LabelTransfromPane(dlTransfrom, DLTransformType.SPEC2DB.toString()); 
 			settingsPane.setPadding(new Insets(0,0,0,20));
-
+			break;
+		case SPECNORMALISEROWSUM:
+			settingsPane = new LabelTransfromPane(dlTransfrom, DLTransformType.SPECNORMALISEROWSUM.toString()); 
+			settingsPane.setPadding(new Insets(0,0,0,20));
 			break;
 		case SPECCLAMP:
 			settingsPane = new SimpleTransformPane((SimpleTransform) dlTransfrom, new String[]{"Min. ", "Max. "}); 

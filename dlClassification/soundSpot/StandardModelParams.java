@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jamdev.jdl4pam.transforms.DLTransform;
+import org.jamdev.jdl4pam.transforms.DLTransfromParams;
 
 import rawDeepLearningClassifer.dlClassification.DLClassName;
-import rawDeepLearningClassifer.layoutFX.dlTransfroms.DLTransformParams;
 
 /**
  * Parameters for the SoundSpot model. 
@@ -16,7 +16,7 @@ import rawDeepLearningClassifer.layoutFX.dlTransfroms.DLTransformParams;
  * @author Jamie Macaulay 
  *
  */
-public class PamSoundSpotParams implements Serializable, Cloneable {
+public class StandardModelParams implements Serializable, Cloneable {
 
 	/**
 	 * 
@@ -34,7 +34,7 @@ public class PamSoundSpotParams implements Serializable, Cloneable {
 	public boolean useCUDA = false;
 	
 	/**
-	 * Use defualt transforms
+	 * Use default transforms
 	 */
 	public boolean useDefaultTransfroms = false; 
 
@@ -50,10 +50,11 @@ public class PamSoundSpotParams implements Serializable, Cloneable {
 	public int numClasses = 0; 
 	
 	/**
-	 * List of transforms for the raw data e.g. filtering, spectrogram, spectrogram normalisation etc. This is only used for saving serialised settings
+	 * List of transforms for the raw data e.g. filtering, spectrogram, spectrogram normalisation etc. 
+	 * This is only used for saving serialised settings
 	 * 
 	 */
-	public List<DLTransformParams> dlTransfromParams = null; 
+	public List<DLTransfromParams> dlTransfromParams = null; 
 	
 	/**
 	 * The DL custom transforms if the default transforms for the mdoel are not being used. 
@@ -76,10 +77,10 @@ public class PamSoundSpotParams implements Serializable, Cloneable {
 	public boolean[] binaryClassification; 
 	
 	@Override
-	public PamSoundSpotParams clone() {
-		PamSoundSpotParams newParams = null;
+	public StandardModelParams clone() {
+		StandardModelParams newParams = null;
 		try {
-			newParams = (PamSoundSpotParams) super.clone();
+			newParams = (StandardModelParams) super.clone();
 //			if (newParams.spectrogramNoiseSettings == null) {
 //				newParams.spectrogramNoiseSettings = new SpectrogramNoiseSettings();
 //			}

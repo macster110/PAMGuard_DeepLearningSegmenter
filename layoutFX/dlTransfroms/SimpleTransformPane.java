@@ -215,7 +215,7 @@ public class SimpleTransformPane extends DLTransformPane {
 
 			}
 			else {
-				spinners.get(i).getValueFactory().setValue(simpleTransform.getParams()[i]);
+				spinners.get(i).getValueFactory().setValue(simpleTransform.getParams()[i].intValue());
 			}
 		}
 

@@ -3,7 +3,7 @@ package rawDeepLearningClassifer.dlClassification.genericModel;
 import javax.swing.JPanel;
 
 import PamController.SettingsPane;
-import rawDeepLearningClassifer.dlClassification.soundSpot.PamSoundSpotParams;
+import rawDeepLearningClassifer.dlClassification.soundSpot.StandardModelParams;
 import rawDeepLearningClassifer.layoutFX.DLCLassiferModelUI;
 
 
@@ -34,7 +34,7 @@ public class GenericModelUI  implements DLCLassiferModelUI {
 	}
 
 	@Override
-	public SettingsPane<PamSoundSpotParams> getSettingsPane() {
+	public SettingsPane<StandardModelParams> getSettingsPane() {
 		if (soundSpotPane==null) {
 			soundSpotPane = new  GenericModelPane(genericModelClassifier); 
 		}
@@ -43,8 +43,8 @@ public class GenericModelUI  implements DLCLassiferModelUI {
 
 	@Override
 	public void getParams() {
-		PamSoundSpotParams orcaSpotParams =  getSettingsPane().getParams(genericModelClassifier.getGenericDLParams()); 
-		genericModelClassifier.setSoundSpotParams(orcaSpotParams.clone()); //be safe and clone.  	
+		StandardModelParams orcaSpotParams =  getSettingsPane().getParams(genericModelClassifier.getGenericDLParams()); 
+		genericModelClassifier.setGenericModelParams(orcaSpotParams.clone()); //be safe and clone.  	
 	}
 
 	

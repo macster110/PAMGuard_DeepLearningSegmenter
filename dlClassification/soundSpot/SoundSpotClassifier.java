@@ -60,7 +60,7 @@ public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 	/**
 	 * Sound spot parameters. 
 	 */
-	private PamSoundSpotParams soundSpotParmas;
+	private StandardModelParams soundSpotParmas;
 
 
 	/**
@@ -74,13 +74,13 @@ public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 	private boolean forceQueue = false; 
 
 	/**
-	 * Sound spot wanring. 
+	 * Sound spot warning. 
 	 */
 	PamWarning soundSpotWarning = new PamWarning("SoundSpotClassifier", "",2); 
 
 	public SoundSpotClassifier(DLControl dlControl) {
 		this.dlControl=dlControl; 
-		this.soundSpotParmas = new PamSoundSpotParams(); 
+		this.soundSpotParmas = new StandardModelParams(); 
 		this.soundSpotUI= new SoundSpotUI(this); 
 		//load the previous settings
 		PamSettingManager.getInstance().registerSettings(this);
@@ -124,7 +124,7 @@ public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 	 * @param modelResult - the model results
 	 * @return the model results. 
 	 */
-	private boolean isBinaryResult(SoundSpotResult modelResult) {
+	private boolean isBinaryResult(GenericModelResult modelResult) {
 		for (int i=0; i<modelResult.getPrediction().length; i++) {
 			if (modelResult.getPrediction()[i]>soundSpotParmas.threshold && soundSpotParmas.binaryClassification[i]) {
 				System.out.println("SoundSpotClassifier: prediciton: " + i + " passed threshold with val: " + modelResult.getPrediction()[i]); 
@@ -136,7 +136,7 @@ public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 
 	/**
 	 * Get the sound spot worker. 
-	 * @returnthe sound spot worker. 
+	 * @return the sound spot worker. 
 	 */
 	SoundSpotWorker getSoundSpotWorker() {
 		if (soundSpotWorker==null) {
@@ -217,7 +217,7 @@ public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 	 * @param modelResult - the model result;
 	 * @param groupedRawData - the grouped raw data. 
 	 */
-	private void newResult(SoundSpotResult modelResult, GroupedRawData groupedRawData) {
+	private void newResult(GenericModelResult modelResult, GroupedRawData groupedRawData) {
 		this.dlControl.getDLClassifyProcess().newModelResult(modelResult, groupedRawData);
 
 	}
@@ -272,7 +272,7 @@ public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 	@Override
 	public Serializable getSettingsReference() {
 		if (soundSpotParmas==null) {
-			soundSpotParmas = new PamSoundSpotParams(); 
+			soundSpotParmas = new StandardModelParams(); 
 		}
 		System.out.println("SoundSpot have been saved. : " + soundSpotParmas.modelPath); 
 		return soundSpotParmas;
@@ -281,17 +281,17 @@ public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 
 	@Override
 	public long getSettingsVersion() {
-		return PamSoundSpotParams.serialVersionUID;
+		return StandardModelParams.serialVersionUID;
 	}
 
 	@Override
 	public boolean restoreSettings(PamControlledUnitSettings pamControlledUnitSettings) {
-		PamSoundSpotParams newParameters = (PamSoundSpotParams) pamControlledUnitSettings.getSettings();
+		StandardModelParams newParameters = (StandardModelParams) pamControlledUnitSettings.getSettings();
 		if (newParameters!=null) {
 			soundSpotParmas = newParameters.clone();
 			System.out.println("SoundSpot have been restored. : " + soundSpotParmas.modelPath); 
 		}
-		else soundSpotParmas = new PamSoundSpotParams(); 
+		else soundSpotParmas = new StandardModelParams(); 
 		return true;
 	}
 
@@ -299,7 +299,7 @@ public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 	 * Get the sound spot parameters. 
 	 * @return sound spot parameters. 
 	 */
-	public PamSoundSpotParams getSoundSpotParams() {
+	public StandardModelParams getSoundSpotParams() {
 		return soundSpotParmas;
 	}
 
@@ -307,15 +307,8 @@ public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 	 * Set the sound spot parameters. 
 	 * @param the params to set 
 	 */
-	public void setSoundSpotParams(PamSoundSpotParams soundSpotParmas) {
+	public void setSoundSpotParams(StandardModelParams soundSpotParmas) {
 		this.soundSpotParmas=soundSpotParmas; 
-
-	}
-
-
-
-	public void newModelSelected(File file) {
-		// TODO Auto-generated method stub
 
 	}
 

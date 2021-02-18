@@ -1,46 +1,89 @@
 package rawDeepLearningClassifer.dlClassification.genericModel;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 
 import PamController.PamControlledUnitSettings;
+import PamController.PamSettingManager;
 import PamController.PamSettings;
 import rawDeepLearningClassifer.DLControl;
 import rawDeepLearningClassifer.dlClassification.DLClassName;
 import rawDeepLearningClassifer.dlClassification.DLClassiferModel;
 import rawDeepLearningClassifer.dlClassification.ModelResult;
-import rawDeepLearningClassifer.dlClassification.soundSpot.PamSoundSpotParams;
+import rawDeepLearningClassifer.dlClassification.soundSpot.StandardModelParams;
 import rawDeepLearningClassifer.layoutFX.DLCLassiferModelUI;
 import rawDeepLearningClassifer.segmenter.SegmenterProcess.GroupedRawData;
+import warnings.PamWarning;
+import warnings.WarningSystem;
 
 
 /**
- * A generic model - can be load any model but requires manaully setting model metadaata. 
+ * A generic model - can be load any model but requires manually setting model 
+. 
  * @author Jamie Macaulay
  * 
  *
  */
 public class GenericDLClassifier implements DLClassiferModel, PamSettings {
 
-	
+	/**
+	 * The DL control. 
+	 */
 	private DLControl dlControl;
 	
+	/**
+	 * The generic model parameters. 
+	 */
 	private GenericModelParams genericModelParams = new GenericModelParams();
 
+	/**
+	 * The generic model UI,
+	 */
 	private DLCLassiferModelUI genericModelUI; 
+	
+	/**
+	 * The generic model worker. 
+	 */
+	private GenericModelWorker genericModelWorker;
+	
+	/**
+	 * Sound spot warning. 
+	 */
+	PamWarning soundSpotWarning = new PamWarning("Generic deep learning classifier", "",2); 
 
 
 	public GenericDLClassifier(DLControl dlControl) {
 		this.dlControl=dlControl; 
 		
 		genericModelUI = new GenericModelUI(this); 
+		
+		//the generic model worker...erm...does the work. 
+		genericModelWorker = new GenericModelWorker(); 
+		
+		//load the previous settings
+		PamSettingManager.getInstance().registerSettings(this);
 	}
 	
 
 	@Override
 	public void prepModel() {
+		//System.out.println("PrepModel! !!!");
+		genericModelWorker.prepModel(genericModelParams, dlControl);
+			//set cusotm transforms in the model. 
+		genericModelWorker.setModelTransforms(genericModelParams.dlTransfroms);
+	
+
+		if (	genericModelWorker.getModel()==null) {
+			soundSpotWarning.setWarningMessage("There is no loaded classifier model. SoundSpot disabled.");
+			WarningSystem.getWarningSystem().addWarning(soundSpotWarning);
+		}
+	}
+	
+	@Override
+	public ArrayList<? extends ModelResult> runModel(ArrayList<GroupedRawData> rawDataUnit) {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
 
 	
@@ -48,12 +91,11 @@ public class GenericDLClassifier implements DLClassiferModel, PamSettings {
 	public void closeModel() {
 		// TODO Auto-generated method stub
 	}
-
+	
 
 	@Override
 	public int getNumClasses() {
-		// TODO Auto-generated method stub
-		return 0;
+		return genericModelParams.numClasses;
 	}
 	
 	@Override
@@ -69,15 +111,7 @@ public class GenericDLClassifier implements DLClassiferModel, PamSettings {
 
 	@Override
 	public DLClassName[] getClassNames() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-	@Override
-	public ArrayList<? extends ModelResult> runModel(ArrayList<GroupedRawData> rawDataUnit) {
-		// TODO Auto-generated method stub
-		return null;
+		return genericModelParams.classNames;
 	}
 
 
@@ -114,7 +148,7 @@ public class GenericDLClassifier implements DLClassiferModel, PamSettings {
 
 	@Override
 	public long getSettingsVersion() {
-		return PamSoundSpotParams.serialVersionUID;
+		return StandardModelParams.serialVersionUID;
 	}
 
 	@Override
@@ -122,7 +156,7 @@ public class GenericDLClassifier implements DLClassiferModel, PamSettings {
 		GenericModelParams newParameters = (GenericModelParams) pamControlledUnitSettings.getSettings();
 		if (newParameters!=null) {
 			genericModelParams = (GenericModelParams) newParameters.clone();
-			System.out.println("SoundSpot have been restored. : " + genericModelParams.modelPath); 
+			System.out.println("Generic settings have been restored. : " + genericModelParams.modelPath); 
 		}
 		else genericModelParams = new GenericModelParams(); 
 		return true;
@@ -135,9 +169,26 @@ public class GenericDLClassifier implements DLClassiferModel, PamSettings {
 	public GenericModelParams getGenericDLParams() {
 		return genericModelParams;
 	}
+	
+	/**
+	 * Get the generic model worker. 
+	 * @return the generic model worker. 
+	 */
+	public GenericModelWorker getGenericDLWorker() {
+		return genericModelWorker;
+	}
 
 
-	public void setSoundSpotParams(PamSoundSpotParams clone) {
+	/**
+	 * Set the generic model params. 
+	 * @param clone - the params to set. 
+	 */
+	public void setGenericModelParams(StandardModelParams clone) {
+		this.genericModelParams=(GenericModelParams) clone;	
+	}
+
+
+	public void newModelSelected(File file) {
 		// TODO Auto-generated method stub
 		
 	}

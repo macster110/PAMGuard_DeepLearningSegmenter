@@ -5,11 +5,9 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import PamUtils.PamArrayUtils;
-import binaryFileStorage.BinaryHeader;
-import rawDeepLearningClassifer.dlClassification.DLClassiferModel;
 import rawDeepLearningClassifer.dlClassification.ModelResult;
 import rawDeepLearningClassifer.dlClassification.dummyClassifier.DummyModelResult;
-import rawDeepLearningClassifer.dlClassification.genericModel.GenericModelResult;
+import rawDeepLearningClassifer.dlClassification.soundSpot.GenericModelResult;
 import rawDeepLearningClassifer.dlClassification.soundSpot.SoundSpotResult;
 
 /**
@@ -123,12 +121,9 @@ public class ModelResultBinaryFactory {
 			short[] classID = new short[nClass];
 			for (int i = 0; i < nClass; i++) {
 				classID[i] =  dis.readShort(); 
-			}
-			
-			
-			System.out.println("ModelResultBinaryFactory Type: " + type); 
+			}			
+			//System.out.println("ModelResultBinaryFactory Type: " + type); 
 
-			
 			ModelResult result; 
 			//specific settings for different modules 
 			switch (type) {
@@ -162,7 +157,7 @@ public class ModelResultBinaryFactory {
 	 */
 	public static int getType(ModelResult modelResult) {
 		int type=0; 
-		if (modelResult instanceof SoundSpotResult) {
+		if (modelResult instanceof GenericModelResult) {
 			type=SOUND_SPOT; 
 		}
 		if (modelResult instanceof GenericModelResult) {

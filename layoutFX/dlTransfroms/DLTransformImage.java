@@ -134,8 +134,6 @@ public abstract class DLTransformImage extends PamBorderPane{
 		});
 		transformschoiceBox.setConverter(new DLTransformConverter());
 
-
-
 		plotPane.getPlotCanvas().widthProperty().addListener((obsval, oldval, newval)->{
 			plotPane.repaint();
 		});
@@ -239,6 +237,10 @@ public abstract class DLTransformImage extends PamBorderPane{
 		return this.exampleSound.getSampleRate();
 	}
 
+	/**
+	 * Update the example sound. 
+	 * @param exampleSoundType - the example sound type. 
+	 */
 	private void updateExampleSound(ExampleSoundType exampleSoundType) {
 		this.exampleSound = exampleSoundFactory.getExampleSound(exampleSoundType); 
 

@@ -67,6 +67,7 @@ public class DLImageTransformPane  extends PamBorderPane {
 
 		@Override
 		public void newSettings(int type) {
+			System.out.println("New settings: " + type); 
 			switch (type) {
 			case DLTransformsPane.TRANSFORM_SETTINGS_CHANGE:
 				//called whenever a control is updated. 
@@ -84,6 +85,8 @@ public class DLImageTransformPane  extends PamBorderPane {
 		@Override
 		protected void addNewDLTransfrom(DLTransformType dlTransformType) {
 			//TODO - need to add frequency and wave transforms in appropriate places in the list.
+			
+			//System.out.println("Add DL transform: " + dlTransformType); 
 			super.addNewDLTransfrom(dlTransformType);
 			dlTransfromImagePane.newSettings();
 		}

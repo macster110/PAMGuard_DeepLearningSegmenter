@@ -1,7 +1,6 @@
 package rawDeepLearningClassifer.layoutFX.dlTransfroms;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.jamdev.jdl4pam.transforms.DLTransform;
@@ -95,8 +94,21 @@ public class DLTransformsPane extends PamBorderPane {
 	 * @param dlTransformType
 	 */
 	protected void addNewDLTransfrom(DLTransformType dlTransformType) {
+		if (draggablelistPane==null) {
+			draggablelistPane = new DLDraggableList();
+			mainPane.getChildren().clear();
+			mainPane.getChildren().addAll(controlPane, draggablelistPane); 
+		}
 		//System.out.println("DLTransformsPane: add a DL transform - TODO"); 
-		draggablelistPane.addDraggablePane(DataTransformPaneFactory.getSettingsPane(dlTransformType, getSampleRate())); 
+		DLTransformPane transformPane = DataTransformPaneFactory.getSettingsPane(dlTransformType, getSampleRate());
+		//transformPane.setParams(DataTransformPaneFactory.d);
+		transformPane.addSettingsListener(()->{
+			newSettings(TRANSFORM_SETTINGS_CHANGE); 
+		});
+		
+		draggablelistPane.addDraggablePane(transformPane); 
+
+	
 	}
 
 	/**
@@ -114,6 +126,12 @@ public class DLTransformsPane extends PamBorderPane {
 	 */
 	public void setTransforms(ArrayList<DLTransform> dlTransforms) {
 
+		if (dlTransforms == null) {
+			mainPane.getChildren().clear();
+			mainPane.getChildren().add(controlPane); 
+			return; 
+		}
+			
 		ArrayList<DLTransformPane> dlTransformPanes = new ArrayList<DLTransformPane>(); 
 
 		sampleRate=-1; 
@@ -121,7 +139,7 @@ public class DLTransformsPane extends PamBorderPane {
 		//create a pane for each transform
 		for (int i=0; i<dlTransforms.size() ; i++) {
 			//bit hackey bit try to set the sample rate...
-			if ( sampleRate<0.0f && dlTransforms.get(i) instanceof WaveTransform && ((WaveTransform) dlTransforms.get(i)).getWaveData()!=null) {
+			if (sampleRate<0.0f && dlTransforms.get(i) instanceof WaveTransform && ((WaveTransform) dlTransforms.get(i)).getWaveData()!=null) {
 				sampleRate = ((WaveTransform) dlTransforms.get(i)).getWaveData().getSampleRate(); 
 			}
 
@@ -178,6 +196,11 @@ public class DLTransformsPane extends PamBorderPane {
 
 
 	class DLDraggableList extends PamDraggableList<DLTransformPane>  {
+		
+		public DLDraggableList() {
+			super();
+		}
+
 
 		public DLDraggableList(List<DLTransformPane> panes) {
 			super(panes);

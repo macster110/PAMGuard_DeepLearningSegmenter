@@ -33,7 +33,7 @@ public class SoundSpotUI implements DLCLassiferModelUI {
 	}
 
 	@Override
-	public SettingsPane<PamSoundSpotParams> getSettingsPane() {
+	public SettingsPane<StandardModelParams> getSettingsPane() {
 		if (soundSpotPane==null) {
 			soundSpotPane = new  SoundSpotModelPane(soundSpotClassifier); 
 		}
@@ -42,7 +42,7 @@ public class SoundSpotUI implements DLCLassiferModelUI {
 
 	@Override
 	public void getParams() {
-		PamSoundSpotParams orcaSpotParams =  getSettingsPane().getParams(soundSpotClassifier.getSoundSpotParams()); 
+		StandardModelParams orcaSpotParams =  getSettingsPane().getParams(soundSpotClassifier.getSoundSpotParams()); 
 		soundSpotClassifier.setSoundSpotParams(orcaSpotParams.clone()); //be safe and clone.  
 		
 	}

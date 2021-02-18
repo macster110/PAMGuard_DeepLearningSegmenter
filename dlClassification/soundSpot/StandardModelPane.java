@@ -41,7 +41,7 @@ import rawDeepLearningClassifer.dlClassification.DLClassiferModel;
  * @author Jamie Macaulay
  *
  */
-public abstract class StandardModelPane extends SettingsPane<PamSoundSpotParams> {
+public abstract class StandardModelPane extends SettingsPane<StandardModelParams> {
 
 	/**
 	 * The main pane for the Soundspot sETTINGS
@@ -76,7 +76,7 @@ public abstract class StandardModelPane extends SettingsPane<PamSoundSpotParams>
 	/**
 	 * The currently held parameters. 
 	 */
-	private PamSoundSpotParams currentParams;
+	private StandardModelParams currentParams;
 
 	/**
 	 * A pop over to show the advanced pane. 
@@ -86,37 +86,44 @@ public abstract class StandardModelPane extends SettingsPane<PamSoundSpotParams>
 	/**
 	 * Advanced settings pane. 
 	 */
-	private SoundSpotAdvPane advSettingsPane;
+	private SettingsPane<StandardModelParams>   advSettingsPane;
 
 	/**
 	 * The sound spot classifier. 
 	 */
-	private DLClassiferModel soundSpotClassifier;
+	private DLClassiferModel dlClassifierModel;
 
 	/**
 	 * Default segment length. 
 	 */
-	private ToggleSwitch usedefaultSeg; 
+	protected ToggleSwitch usedefaultSeg; 
 
-	private PamSoundSpotParams paramsClone;
+	/**
+	 * Parameters clone. 
+	 */
+	private StandardModelParams paramsClone;
 
-
+	/**
+	 * Species ID box. 
+	 */
 	private CheckComboBox<String> speciesIDBox;
 
 	/**
 	 * The VBox. 
 	 */
-	private PamVBox vBoxHolder; 
+	private PamVBox vBoxHolder;
+
+	protected PamHBox defaultSegBox; 
 
 
 	public StandardModelPane(DLClassiferModel soundSpotClassifier) {
 		super(null);
-		this.soundSpotClassifier=soundSpotClassifier; 
+		this.dlClassifierModel=soundSpotClassifier; 
 		mainPane = createPane(); 
 		//the directory chooser. 
 		fileChooser = new FileChooser();
 		fileChooser.setTitle("Classifier Model Location");
-		setAdvSettingsPane(new SoundSpotAdvPane()); 
+		setAdvSettingsPane(new StandardAdvModelPane()); 
 	}
 
 	/**
@@ -127,14 +134,14 @@ public abstract class StandardModelPane extends SettingsPane<PamSoundSpotParams>
 		PamBorderPane mainPane = new PamBorderPane(); 
 
 
-		Label classiferInfoLabel = new Label("SoundSpot Classifier"); 
+		Label classiferInfoLabel = new Label(dlClassifierModel.getName() + " Classifier"); 
 		//PamGuiManagerFX.titleFont2style(classiferInfoLabel);
 		Font font= Font.font(null, FontWeight.BOLD, 11);
 		classiferInfoLabel.setFont(font);
 
 		/**Basic classifier info**/
 		pathLabel = new Label("No classifier file selected"); 
-		PamButton pamButton = new PamButton("", PamGlyphDude.createPamGlyph(MaterialDesignIcon.FILE, PamGuiManagerFX.iconSize-3)); 
+		PamButton pamButton = new PamButton("", PamGlyphDude.createPamGlyph(MaterialDesignIcon.FILE, PamGuiManagerFX.iconSize)); 
 		pamButton.setMinWidth(30);
 		pamButton.setTooltip(new Tooltip("Browse to selcect a model file"));
 
@@ -167,7 +174,7 @@ public abstract class StandardModelPane extends SettingsPane<PamSoundSpotParams>
 		hBox.getChildren().addAll(pathLabel, pamButton); 
 		hBox.setAlignment(Pos.CENTER_RIGHT);
 
-		PamButton advButton = new PamButton("", PamGlyphDude.createPamGlyph(MaterialDesignIcon.SETTINGS, PamGuiManagerFX.iconSize-3)); 
+		PamButton advButton = new PamButton("", PamGlyphDude.createPamGlyph(MaterialDesignIcon.SETTINGS, PamGuiManagerFX.iconSize)); 
 		advButton.setMinWidth(30);
 		advButton.setOnAction((action)->{
 			//pop up window with adv settings.
@@ -189,7 +196,7 @@ public abstract class StandardModelPane extends SettingsPane<PamSoundSpotParams>
 		usedefaultSeg.setMaxWidth(20); 
 
 
-		PamHBox defaultSegBox = new PamHBox(); 
+		defaultSegBox = new PamHBox(); 
 		defaultSegBox.setSpacing(5);
 		defaultSegBox.getChildren().addAll(usedefaultSeg, new Label("Use default segment length")); 
 		defaultSegBox.setAlignment(Pos.CENTER_LEFT);
@@ -258,18 +265,18 @@ public abstract class StandardModelPane extends SettingsPane<PamSoundSpotParams>
 			//			int defaultsamples = (int) this.soundSpotClassifier.millis2Samples(paramsClone.defaultSegmentLen); 
 
 
-			float sR = soundSpotClassifier.getDLControl().getSettingsPane().getSelectedParentDataBlock().getSampleRate(); 
+			float sR = dlClassifierModel.getDLControl().getSettingsPane().getSelectedParentDataBlock().getSampleRate(); 
 
 			int defaultsamples =  (int) (paramsClone.defaultSegmentLen.doubleValue()*sR/1000.0);
 
 			//work out the window length in samples
-			soundSpotClassifier.getDLControl().getSettingsPane().getSegmentLenSpinner().getValueFactory().setValue(defaultsamples);
-			soundSpotClassifier.getDLControl().getSettingsPane().getHopLenSpinner().getValueFactory().setValue((int) defaultsamples/2);
+			dlClassifierModel.getDLControl().getSettingsPane().getSegmentLenSpinner().getValueFactory().setValue(defaultsamples);
+			dlClassifierModel.getDLControl().getSettingsPane().getHopLenSpinner().getValueFactory().setValue((int) defaultsamples/2);
 
-			soundSpotClassifier.getDLControl().getSettingsPane().getSegmentLenSpinner().setDisable(true); 
+			dlClassifierModel.getDLControl().getSettingsPane().getSegmentLenSpinner().setDisable(true); 
 		}
 		else {
-			soundSpotClassifier.getDLControl().getSettingsPane().getSegmentLenSpinner().setDisable(false); 
+			dlClassifierModel.getDLControl().getSettingsPane().getSegmentLenSpinner().setDisable(false); 
 		}
 	}
 
@@ -314,7 +321,7 @@ public abstract class StandardModelPane extends SettingsPane<PamSoundSpotParams>
 	}
 
 	@Override
-	public PamSoundSpotParams getParams(PamSoundSpotParams currParams) {
+	public StandardModelParams getParams(StandardModelParams currParams) {
 
 		if (currentSelectedFile==null) {
 			//uuurgh need to sort this out with FX stuff
@@ -328,7 +335,7 @@ public abstract class StandardModelPane extends SettingsPane<PamSoundSpotParams>
 		currParams.threshold = detectionSpinner.getValue(); 
 		//		currParams.useCUDA = useCuda.isSelected(); 
 
-		currParams = this.getAdvSettingsPane().getParams(currParams);
+		currParams = (StandardModelParams) this.getAdvSettingsPane().getParams(currParams);
 
 		currParams.useDefaultTransfroms = this.usedefaultSeg.isSelected(); 
 		
@@ -344,7 +351,7 @@ public abstract class StandardModelPane extends SettingsPane<PamSoundSpotParams>
 	}
 
 	@Override
-	public void setParams(PamSoundSpotParams currParams) {
+	public void setParams(StandardModelParams currParams) {
 		this.currentParams = currParams.clone(); 
 
 		pathLabel .setText(this.currentSelectedFile.getPath()); 
@@ -373,7 +380,7 @@ public abstract class StandardModelPane extends SettingsPane<PamSoundSpotParams>
 	 * Set the class names in the class name combo box. 
 	 * @param currParams
 	 */
-	private void setClassNames(PamSoundSpotParams currParams) {
+	private void setClassNames(StandardModelParams currParams) {
 		speciesIDBox.getItems().clear();
 		
 		int classNamesLen = 0 ; 
@@ -410,27 +417,43 @@ public abstract class StandardModelPane extends SettingsPane<PamSoundSpotParams>
 
 	}
 
-	public PamSoundSpotParams getParamsClone() {
+	public StandardModelParams getParamsClone() {
 		return paramsClone;
 	}
 
-	public void setParamsClone(PamSoundSpotParams paramsClone) {
+	public void setParamsClone(StandardModelParams paramsClone) {
 		this.paramsClone = paramsClone;
 	}
 	
+	/**
+	 * Get the currently selected model file. 
+	 * @return the currently selected model file. 
+	 */
 	public File getCurrentSelectedFile() {
 		return currentSelectedFile;
 	}
 
+	/**
+	 * Set  the currently selected model file 
+	 * @param currentSelectedFile - the currently selected model file. 
+	 */
 	public void setCurrentSelectedFile(File currentSelectedFile) {
 		this.currentSelectedFile = currentSelectedFile;
 	}
 
-	public SoundSpotAdvPane getAdvSettingsPane() {
+	/**
+	 * Get the advanced settings pane. 
+	 * @return the advanced settings pane. 
+	 */
+	public SettingsPane getAdvSettingsPane() {
 		return advSettingsPane;
 	}
 
-	public void setAdvSettingsPane(SoundSpotAdvPane advSettingsPane) {
+	/**
+	 * Set the advanced settings pane. The advanced s pane to set. 
+	 * @param advSettingsPane
+	 */
+	public void setAdvSettingsPane(SettingsPane  advSettingsPane) {
 		this.advSettingsPane = advSettingsPane;
 	}
 	

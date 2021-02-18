@@ -35,9 +35,8 @@ public class SoundSpotModelPane extends StandardModelPane {
 	@Override
 	public void newModelSelected(File file) {
 		this.setCurrentSelectedFile(file);
-		this.soundSpotClassifier.newModelSelected(file); 
 
-		this.setParamsClone(new PamSoundSpotParams()); 
+		this.setParamsClone(new StandardModelParams()); 
 		//prep the model with current parameters; 
 		soundSpotClassifier.getSoundSpotWorker().prepModel(getParams(getParamsClone()), soundSpotClassifier.getDLControl());
 		//get the model tansforms calculated from the model by SoundSpoyWorker and apply them to our temporary params clone. 
