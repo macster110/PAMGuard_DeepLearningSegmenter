@@ -1,6 +1,11 @@
 package rawDeepLearningClassifer.dlClassification.genericModel;
 
+import java.util.ArrayList;
+
 import javax.swing.JPanel;
+
+import org.jamdev.jdl4pam.transforms.DLTransformsFactory;
+import org.jamdev.jdl4pam.transforms.DLTransfromParams;
 
 import PamController.SettingsPane;
 import rawDeepLearningClassifer.dlClassification.soundSpot.StandardModelParams;
@@ -43,14 +48,18 @@ public class GenericModelUI  implements DLCLassiferModelUI {
 
 	@Override
 	public void getParams() {
-		StandardModelParams orcaSpotParams =  getSettingsPane().getParams(genericModelClassifier.getGenericDLParams()); 
+		GenericModelParams orcaSpotParams =  (GenericModelParams) getSettingsPane().getParams(genericModelClassifier.getGenericDLParams()); 
+		
+		
+		//System.out.println("Get generic model params: " +  orcaSpotParams.dlTransfromParams + "  transforms: " + orcaSpotParams.dlTransfroms); 
 		genericModelClassifier.setGenericModelParams(orcaSpotParams.clone()); //be safe and clone.  	
 	}
 
 	
 	@Override
 	public void setParams() {
-		 getSettingsPane().setParams(genericModelClassifier.getGenericDLParams());
+//		System.out.println("Set model params: " + genericModelClassifier.getGenericDLParams().dlTransfromParams.size()); 
+		getSettingsPane().setParams(genericModelClassifier.getGenericDLParams());
 	}
 	
 

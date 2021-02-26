@@ -15,7 +15,9 @@ public class ExampleSoundFactory {
 	 *
 	 */
 	public enum ExampleSoundType {
-	    BAT_CALL("Bat Call (Myotis daubentonii)");
+	    BAT_CALL("Bat Call (Myotis daubentonii)"),
+		
+	    RIGHT_WHALE("Southern Right Whale (Eubalaena australis)");
 
 	    private final String text;
 
@@ -42,9 +44,14 @@ public class ExampleSoundFactory {
 	 */
 	public ExampleSound getExampleSound(ExampleSoundType exampleSoundType) {
 		ExampleSound exampleSound = null; 
+		URL path; 
 		switch (exampleSoundType) {
 		case BAT_CALL:
-			URL path = getClass().getResource("DUB_20200623_000152_885.wav"); 
+			path = getClass().getResource("DUB_20200623_000152_885.wav"); 
+			exampleSound = new SimpleExampleSound(path.getFile()); 
+			break;
+		case RIGHT_WHALE:
+			path = getClass().getResource("southern_right_whale_clip2.wav"); 
 			exampleSound = new SimpleExampleSound(path.getFile()); 
 			break;
 		default:

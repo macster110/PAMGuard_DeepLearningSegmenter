@@ -8,7 +8,15 @@ package rawDeepLearningClassifer.dlClassification;
  * @author Jamie Macaulay
  *
  */
-public interface ModelResult {
+public interface PredictionResult {
+
+	
+	/**
+	 * Get the time stamp. 
+	 * @return the millis datenumber.
+	 */
+	public long getTimeMillis(); 
+	
 
 	/**
 	 * Get the predictions for this result. The array contains the probabilities for all classes. 
@@ -35,7 +43,6 @@ public interface ModelResult {
 	 */
 	public double getAnalysisTime(); 
 	
-
 	/**
 	 * String representation of the result
 	 * @return a string of the result. 

@@ -51,7 +51,7 @@ public class DLDetection extends PamDataUnit implements PamDetection, RawDataHol
 	 */
 	@Deprecated
 	public DLDetection(long timeMilliseconds, int channelBitmap, long startSample, long durationSamples,
-			ArrayList<ModelResult> modelResults, double[][] waveData) {
+			ArrayList<PredictionResult> modelResults, double[][] waveData) {
 		super(timeMilliseconds, channelBitmap, startSample, durationSamples);
 		DLAnnotation annotation = new DLAnnotation(null, modelResults); 
 		this.addDataAnnotation(annotation);
@@ -127,7 +127,7 @@ public class DLDetection extends PamDataUnit implements PamDetection, RawDataHol
 	 * The number of results will generally be the raw data length divided by hop size. 
 	 * @return the  model results. 
 	 */
-	public ArrayList<ModelResult> getModelResults() {
+	public ArrayList<PredictionResult> getModelResults() {
 		DLAnnotation annotation = (DLAnnotation) this. findDataAnnotation(DLAnnotation.class) ;
 		if (annotation!=null) return annotation.getModelResults(); 
 		else return null; 

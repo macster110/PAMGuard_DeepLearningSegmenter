@@ -14,6 +14,7 @@ import org.jamdev.jpamutils.wavFiles.AudioData;
 import org.pytorch.Module;
 import org.pytorch.Tensor;
 
+import PamUtils.PamCalendar;
 import rawDeepLearningClassifer.DLControl;
 import rawDeepLearningClassifer.dlClassification.soundSpot.StandardModelParams;
 import rawDeepLearningClassifer.segmenter.SegmenterProcess.GroupedRawData;
@@ -48,20 +49,24 @@ public abstract class DLModelWorker<T> {
 	 * @param iChan - the channel to run the data on. 
 	 * @return the model to run. 
 	 */
-	public ArrayList<T> runModel(ArrayList<GroupedRawData> rawDataUnits, float sampleRate, int iChan) {
+	public synchronized ArrayList<T> runModel(ArrayList<GroupedRawData> rawDataUnits, float sampleRate, int iChan) {
 
 		try {
-			//		PamCalendar.isSoundFile(); 
-			//		// create an audio data object from the raw data chunk
+			
+			//the number of chunks. 
+			int numChunks = rawDataUnits.size(); 
+			
+			//PamCalendar.isSoundFile(); 
+			//create an audio data object from the raw data chunk
 			long timeStart = System.nanoTime(); 
-
+			
 			//data input into the model - a stack of spectrogram images. 
-			float[][][] transformedDataStack = new float[rawDataUnits.size()][][]; 
+			float[][][] transformedDataStack = new float[numChunks][][]; 
 
 			//geenrate the spectrogram stack. 
 			AudioData soundData; 
 			double[][] transformedData;
-			for (int j=0; j<rawDataUnits.size(); j++) {
+			for (int j=0; j<numChunks; j++) {
 
 				soundData  = new AudioData(rawDataUnits.get(j).getRawData()[iChan], sampleRate); 
 
@@ -81,7 +86,9 @@ public abstract class DLModelWorker<T> {
 
 				//the transformed data
 				transformedData = ((FreqTransform) transform).getSpecTransfrom().getTransformedData(); 
-
+				
+				//System.out.println("DLModelWorker: Input shape: " + transformedData.length + "  " + transformedData[0].length + PamCalendar.formatDBDateTime(rawDataUnits.get(j).getTimeMilliseconds(), true));
+				
 				transformedDataStack[j] = DLUtils.toFloatArray(transformedData); 
 
 			}
@@ -96,14 +103,24 @@ public abstract class DLModelWorker<T> {
 
 			int numclasses = (int) (output.length/transformedDataStack.length); 
 
-			//System.out.println(PamCalendar.formatDBDateTime(rawDataUnit.getTimeMilliseconds(), true) + " Time to run model: " + (time2-time1) + " ms for spec of len: " + transformedData.length); 
+//			System.out.println(PamCalendar.formatDBDateTime(rawDataUnits.get(0).getTimeMilliseconds(), true) + 
+//					" Time to run model: " + (time2-time1) + " ms for spec of len: " + transformedDataStack.length + 
+//					"output: " + output.length + " " + numclasses); 
 
 			ArrayList<T> modelResults = new ArrayList<T>(); 
 			float[] prob; 
 			float[] classOut; 
 			for (int i=0; i<transformedDataStack.length; i++) {
+				
 
-				classOut = Arrays.copyOfRange(output, i*numclasses, (i+1)*numclasses-1); 
+				/**
+				 * This is super weird. Reading the documentation for copeOfRange the index from and index to are enclusive. So 
+				 * to copy the first two elements indexfrom =0 and indexto = 1. But actually it seems that this should be indexfrom =0 and indexto =2. 
+				 * So do not minus one form (i+1)*numclasses. This works but I'm confused as to why?
+				 */
+				classOut = Arrays.copyOfRange(output, i*numclasses, (i+1)*numclasses); 
+
+//				System.out.println("The copyOfRange is: " + i*numclasses + " to " + ((i+1)*numclasses-1) + " class out len: " + classOut.length); 
 
 				prob = new float[classOut.length]; 
 
@@ -113,13 +130,13 @@ public abstract class DLModelWorker<T> {
 					//                    pred = int(prob >= ARGS.threshold)		    	
 					//softmax function
 					prob[j] = (float) DLUtils.softmax(classOut[j], classOut); 
-					//System.out.println("The probability is: " + prob[j]); 
+					//System.out.println("The probability is: " + j + ": " + prob[j]); 
 				}
 
 				//does this pass binary classification
 				long timeEnd = System.nanoTime(); 
 
-				T soundSpotResult =   makeModelResult(prob, (timeEnd-timeStart)/1000/1000/1000); 
+				T soundSpotResult = makeModelResult(prob, (timeEnd-timeStart)/1000/1000/1000); 
 				//				soundSpotResult.setAnalysisTime((timeEnd-timeStart)/1000/1000/1000);
 
 				modelResults.add(soundSpotResult);
@@ -138,7 +155,6 @@ public abstract class DLModelWorker<T> {
 	public abstract float[] runModel(float[][][] transformedDataStack);
 
 	public abstract T makeModelResult(float[] prob, double time);
-
 
 	public abstract void prepModel(StandardModelParams soundSpotParams, DLControl dlControl);
 

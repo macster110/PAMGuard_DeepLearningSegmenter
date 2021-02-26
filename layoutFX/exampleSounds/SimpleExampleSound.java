@@ -25,6 +25,7 @@ public class SimpleExampleSound implements ExampleSound{
 			data = DLUtils.loadWavFile(file);
 		} catch (IOException | UnsupportedAudioFileException e) {
 			// TODO Auto-generated catch block
+			System.out.println(file); 
 			e.printStackTrace();
 		} 
 	}

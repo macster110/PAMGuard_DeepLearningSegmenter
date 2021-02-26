@@ -23,6 +23,7 @@ import dataPlotsFX.data.TDDataProviderRegisterFX;
 import detectionPlotFX.data.DDPlotRegister;
 import pamViewFX.fxNodes.pamDialogFX.PamDialogFX2AWT;
 import rawDeepLearningClassifer.dataPlotFX.DLDetectionPlotProvider;
+import rawDeepLearningClassifer.dataPlotFX.DLPredictionProvider;
 import rawDeepLearningClassifer.ddPlotFX.RawDLDDPlotProvider;
 import rawDeepLearningClassifer.dlClassification.DLClassName;
 import rawDeepLearningClassifer.dlClassification.DLClassNameManager;
@@ -34,6 +35,7 @@ import rawDeepLearningClassifer.dlClassification.genericModel.GenericDLClassifie
 import rawDeepLearningClassifer.dlClassification.soundSpot.SoundSpotClassifier;
 import rawDeepLearningClassifer.layoutFX.DLSidePanelSwing;
 import rawDeepLearningClassifer.layoutFX.DLSymbolManager;
+import rawDeepLearningClassifer.layoutFX.PredictionSymbolManager;
 import rawDeepLearningClassifer.layoutFX.RawDLSettingsPane;
 import rawDeepLearningClassifer.logging.DLResultBinarySource;
 import rawDeepLearningClassifer.offline.DLOfflineProcess;
@@ -156,14 +158,15 @@ public class DLControl extends PamControlledUnit implements PamSettings {
 
 		//add storage options etc. 
 		dlBinaryDataSource = new DLResultBinarySource(dlClassifyProcess); 
-		dlClassifyProcess.getDLResultDataBlock().setBinaryDataSource(dlBinaryDataSource);
-		dlClassifyProcess.getDLResultDataBlock().setDatagramProvider(new DLDataUnitDatagram(this));
+		dlClassifyProcess.getDLPredictionDataBlock().setBinaryDataSource(dlBinaryDataSource);
+		dlClassifyProcess.getDLPredictionDataBlock().setDatagramProvider(new DLDataUnitDatagram(this));
 
 		dlDetectionBinarySource = new DLDetectionBinarySource(this, dlClassifyProcess.getDLDetectionDatablock()); 
 		dlClassifyProcess.getDLDetectionDatablock().setBinaryDataSource(dlDetectionBinarySource);
 		dlClassifyProcess.getDLDetectionDatablock().setDatagramProvider(new DLDetectionDatagram(this));
 
 		dlClassifyProcess.getDLDetectionDatablock().setPamSymbolManager(new DLSymbolManager(this, 	dlClassifyProcess.getDLDetectionDatablock()));
+		dlClassifyProcess.getDLPredictionDataBlock().setPamSymbolManager(new PredictionSymbolManager(this, 	dlClassifyProcess.getDLDetectionDatablock()));
 
 		/*****Add new deep learning models here****/
 
@@ -179,6 +182,8 @@ public class DLControl extends PamControlledUnit implements PamSettings {
 
 		//register click detector for the javafx display. 
 		TDDataProviderRegisterFX.getInstance().registerDataInfo(new DLDetectionPlotProvider(this, dlClassifyProcess.getDLDetectionDatablock()));
+		TDDataProviderRegisterFX.getInstance().registerDataInfo(new DLPredictionProvider(this, dlClassifyProcess.getDLDetectionDatablock()));
+
 		//register the DD display
 		DDPlotRegister.getInstance().registerDataInfo(new RawDLDDPlotProvider(this, dlClassifyProcess.getDLDetectionDatablock()));
 		//load the previous settings

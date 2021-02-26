@@ -37,9 +37,7 @@ public class DLDetectionPlotInfoFX extends RawClipDataInfo {
 		//any data unit used with this should be a raw data holder. 
 		DLDetection rawDataProvider = (DLDetection) pamDataUnit; 
 
-
 		double[][] spec =  rawDataProvider.getSpectrogram( this.getRawClipParams().fftLength, this.getRawClipParams().fftHop).getSpectrogram(iChan); 
-
 		//System.out.println("Getting a spectrogram: " + spec.length + " x " + spec[0].length + " " + spec[0][5]);
 
 		return spec; 

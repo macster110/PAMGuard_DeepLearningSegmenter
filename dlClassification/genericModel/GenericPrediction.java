@@ -1,7 +1,7 @@
-package rawDeepLearningClassifer.dlClassification.soundSpot;
+package rawDeepLearningClassifer.dlClassification.genericModel;
 
 import PamUtils.PamArrayUtils;
-import rawDeepLearningClassifer.dlClassification.ModelResult;
+import rawDeepLearningClassifer.dlClassification.PredictionResult;
 
 /**
  * Result from the SoundSpot classifier.
@@ -9,7 +9,13 @@ import rawDeepLearningClassifer.dlClassification.ModelResult;
  * @author Jamie Macaulay 
  *
  */
-public class GenericModelResult implements ModelResult {
+public class GenericPrediction implements PredictionResult {
+	
+
+	/**
+	 * The time in millis
+	 */
+	long timeMillis = -1L; 
 
 	/**
 	 * Create a result for the Sound Spot classifier. 
@@ -33,14 +39,14 @@ public class GenericModelResult implements ModelResult {
 	public double analysisTime=0; 
 	
 
-	public GenericModelResult(float[] prob, short[] classNameID, boolean isBinary) {
+	public GenericPrediction(float[] prob, short[] classNameID, boolean isBinary) {
 		this.prob=prob; 
 		this.classNameID = classNameID;
 		this.binaryPass= isBinary; 
 	}
 
 	
-	public GenericModelResult(float[] prob, boolean isBinary) {
+	public GenericPrediction(float[] prob, boolean isBinary) {
 		this(prob, null, isBinary); 
 	}
 
@@ -48,7 +54,7 @@ public class GenericModelResult implements ModelResult {
 	 * Create a result for the Sound Spot classifier. 
 	 * @param prob - the probability of each class. 
 	 */
-	public GenericModelResult(float[] prob) {
+	public GenericPrediction(float[] prob) {
 		this(prob, null, false); 
 	}
 
@@ -98,6 +104,16 @@ public class GenericModelResult implements ModelResult {
 	public void setBinaryClassification(boolean binaryResult) {
 		this.binaryPass=binaryResult; 
 		
+	}
+	
+	@Override
+	public long getTimeMillis() {
+		return timeMillis;
+	}
+
+
+	public void setTimeMillis(long timeMillis) {
+		this.timeMillis = timeMillis;
 	}
 
 }

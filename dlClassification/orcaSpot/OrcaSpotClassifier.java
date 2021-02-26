@@ -14,7 +14,7 @@ import rawDeepLearningClassifer.dlClassification.DLClassName;
 import rawDeepLearningClassifer.dlClassification.DLClassiferModel;
 import rawDeepLearningClassifer.dlClassification.DLDataUnit;
 import rawDeepLearningClassifer.dlClassification.DLDetection;
-import rawDeepLearningClassifer.dlClassification.ModelResult;
+import rawDeepLearningClassifer.dlClassification.PredictionResult;
 import rawDeepLearningClassifer.layoutFX.DLCLassiferModelUI;
 import rawDeepLearningClassifer.segmenter.SegmenterProcess.GroupedRawData;
 
@@ -96,7 +96,7 @@ public class OrcaSpotClassifier implements DLClassiferModel, PamSettings {
 	}
 
 	@Override
-	public ArrayList<ModelResult> runModel(ArrayList<GroupedRawData> rawDataUnits) {
+	public ArrayList<PredictionResult> runModel(ArrayList<GroupedRawData> rawDataUnits) {
 
 		for (GroupedRawData groupedRawData: rawDataUnits){
 			if (queue.size()>MAX_QUEUE_SIZE) {
@@ -186,11 +186,11 @@ public class OrcaSpotClassifier implements DLClassiferModel, PamSettings {
 		dlDataUnit.setDurationInMilliseconds(groupedRawData.getDurationInMilliseconds()); 
 
 
-		dlControl.getDLClassifyProcess().getDLResultDataBlock().addPamData(dlDataUnit);
+		dlControl.getDLClassifyProcess().getDLPredictionDataBlock().addPamData(dlDataUnit);
 
-		if (dlDataUnit.getModelResult().isBinaryClassification()) {
+		if (dlDataUnit.getPredicitionResult().isBinaryClassification()) {
 			//send off to localised datablock 
-			ArrayList<ModelResult> modelResults = new ArrayList<ModelResult>(); 
+			ArrayList<PredictionResult> modelResults = new ArrayList<PredictionResult>(); 
 			modelResults.add(modelResult); 
 			dlControl.getDLClassifyProcess().getDLDetectionDatablock().addPamData(new DLDetection(groupedRawData.getTimeMilliseconds(), 
 					groupedRawData.getChannelBitmap(), groupedRawData.getStartSample(),
@@ -335,6 +335,11 @@ public class OrcaSpotClassifier implements DLClassiferModel, PamSettings {
 	@Override
 	public DLControl getDLControl() {
 		return dlControl;
+	}
+
+	@Override
+	public boolean checkModelOK() {
+		return true;
 	}
 
 }

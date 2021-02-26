@@ -1,8 +1,8 @@
 package rawDeepLearningClassifer.dlClassification.dummyClassifier;
 
-import rawDeepLearningClassifer.dlClassification.ModelResult;
+import rawDeepLearningClassifer.dlClassification.PredictionResult;
 
-public class DummyModelResult implements ModelResult {
+public class DummyModelResult implements PredictionResult {
 	
 	
 	private float[] probability;
@@ -41,6 +41,12 @@ public class DummyModelResult implements ModelResult {
 	public short[] getClassNames() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public long getTimeMillis() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 	
 }

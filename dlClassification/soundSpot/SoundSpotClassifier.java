@@ -1,12 +1,9 @@
 package rawDeepLearningClassifer.dlClassification.soundSpot;
 
-import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import PamController.PamControlledUnitSettings;
 import PamController.PamSettingManager;
 import PamController.PamSettings;
@@ -14,7 +11,9 @@ import PamUtils.PamCalendar;
 import rawDeepLearningClassifer.DLControl;
 import rawDeepLearningClassifer.dlClassification.DLClassName;
 import rawDeepLearningClassifer.dlClassification.DLClassiferModel;
-import rawDeepLearningClassifer.dlClassification.ModelResult;
+import rawDeepLearningClassifer.dlClassification.DLTaskThread;
+import rawDeepLearningClassifer.dlClassification.genericModel.DLModelWorker;
+import rawDeepLearningClassifer.dlClassification.genericModel.GenericPrediction;
 import rawDeepLearningClassifer.layoutFX.DLCLassiferModelUI;
 import rawDeepLearningClassifer.layoutFX.RawDLSettingsPane;
 import rawDeepLearningClassifer.segmenter.SegmenterProcess.GroupedRawData;
@@ -35,11 +34,6 @@ import warnings.WarningSystem;
  *
  */
 public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
-
-	/**
-	 * The maximum queue size. 
-	 */
-	private int MAX_QUEUE_SIZE = 10; 
 
 	/**
 	 * Reference to the control.
@@ -76,7 +70,9 @@ public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 	/**
 	 * Sound spot warning. 
 	 */
-	PamWarning soundSpotWarning = new PamWarning("SoundSpotClassifier", "",2); 
+	PamWarning soundSpotWarning = new PamWarning("SoundSpotClassifier", "",2);
+
+	private DLTaskThread workerThread; 
 
 	public SoundSpotClassifier(DLControl dlControl) {
 		this.dlControl=dlControl; 
@@ -110,7 +106,7 @@ public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 		}
 		else {
 			//add to a buffer if in real time. 
-			if (queue.size()>MAX_QUEUE_SIZE) {
+			if (queue.size()>DLModelWorker.MAX_QUEUE_SIZE) {
 				//we are not doing well - clear the buffer
 				queue.clear();
 			}
@@ -124,10 +120,10 @@ public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 	 * @param modelResult - the model results
 	 * @return the model results. 
 	 */
-	private boolean isBinaryResult(GenericModelResult modelResult) {
+	private boolean isBinaryResult(GenericPrediction modelResult) {
 		for (int i=0; i<modelResult.getPrediction().length; i++) {
 			if (modelResult.getPrediction()[i]>soundSpotParmas.threshold && soundSpotParmas.binaryClassification[i]) {
-				System.out.println("SoundSpotClassifier: prediciton: " + i + " passed threshold with val: " + modelResult.getPrediction()[i]); 
+				//System.out.println("SoundSpotClassifier: prediciton: " + i + " passed threshold with val: " + modelResult.getPrediction()[i]); 
 				return true; 
 			}
 		}
@@ -146,58 +142,79 @@ public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 	}
 
 
-	public class TaskThread extends Thread {
+	/**
+	 * The task thread. 
+	 * @author Jamie Macaulay 
+	 *
+	 */
+	public class TaskThread extends DLTaskThread {
 
-		private AtomicBoolean run = new AtomicBoolean(true);
-
-		TaskThread() {
-			super("TaskThread");
-			if (soundSpotWorker == null) {
-				//create the daemons etc...
-				soundSpotWorker = new SoundSpotWorker(); 	
-			}
+		TaskThread(DLModelWorker soundSpotWorker) {
+			super(soundSpotWorker);
 		}
 
-		public void stopTaskThread() {
-			run.set(false);  
-			//Clean up daemon.
-			if (soundSpotWorker!=null) {
-				soundSpotWorker.closeModel();
-			}
-			soundSpotWorker = null; 
-		}
-
-		public void run() {
-			while (run.get()) {
-				//				System.out.println("ORCASPOT THREAD while: " + "The queue size is " + queue.size()); 
-				try {
-					if (queue.size()>0) {
-						//						System.out.println("ORCASPOT THREAD: " + "The queue size is " + queue.size()); 
-						ArrayList<GroupedRawData> groupedRawData = queue.remove(0);
-
-						ArrayList<SoundSpotResult> modelResult = getSoundSpotWorker().runModel(groupedRawData, 
-								groupedRawData.get(0).getParentDataBlock().getSampleRate(), 0); 
-
-						for (int i =0; i<modelResult.size(); i++) {
-							modelResult.get(i).setClassNameID(getClassNameIDs()); 
-							modelResult.get(i).setBinaryClassification(isBinaryResult(modelResult.get(i))); 
-							newResult(modelResult.get(i), groupedRawData.get(i));
-						}
-
-					}
-					else {
-						//						System.out.println("ORCASPOT THREAD SLEEP: "); ; 
-						Thread.sleep(10);
-						//						System.out.println("ORCASPOT THREAD DONE: "); ; 
-					}
-
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
+		@Override
+		public void newResult(GenericPrediction soundSpotResult, GroupedRawData groupedRawData) {
+			soundSpotResult.setClassNameID(getClassNameIDs()); 
+			soundSpotResult.setBinaryClassification(isBinaryResult(soundSpotResult)); 
+			newResult(soundSpotResult, groupedRawData);
 		}
 
 	}
+
+
+	//	public class TaskThread extends Thread {
+	//
+	//		private AtomicBoolean run = new AtomicBoolean(true);
+	//
+	//		TaskThread() {
+	//			super("TaskThread");
+	//			if (soundSpotWorker == null) {
+	//				//create the daemons etc...
+	//				soundSpotWorker = new SoundSpotWorker(); 	
+	//			}
+	//		}
+	//
+	//		public void stopTaskThread() {
+	//			run.set(false);  
+	//			//Clean up daemon.
+	//			if (soundSpotWorker!=null) {
+	//				soundSpotWorker.closeModel();
+	//			}
+	//			soundSpotWorker = null; 
+	//		}
+	//
+	//		public void run() {
+	//			while (run.get()) {
+	//				//				System.out.println("ORCASPOT THREAD while: " + "The queue size is " + queue.size()); 
+	//				try {
+	//					if (queue.size()>0) {
+	//						//						System.out.println("ORCASPOT THREAD: " + "The queue size is " + queue.size()); 
+	//						ArrayList<GroupedRawData> groupedRawData = queue.remove(0);
+	//
+	//						ArrayList<SoundSpotResult> modelResult = getSoundSpotWorker().runModel(groupedRawData, 
+	//								groupedRawData.get(0).getParentDataBlock().getSampleRate(), 0); //TODO channel?
+	//
+	//						for (int i =0; i<modelResult.size(); i++) {
+	//							modelResult.get(i).setClassNameID(getClassNameIDs()); 
+	//							modelResult.get(i).setBinaryClassification(isBinaryResult(modelResult.get(i))); 
+	//							newResult(modelResult.get(i), groupedRawData.get(i));
+	//						}
+	//
+	//					}
+	//					else {
+	//						//						System.out.println("ORCASPOT THREAD SLEEP: "); ; 
+	//						Thread.sleep(10);
+	//						//						System.out.println("ORCASPOT THREAD DONE: "); ; 
+	//					}
+	//
+	//				} catch (Exception e) {
+	//					e.printStackTrace();
+	//				}
+	//			}
+	//		}
+	//
+	//	}
 
 	/**
 	 * Get the class name IDs
@@ -217,9 +234,8 @@ public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 	 * @param modelResult - the model result;
 	 * @param groupedRawData - the grouped raw data. 
 	 */
-	private void newResult(GenericModelResult modelResult, GroupedRawData groupedRawData) {
+	private void newResult(GenericPrediction modelResult, GroupedRawData groupedRawData) {
 		this.dlControl.getDLClassifyProcess().newModelResult(modelResult, groupedRawData);
-
 	}
 
 
@@ -228,13 +244,25 @@ public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 		//System.out.println("PrepModel! !!!");
 		getSoundSpotWorker().prepModel(soundSpotParmas, dlControl);
 		if (!soundSpotParmas.useDefaultTransfroms) {
-			//set cusotm transforms in the model. 
+			//set custom transforms in the model. 
 			getSoundSpotWorker().setModelTransforms(soundSpotParmas.dlTransfroms);
 		}
 
 		if (	getSoundSpotWorker().getModel()==null) {
 			soundSpotWarning.setWarningMessage("There is no loaded classifier model. SoundSpot disabled.");
 			WarningSystem.getWarningSystem().addWarning(soundSpotWarning);
+		}
+
+
+		if ((!PamCalendar.isSoundFile() || forceQueue) && !dlControl.isViewer()) {
+			//for real time only
+			if (workerThread!=null) {
+				workerThread.stopTaskThread();
+			}
+			
+			workerThread = new TaskThread(getSoundSpotWorker());
+			workerThread.setPriority(Thread.MAX_PRIORITY);
+			workerThread.start();
 		}
 	}
 
@@ -312,6 +340,10 @@ public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 
 	}
 
+	/**
+	 * Get raw settings pane
+	 * @return the setting pane. 
+	 */
 	public RawDLSettingsPane getRawSettingsPane() {
 		return this.dlControl.getSettingsPane();
 	}
@@ -337,6 +369,12 @@ public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 
 	public DLControl getDLControl() {
 		return dlControl;
+	}
+
+
+	@Override
+	public boolean checkModelOK() {
+		return getSoundSpotWorker().getModel()!=null;
 	}
 
 

@@ -79,6 +79,7 @@ public class SoundSpotWorker extends DLModelWorker<SoundSpotResult> {
 			//System.out.println("Model transforms: " + this.modelTransforms.size());
 		}
 		catch (Exception e) {
+			soundSpotModel=null; 
 			e.printStackTrace();
 			//WarnOnce.showWarning(null, "Model Metadata Error", "There was an error extracting the metadata from the model.", WarnOnce.OK_OPTION); 
 		}

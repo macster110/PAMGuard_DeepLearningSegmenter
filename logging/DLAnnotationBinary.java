@@ -13,7 +13,7 @@ import annotation.binary.AnnotationBinaryData;
 import annotation.binary.AnnotationBinaryHandler;
 import binaryFileStorage.BinaryStore;
 import rawDeepLearningClassifer.dlClassification.DLDetection;
-import rawDeepLearningClassifer.dlClassification.ModelResult;
+import rawDeepLearningClassifer.dlClassification.PredictionResult;
 
 /**
  * Saves deep learning annotations in binary files. 
@@ -77,7 +77,7 @@ public class DLAnnotationBinary extends AnnotationBinaryHandler<DLAnnotation> {
 
 		int version = annotationBinaryData.annotationVersion; //1 for original single template, 2 for multi template
 
-		ArrayList<ModelResult> modelResults = new ArrayList<ModelResult>(); 
+		ArrayList<PredictionResult> modelResults = new ArrayList<PredictionResult>(); 
 		try {
 
 			int numModels  = dis.readShort(); 

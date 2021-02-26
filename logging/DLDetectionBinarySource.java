@@ -18,7 +18,7 @@ import binaryFileStorage.ModuleHeader;
 import rawDeepLearningClassifer.DLControl;
 import rawDeepLearningClassifer.dlClassification.DLDetection;
 import rawDeepLearningClassifer.dlClassification.DLDetectionDataBlock;
-import rawDeepLearningClassifer.dlClassification.ModelResult;
+import rawDeepLearningClassifer.dlClassification.PredictionResult;
 
 /**
  * Saves and loads binary data for classified Deep Learning data units. 
@@ -176,7 +176,7 @@ public class DLDetectionBinarySource extends BinaryDataSource {
 	 * @param dos2 - the model result data 
 	 * @param arrayList - the model result data
 	 */
-	private void writeProbData(DataOutputStream dos2, ArrayList<ModelResult> arrayList) {
+	private void writeProbData(DataOutputStream dos2, ArrayList<PredictionResult> arrayList) {
 		// TODO Auto-generated method stub
 
 	}

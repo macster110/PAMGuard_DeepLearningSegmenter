@@ -14,7 +14,7 @@ import pamViewFX.fxNodes.utilsFX.ColourArray;
 import pamViewFX.fxNodes.utilsFX.PamUtilsFX;
 import pamViewFX.fxNodes.utilsFX.ColourArray.ColourArrayType;
 import pamViewFX.symbol.SymbolModifierPane;
-import rawDeepLearningClassifer.dlClassification.ModelResult;
+import rawDeepLearningClassifer.dlClassification.PredictionResult;
 import rawDeepLearningClassifer.logging.DLAnnotation;
 import rawDeepLearningClassifer.logging.DLAnnotationType;
 
@@ -102,7 +102,7 @@ public class DLSymbolModifier extends SymbolModifier {
 
 		boolean passed = false; 
 		double maxValue = -1; 
-		for (ModelResult modelResult: annotation.getModelResults()) {
+		for (PredictionResult modelResult: annotation.getModelResults()) {
 			if (modelResult.isBinaryClassification()) passed = true; 
 			
 			if (modelResult.getPrediction()[dlSymbolOptions.classIndex]>maxValue) {

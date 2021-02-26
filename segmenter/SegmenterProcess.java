@@ -14,11 +14,13 @@ import PamView.GroupedSourceParameters;
 import PamView.PamDetectionOverlayGraphics;
 import PamView.PamSymbol;
 import PamView.PamSymbolType;
+import PamView.symbol.modifier.SymbolModifierParams;
 import PamguardMVC.PamDataBlock;
 import PamguardMVC.PamDataUnit;
 import PamguardMVC.PamObservable;
 import PamguardMVC.PamProcess;
 import PamguardMVC.PamRawDataBlock;
+import PamguardMVC.debug.Debug;
 import clickDetector.ClickDetection;
 import clipgenerator.ClipDataUnit;
 import rawDeepLearningClassifer.DLControl;
@@ -261,8 +263,8 @@ public class SegmenterProcess extends PamProcess {
 
 	/**
 	 * Segment a single new raw data chunk. This is for a discrete data chunk i.e. the data is not a continuous time 
-	 * series of acoustic data but a clip of some kind of that. 
-	 * @param pamDataUnit - the pam data unit containing the chunk of raw data. 
+	 * series of acoustic data but a clip of some kind of that should be passed a s single detection to a deep learning model. 
+	 * @param pamDataUnit - the PAM data unit containing the chunk of raw data. 
 	 * @param rawDataChunk - the raw chunk of data from the data unit. 
 	 * @param forceSave - all segments to be saved, even if the segment is not full e.g. for clicks detections. 
 	 */
@@ -342,9 +344,9 @@ public class SegmenterProcess extends PamProcess {
 				//current time milliseconds is referenced from the first chunk with samples added. But, this can mean, especially for long period of times and multiple 
 				//chunks that things get a bit out of sync. So make a quick check to ensure that time millis is roughly correct. If not then fix. 
 				if (Math.abs(((double) currentRawChunks[i].getTimeMilliseconds() + 1000.*currentRawChunks[i].getRawDataPointer()[0]/this.getSampleRate()) - timeMilliseconds)>MAX_MILLIS_DRIFT) {
-					System.out.println("RESETTING TIME: "); 
-					currentRawChunks[i].setTimeMilliseconds(timeMilliseconds);
-					currentRawChunks[i].setStartSample(startSampleTime);
+					Debug.out.println("DL SEGMENTER: RESETTING TIME: "); 
+					currentRawChunks[i].setTimeMilliseconds((long) (timeMilliseconds - 1000.*currentRawChunks[i].getRawDataPointer()[0]/this.getSampleRate()));
+					currentRawChunks[i].setStartSample(startSampleTime-currentRawChunks[i].getRawDataPointer()[0]);
 				}
 
 				int chanMap = getSourceParams().getGroupChannels(i); 
@@ -467,12 +469,12 @@ public class SegmenterProcess extends PamProcess {
 	 * @param i - the group index. 
 	 */
 	private void saveRawGroupData(int i) {
-		
+
 		if (currentRawChunks[i]==null) {
 			return; 
 		}
 
-		//send the raw data unit off to be classified!
+		//add some extra metadata to the chunks 
 		packageSegmenterDataUnit(currentRawChunks[i]); 
 		//System.out.println("Current segmnent UID: " + currentRawChunks[i].getUID()); 
 
@@ -495,7 +497,11 @@ public class SegmenterProcess extends PamProcess {
 
 		//Need to copy a section of the old data into the new 
 		if (nextRawChunks[i]!=null) {
-			currentRawChunks[i] = nextRawChunks[i][nextRawChunks[i].length-1]; //in an unlikely situation this could be null should be picked up by the first null check. 
+			/**
+			 * It's very important to clone this as otherwise some very weird things happnen as the units are
+			 * passed to downstream processes. 
+			 */
+			currentRawChunks[i] = nextRawChunks[i][nextRawChunks[i].length-1].clone(); //in an unlikely situation this could be null should be picked up by the first null check. 
 		}
 		else {
 			currentRawChunks[i] = null; 
@@ -576,7 +582,7 @@ public class SegmenterProcess extends PamProcess {
 	 * @author Jamie Macaulay 
 	 *
 	 */
-	public class GroupedRawData extends PamDataUnit implements PamDetection {
+	public class GroupedRawData extends PamDataUnit implements PamDetection, Cloneable {
 
 
 		/*
@@ -601,7 +607,7 @@ public class SegmenterProcess extends PamProcess {
 		 * @param timeMilliseconds - the time in milliseconds. 
 		 * @param channelBitmap - the channel bitmap of the raw data. 
 		 * @param startSample - the start sample of the raw data. 
-		 * @param duration - the duration of the raw data in milliseconds. 
+		 * @param duration - the duration of the raw data in samples. 
 		 * @param samplesize - the total sample size of the raw data unit chunk in samples. 
 		 */
 		public GroupedRawData(long timeMilliseconds, int channelBitmap, long startSample, long duration, int samplesize) {
@@ -657,6 +663,8 @@ public class SegmenterProcess extends PamProcess {
 			else {
 				arrayCopyLen= copyLen; 
 			}
+			
+			arrayCopyLen = Math.max(arrayCopyLen, 0); 
 
 			//update the current grouped raw data unit with new raw data. 
 			System.arraycopy(src, srcPos, rawData[groupChan], rawDataPointer[groupChan], arrayCopyLen); 
@@ -680,6 +688,26 @@ public class SegmenterProcess extends PamProcess {
 		 */
 		public int[] getRawDataPointer() {
 			return rawDataPointer;
+		}
+
+
+		@Override
+		protected GroupedRawData clone()  {
+			try {
+				GroupedRawData groupedRawData =  (GroupedRawData) super.clone();
+				
+				//hard clone the acoustic data
+				groupedRawData.rawData = new double[this.rawData.length][]; 
+				for (int i=0; i<groupedRawData.rawData.length; i++) {
+					groupedRawData.rawData[i] = Arrays.copyOf(this.rawData[i], this.rawData[i].length); 
+				}
+
+				return groupedRawData;
+
+			} catch (CloneNotSupportedException e) {
+				e.printStackTrace();
+				return null;
+			}
 		}
 	}
 

@@ -7,13 +7,12 @@ import rawDeepLearningClassifer.DLControl;
 import rawDeepLearningClassifer.dlClassification.DLDetectionDataBlock;
 
 /**
- * 
  * The DL detection plot provider. 
  * 
  * @author Jamie Macaulay 
  *
  */
-public class DLDetectionPlotProvider extends TDDataProviderFX {
+public class DLPredictionProvider extends TDDataProviderFX {
 
 	/**
 	 * Reference DL control. 
@@ -25,17 +24,17 @@ public class DLDetectionPlotProvider extends TDDataProviderFX {
 	 * @param dlControl - reference to DL control. 
 	 * @param dlDetectionDataBlock - the dl detection data block. 
 	 */
-	public DLDetectionPlotProvider(DLControl dlControl, DLDetectionDataBlock dlDetectionDataBlock) {
+	public DLPredictionProvider(DLControl dlControl, DLDetectionDataBlock dlDetectionDataBlock) {
 		super(dlDetectionDataBlock); 
 		this.dlControl = dlControl;
 	}
 
 	@Override
 	public TDDataInfoFX createDataInfo(TDGraphFX tdGraph) {
-		return new DLDetectionPlotInfoFX(this, dlControl, tdGraph, dlControl.getDLClassifyProcess().getDLDetectionDatablock());
+		return new DLPredictionPlotInfoFX(this, dlControl, tdGraph, dlControl.getDLClassifyProcess().getDLPredictionDataBlock());
 	}
 	
 	public String getName() {
-		return "Deep learning detection, " + dlControl.getUnitName();
+		return "Prediciton probability, " + dlControl.getUnitName();
 	}
 }

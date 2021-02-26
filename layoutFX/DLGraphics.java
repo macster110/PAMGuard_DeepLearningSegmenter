@@ -87,7 +87,7 @@ public class DLGraphics extends PamDetectionOverlayGraphics {
 		//				+ " " + topLeft.y + "  " + botRight.y + " Frequency: " + frequency[0] + " " + frequency[1]); 
 
 		//do not paint unles sit's passed binary classiifcation 
-		if (pamDetection.getModelResult().isBinaryClassification()) {
+		if (pamDetection.getPredicitionResult().isBinaryClassification()) {
 			//set the stroke of the copy, not the original 
 			g2d.setStroke(normal);
 		}
@@ -102,14 +102,14 @@ public class DLGraphics extends PamDetectionOverlayGraphics {
 
 
 		//		System.out.println("Is classification: " + pamDetection.getModelResult().isClassification()); 
-		if (pamDetection.getModelResult().isBinaryClassification()) {
+		if (pamDetection.getPredicitionResult().isBinaryClassification()) {
 
 			//alpha - higher numbers mean less opaque - means more see through
 			//so want more opacity for higher predictions to highlight more
 			//so low alpha means more opaque
 
 			//set the alpha so that better results are more opaque 
-			int alphaDet =  (int) ((1.0-PamUtils.PamArrayUtils.max(pamDetection.getModelResult().getPrediction()))*alpha); 
+			int alphaDet =  (int) ((1.0-PamUtils.PamArrayUtils.max(pamDetection.getPredicitionResult().getPrediction()))*alpha); 
 
 			//			System.out.println("Alpha Det: " + alphaDet + "  " + pamDetection.getModelResult().getPrediction()); 
 			Color detColorAlpha = new Color(detColor.getRed(), detColor.getGreen(), detColor.getBlue(), alphaDet);

@@ -13,6 +13,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import pamViewFX.fxGlyphs.PamGlyphDude;
 import pamViewFX.fxNodes.PamBorderPane;
@@ -46,8 +47,14 @@ public class DLTransformsPane extends PamBorderPane {
 	 */
 	private PamVBox mainPane;
 
+	/**
+	 * The control pane. 
+	 */
 	private Pane controlPane;
 
+	/**
+	 * The sample rate.
+	 */
 	private float sampleRate; 
 
 	public DLTransformsPane() {
@@ -107,8 +114,13 @@ public class DLTransformsPane extends PamBorderPane {
 		});
 		
 		draggablelistPane.addDraggablePane(transformPane); 
-
+	}
 	
+	/*
+	 * Called whenever a transform is remvoed from the pane. 
+	 */
+	public void dlTrandformRemoved(DLTransformPane center) {
+		// TODO Auto-generated method stub
 	}
 
 	/**
@@ -125,6 +137,8 @@ public class DLTransformsPane extends PamBorderPane {
 	 * @param dlTransforms - the list of transforms (in order) to set
 	 */
 	public void setTransforms(ArrayList<DLTransform> dlTransforms) {
+		
+		//System.out.println("Set DL transfroms: " + dlTransforms); 
 
 		if (dlTransforms == null) {
 			mainPane.getChildren().clear();
@@ -165,7 +179,7 @@ public class DLTransformsPane extends PamBorderPane {
 	}
 
 	/**
-	 * Get parameters fror all transforms based on controls. 
+	 * Get parameters for all transforms based on controls. 
 	 */
 	public void getParams() {
 		List<DLTransformPane> transformPanes = draggablelistPane.getSortedList();
@@ -193,6 +207,20 @@ public class DLTransformsPane extends PamBorderPane {
 
 		return null; 
 	}
+	
+	/**
+	 * Get the transform panes.
+	 * @return the transofrm panes. 
+	 */
+	public List<DLTransformPane>  getDLTransformPanes() {
+		if (draggablelistPane!=null) {
+			return draggablelistPane.getSortedList(); 
+		}
+		else {
+			return null;
+		}
+	}
+ 
 
 
 	class DLDraggableList extends PamDraggableList<DLTransformPane>  {
@@ -211,6 +239,13 @@ public class DLTransformsPane extends PamBorderPane {
 		public void paneOrderChanged(boolean success) {
 			newSettings(TRANSFORM_ORDER_CHANGE); 
 		}
+		
+		@Override
+		public void removePane(BorderPane pane) {
+			super.removePane(pane);
+			dlTrandformRemoved((DLTransformPane) pane.getCenter()); 
+		}
+
 
 		@Override 
 		public boolean canDrop(DLTransformPane source, int sourceIndex,  int targetIndex) {
@@ -251,4 +286,6 @@ public class DLTransformsPane extends PamBorderPane {
 		}
 
 	}
+
+
 }

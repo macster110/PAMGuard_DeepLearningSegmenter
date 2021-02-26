@@ -22,7 +22,7 @@ import pamViewFX.fxNodes.PamHBox;
  * @author Jamie Macaulay 
  *
  */
-public class ImportExportPane extends PamHBox {
+public abstract class ImportExportPane extends PamHBox {
 	
 
 	/**
@@ -33,16 +33,18 @@ public class ImportExportPane extends PamHBox {
 	/**
 	 * The file chooser. 
 	 */
-	private FileChooser fileChooser; 
+	private FileChooser fileChooser;
+	
+	
 	
 	public ImportExportPane() {
 		fileChooser = new FileChooser();  
 		//open a settings file. 
-		fileChooser.getExtensionFilters().addAll(new ExtensionFilter("Deep Learning Model Parameters", "*.pgtf"));
+		fileChooser.getExtensionFilters().addAll(new ExtensionFilter("Deep Learning Model Parameters", "*.pdtf"));
 		
-		ArrayList<ExtensionFilter> extensionFilters = new ArrayList<ExtensionFilter>(); 
-		extensionFilters.add(new ExtensionFilter("Deep Learning Settings File", "*.pgtf")); 
-		
+//		ArrayList<ExtensionFilter> extensionFilters = new ArrayList<ExtensionFilter>(); 
+//		extensionFilters.add(new ExtensionFilter("Deep Learning Settings File", "*.pdtf")); 
+//		
 		
 		this.setSpacing(5);
 		this.setAlignment(Pos.CENTER_LEFT);
@@ -82,7 +84,7 @@ public class ImportExportPane extends PamHBox {
 				return; 
 			}
 
-			newSettingsFile(file); 
+			importSettingFile(file); 
 			
 		});
 	
@@ -119,7 +121,7 @@ public class ImportExportPane extends PamHBox {
 				fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
 			}
 
-			File file = fileChooser.showOpenDialog(null); 
+			File file = fileChooser.showSaveDialog(null); 
 
 			if (file==null) {
 				return; 
@@ -138,15 +140,10 @@ public class ImportExportPane extends PamHBox {
 
 
 
-	private void exportSettings(File file) {
-		// TODO Auto-generated method stub
-		
-	}
+	public abstract void exportSettings(File file);
 
 
 
-	private void newSettingsFile(File file) {
-		// TODO Auto-generated method stub	
-	}
+	public abstract void importSettingFile(File file);
 
 }

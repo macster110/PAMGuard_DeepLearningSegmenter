@@ -56,7 +56,7 @@ public class DLClassifyProcess extends PamProcess {
 	/**
 	 * Buffer which holds positive model results to be merged into one data unit. This mirrors groupDataBuffer. 
 	 */
-	private ArrayList<ModelResult>[] modelResultDataBuffer; 
+	private ArrayList<PredictionResult>[] modelResultDataBuffer; 
 
 	/**
 	 * The DL buffer
@@ -141,7 +141,7 @@ public class DLClassifyProcess extends PamProcess {
 			lastParentDataUnit = new PamDataUnit[chanGroups.length]; 
 			for (int i =0; i<chanGroups.length; i++) {
 				groupDataBuffer[i] = new ArrayList<GroupedRawData>();
-				modelResultDataBuffer[i] = new ArrayList<ModelResult>(); 
+				modelResultDataBuffer[i] = new ArrayList<PredictionResult>(); 
 			}
 		}
 
@@ -192,14 +192,21 @@ public class DLClassifyProcess extends PamProcess {
 		
 		if (classificationBuffer.size()<=0) return; 
 
-
 		//run the deep learning algorithm 
-		ArrayList<? extends ModelResult> modelResults = this.dlControl.getDLModel().runModel(classificationBuffer); 
+		ArrayList<GroupedRawData> classificationBufferTemp = (ArrayList<GroupedRawData>) classificationBuffer.clone(); 
+		ArrayList<? extends PredictionResult> modelResults = this.dlControl.getDLModel().runModel(classificationBuffer); 
 
-		for (int i=0; i<classificationBuffer.size(); i++) {
+		if (modelResults==null) {
+			return; //there has been a problem
+		}
+		
+		for (int i=0; i<classificationBufferTemp.size(); i++) {
 			if (modelResults.get(i)!=null) {
 				//if the model is null there may be a buffer on a different thread 
-				newModelResult(modelResults.get(i), classificationBuffer.get(i)); 
+//				System.out.println("Compare Times: " + PamCalendar.formatDBDateTime(modelResults.get(i).getTimeMillis(), true)  + 
+//						"   " + PamCalendar.formatDBDateTime(classificationBufferTemp.get(i).getTimeMilliseconds(), true) + "  " +
+//						modelResults.get(i).getPrediction()[1]); 
+				newModelResult(modelResults.get(i), classificationBufferTemp.get(i)); 
 			}
 		}
 	}
@@ -237,6 +244,8 @@ public class DLClassifyProcess extends PamProcess {
 		double timeDiff = rawDataUnit.getTimeMilliseconds()-min; 
 		
 		if (timeDiff>=this.dlControl.getDLParams().maxBufferTime) {
+//		if (timeDiff>=this.dlControl.getDLParams().maxBufferTime) {
+
 			//we are overr the max buffer size. 
 			return true; 
 		}
@@ -258,7 +267,6 @@ public class DLClassifyProcess extends PamProcess {
 			return false; 
 		}
 
-
 		return true;
 	}
 
@@ -267,13 +275,14 @@ public class DLClassifyProcess extends PamProcess {
 	 * @param modelResult - the model result. 
 	 * @param pamRawData - the raw data unit which the model result came from. 
 	 */
-	public void newModelResult(ModelResult modelResult, GroupedRawData pamRawData) {
+	public void newModelResult(PredictionResult modelResult, GroupedRawData pamRawData) {
 
 		//the model result may be null if the classifier uses a new thread. 
 
-		//create a new data unit - allways add to the model result section. 
+		//create a new data unit - always add to the model result section. 
 		DLDataUnit dlDataUnit = new DLDataUnit(pamRawData.getTimeMilliseconds(), pamRawData.getChannelBitmap(), 
 				pamRawData.getStartSample(), pamRawData.getSampleDuration(), modelResult); 
+		
 
 		dlDataUnit.setFrequency(new double[] {0, dlControl.getDLClassifyProcess().getSampleRate()/2});
 		dlDataUnit.setDurationInMilliseconds(pamRawData.getDurationInMilliseconds()); 
@@ -296,7 +305,7 @@ public class DLClassifyProcess extends PamProcess {
 				 * 2) Annotated an existing data unit with a deep learning annotation. 
 				 */
 				if (pamRawData.getParentDataUnit() instanceof RawDataUnit) {
-					if (dlDataUnit.getModelResult().isBinaryClassification()) {
+					if (dlDataUnit.getPredicitionResult().isBinaryClassification()) {
 						//if the model result has a binary classification then it is added to the data buffer unless the data
 						//buffer has reached a maximum size. In that case the data is saved. 
 						groupDataBuffer[i].add(pamRawData); 
@@ -318,8 +327,8 @@ public class DLClassifyProcess extends PamProcess {
 						clearBuffer(i) ;
 						if (dlDetection!=null) {
 							this.dlDetectionDataBlock.addPamData(dlDetection);
-							System.out.println("Amplitude: " + dlDetection.getAmplitudeDB()  
-							+ "  " + dlDetection.getMeasuredAmplitudeType());
+//							System.out.println("Amplitude: " + dlDetection.getAmplitudeDB()  
+//							+ "  " + dlDetection.getMeasuredAmplitudeType());
 						}
 
 					}
@@ -361,7 +370,7 @@ public class DLClassifyProcess extends PamProcess {
 	 * @param modelResult - the model results. 
 	 * @return a DL detection with merged raw data. 
 	 */
-	private synchronized DLDetection makeDLDetection(ArrayList<GroupedRawData> groupDataBuffer, ArrayList<ModelResult> modelResult) {
+	private synchronized DLDetection makeDLDetection(ArrayList<GroupedRawData> groupDataBuffer, ArrayList<PredictionResult> modelResult) {
 
 		if (groupDataBuffer==null || groupDataBuffer.size()<=0) {
 			return null; 
@@ -369,15 +378,21 @@ public class DLClassifyProcess extends PamProcess {
 
 		int chans = PamUtils.getNumChannels(groupDataBuffer.get(0).getChannelBitmap());
 
-		//need to merge the raw data chunks- these are overlapping whihc is a bit of pain but should be OK if we only copy in the hop lengths.
+		//need to merge the raw data chunks- these are overlapping which is a bit of pain but should be OK if we only copy in the hop lengths.
 		double[][] rawdata = new double[PamUtils.getNumChannels(groupDataBuffer.get(0).getChannelBitmap())]
-				[dlControl.getDLParams().sampleHop*groupDataBuffer.size()]; 
+				[dlControl.getDLParams().sampleHop*(groupDataBuffer.size()-1) + dlControl.getDLParams().rawSampleSize]; 
 
 		//copy all data into a new data buffer making sure to compensate for hop size.  
 		for (int i=0; i<groupDataBuffer.size(); i++) {
+			
+			int copyLen = dlControl.getDLParams().sampleHop; 
+			
+			//at the end have to copy the entire length or else we miss the end of the detection...
+			if (i==groupDataBuffer.size()-1) copyLen = dlControl.getDLParams().rawSampleSize; 
+			
 			for (int j=0; j<chans; j++) {
 				System.arraycopy(groupDataBuffer.get(i).getRawData()[j], 0, rawdata[j], 
-						i*dlControl.getDLParams().sampleHop, dlControl.getDLParams().sampleHop);
+						i*dlControl.getDLParams().sampleHop, copyLen);
 			}
 		}
 
@@ -401,7 +416,7 @@ public class DLClassifyProcess extends PamProcess {
 		//do not clear because the arrays are referenced by other data. Prevent
 		//the need to clone the arrays
 		groupDataBuffer[group] = new ArrayList<GroupedRawData>();
-		modelResultDataBuffer[group] = new ArrayList<ModelResult>(); 
+		modelResultDataBuffer[group] = new ArrayList<PredictionResult>(); 
 		//		groupDataBuffer[group].clear(); 
 		//		modelResultDataBuffer[group].clear(); 
 	}
@@ -414,7 +429,7 @@ public class DLClassifyProcess extends PamProcess {
 	 * @return a DL detection with merged raw data. 
 	 */
 	private void addDLAnnotation(PamDataUnit parentDataUnit, ArrayList<GroupedRawData> groupDataBuffer,
-			ArrayList<ModelResult> modelResult) {
+			ArrayList<PredictionResult> modelResult) {
 
 		//System.out.println("DLClassifyProces: Add annnotation to  " + parentDataUnit); 
 
@@ -437,7 +452,7 @@ public class DLClassifyProcess extends PamProcess {
 	 * Get the data block which contains all results from the deep learning output. 
 	 * @return the data block which holds results output form the deep learning classifier. 
 	 */
-	public DLModelDataBlock getDLResultDataBlock() {
+	public DLModelDataBlock getDLPredictionDataBlock() {
 		return dlModelResultDataBlock; 
 	}
 

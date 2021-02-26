@@ -41,8 +41,8 @@ public class DLLogging  extends SQLLogging {
 	@Override
 	public void setTableData(SQLTypes sqlTypes, PamDataUnit pamDataUnit) {
 		DLDataUnit dgdu = (DLDataUnit) pamDataUnit;
-		analysisTime.setValue(dgdu.getModelResult().getAnalysisTime());
-		predicition.setValue(dgdu.getModelResult().getPrediction());
+		analysisTime.setValue(dgdu.getPredicitionResult().getAnalysisTime());
+		predicition.setValue(dgdu.getPredicitionResult().getPrediction());
 	}
 	
 

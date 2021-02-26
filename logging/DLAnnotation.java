@@ -3,7 +3,7 @@ package rawDeepLearningClassifer.logging;
 import java.util.ArrayList;
 
 import annotation.DataAnnotation;
-import rawDeepLearningClassifer.dlClassification.ModelResult;
+import rawDeepLearningClassifer.dlClassification.PredictionResult;
 
 /**
  * Deep learning results annotation. 
@@ -15,9 +15,9 @@ public class DLAnnotation extends DataAnnotation<DLAnnotationType> {
 	/**
 	 * The results of the DL model. 
 	 */
-	private ArrayList<ModelResult> modelResults;
+	private ArrayList<PredictionResult> modelResults;
 
-	public DLAnnotation(DLAnnotationType dlAnnotationType, ArrayList<ModelResult> modelResults) {
+	public DLAnnotation(DLAnnotationType dlAnnotationType, ArrayList<PredictionResult> modelResults) {
 		super(dlAnnotationType);
 		//		System.out.println("DLAnnotation: " + modelResults.size()); 
 		this.modelResults = modelResults; 
@@ -28,7 +28,7 @@ public class DLAnnotation extends DataAnnotation<DLAnnotationType> {
 	 * Get all the model results. 
 	 * @return the model results. 
 	 */
-	public ArrayList<ModelResult> getModelResults() {
+	public ArrayList<PredictionResult> getModelResults() {
 		return modelResults;
 	}
 

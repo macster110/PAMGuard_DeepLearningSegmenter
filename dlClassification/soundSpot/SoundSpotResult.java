@@ -1,11 +1,13 @@
 package rawDeepLearningClassifer.dlClassification.soundSpot;
 
+import rawDeepLearningClassifer.dlClassification.genericModel.GenericPrediction;
+
 /**
  * Result from the SoundSpotClassifier. 
  * @author Jamie Macaulay
  *
  */
-public class SoundSpotResult extends GenericModelResult {
+public class SoundSpotResult extends GenericPrediction {
 
 	public SoundSpotResult(float[] prob, boolean isBinary) {
 		super(prob, isBinary);

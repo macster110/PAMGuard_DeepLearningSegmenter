@@ -44,7 +44,7 @@ public class DataTransformPaneFactory {
 		case DECIMATE:
 			settingsPane = new SimpleTransformPane((SimpleTransform) dlTransfrom, new String[]{"Sample rate "}, new String[]{"Hz. "}); 
 			double sR = ((SimpleTransform) dlTransfrom).getParams()[0].doubleValue(); 
-			((SimpleTransformPane) settingsPane).setSpinnerMinMaxValues(0, 0.0, Integer.MAX_VALUE,   sR>10000 ? 1000.0 : 100.0);
+			((SimpleTransformPane) settingsPane).setSpinnerMinMaxValues(0, 100.0, Integer.MAX_VALUE,   sR>10000 ? 1000.0 : 100.0);
 			break;
 		case PREEMPHSIS:
 			settingsPane = new SimpleTransformPane((SimpleTransform) dlTransfrom, new String[]{"Factor "}); 
@@ -65,7 +65,7 @@ public class DataTransformPaneFactory {
 			break;
 		case SPECCROPINTERP:
 			settingsPane = new SimpleTransformPane((SimpleTransform) dlTransfrom, new String[]{"Min. Freq. ", "Max. Freq. ", " No. bins "},  new String[]{"Hz", "Hz", ""}, 2); 
-			((SimpleTransformPane) settingsPane).setSpinnerMinMaxValues(0, 0.0, 500000.0,   100.); //hmmmm would be nce to have the sample rate here...
+			((SimpleTransformPane) settingsPane).setSpinnerMinMaxValues(0, 0.0, 500000.0,   100.); //hmmmm would be nice to have the sample rate here...
 			((SimpleTransformPane) settingsPane).setSpinnerMinMaxValues(1, 0.0, 500000.0,   100.);
 			((SimpleTransformPane) settingsPane).setSpinnerMinMaxValues(2, 0, Integer.MAX_VALUE,   10);
 			break;

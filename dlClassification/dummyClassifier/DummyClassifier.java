@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import rawDeepLearningClassifer.DLControl;
 import rawDeepLearningClassifer.dlClassification.DLClassName;
 import rawDeepLearningClassifer.dlClassification.DLClassiferModel;
-import rawDeepLearningClassifer.dlClassification.ModelResult;
+import rawDeepLearningClassifer.dlClassification.PredictionResult;
 import rawDeepLearningClassifer.layoutFX.DLCLassiferModelUI;
 import rawDeepLearningClassifer.segmenter.SegmenterProcess.GroupedRawData;
 
@@ -60,8 +60,8 @@ public class DummyClassifier implements DLClassiferModel{
 	}
 
 	@Override
-	public ArrayList<ModelResult> runModel(ArrayList<GroupedRawData> rawDataUnit) {
-		ArrayList<ModelResult> modelResults = new ArrayList<ModelResult>(); 
+	public ArrayList<PredictionResult> runModel(ArrayList<GroupedRawData> rawDataUnit) {
+		ArrayList<PredictionResult> modelResults = new ArrayList<PredictionResult>(); 
 
 		for (int i=0; i<rawDataUnit.size(); i++) {
 			modelResults.add(new DummyModelResult(new float[] {(float) Math.random(), (float) Math.random()}));
@@ -75,6 +75,11 @@ public class DummyClassifier implements DLClassiferModel{
 	public DLControl getDLControl() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public boolean checkModelOK() {
+		return true;
 	}
 
 }

@@ -1,6 +1,6 @@
 package rawDeepLearningClassifer.dlClassification.orcaSpot;
 
-import rawDeepLearningClassifer.dlClassification.ModelResult;
+import rawDeepLearningClassifer.dlClassification.PredictionResult;
 
 /**
  * Stores results from an OrcaSpot classification 
@@ -8,7 +8,7 @@ import rawDeepLearningClassifer.dlClassification.ModelResult;
  * @author Jamie Macaulay
  *
  */
-public class OrcaSpotModelResult implements ModelResult {
+public class OrcaSpotModelResult implements PredictionResult {
 
 	/**
 	 * The time in seconds. 
@@ -114,6 +114,12 @@ public class OrcaSpotModelResult implements ModelResult {
 	public short[] getClassNames() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public long getTimeMillis() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 

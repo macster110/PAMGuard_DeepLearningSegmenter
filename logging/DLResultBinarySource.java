@@ -15,7 +15,7 @@ import binaryFileStorage.ModuleHeader;
 import rawDeepLearningClassifer.dlClassification.DLClassifyProcess;
 import rawDeepLearningClassifer.dlClassification.DLDataUnit;
 import rawDeepLearningClassifer.dlClassification.DLModelDataBlock;
-import rawDeepLearningClassifer.dlClassification.ModelResult;
+import rawDeepLearningClassifer.dlClassification.PredictionResult;
 
 /**
  * Binary storage for the all the model results, i.e. all the returned probabilities. 
@@ -34,8 +34,8 @@ public class DLResultBinarySource extends BinaryDataSource {
 	private DLClassifyProcess dlClassifierProcess;
 
 	public DLResultBinarySource(DLClassifyProcess dlClassifierProcess) {
-		super(dlClassifierProcess.getDLResultDataBlock());
-		this.dlDataBlock = dlClassifierProcess.getDLResultDataBlock();
+		super(dlClassifierProcess.getDLPredictionDataBlock());
+		this.dlDataBlock = dlClassifierProcess.getDLPredictionDataBlock();
 		this.dlClassifierProcess=dlClassifierProcess; 
 	}
 
@@ -69,10 +69,10 @@ public class DLResultBinarySource extends BinaryDataSource {
 			bos.reset();
 		}
 
-		int type = ModelResultBinaryFactory.getType(dlDataUnit.getModelResult()); 
+		int type = ModelResultBinaryFactory.getType(dlDataUnit.getPredicitionResult()); 
 
 
-		ModelResultBinaryFactory.getPackedData(dlDataUnit.getModelResult(), dos, type);
+		ModelResultBinaryFactory.getPackedData(dlDataUnit.getPredicitionResult(), dos, type);
 		
 		BinaryObjectData packedData = new BinaryObjectData(0, bos.toByteArray());
 		return packedData;
@@ -86,7 +86,7 @@ public class DLResultBinarySource extends BinaryDataSource {
 		DataUnitBaseData baseData = binaryObjectData.getDataUnitBaseData();
 
 		DataInputStream dis = new DataInputStream(new ByteArrayInputStream(binaryObjectData.getData()));
-		ModelResult result= ModelResultBinaryFactory.sinkData(dis); 
+		PredictionResult result= ModelResultBinaryFactory.sinkData(dis); 
 
 
 		return new DLDataUnit(baseData, result);

@@ -96,12 +96,18 @@ public abstract class DLTransformImage extends PamBorderPane{
 	 */
 	private RangeSlider timeSlider;
 
+	/**
+	 * tIME BINS. 
+	 */
 	private int[] timeBins = new int[2];
 
 	private double[] data1DminMax;
 
 	private float transformsR;
 
+	/**
+	 * The time label. 
+	 */
 	private Label timeLabel; 
 
 
@@ -198,13 +204,49 @@ public abstract class DLTransformImage extends PamBorderPane{
 	 * Calculate the sample time bins. 
 	 */
 	private void calcTimeBins(float sampleRate) {
+		
 		timeBins[0] = (int) (sampleRate*(timeSlider.getLowValue()/1000.0));
 		timeBins[1] = (int) (sampleRate*(timeSlider.getHighValue()/1000.0));
 
 		this.plotPane.getAxis(Side.TOP).setMinVal(timeSlider.getLowValue());
 		this.plotPane.getAxis(Side.TOP).setMaxVal(timeSlider.getHighValue());
 
-		timeLabel.setText(String.format("Segment size %.0f (samples)",  this.exampleSound.getSampleRate()*((timeSlider.getHighValue()-timeSlider.getLowValue())/1000.0)));
+		long[] shape = calcShape(); 
+
+
+		double nSamples = this.exampleSound.getSampleRate()*((timeSlider.getHighValue()-timeSlider.getLowValue())/1000.0);
+		
+
+		if (shape!=null) {
+			int timeShape =  (int) (shape[0]*(nSamples/(double) exampleSound.getWave().length));
+			timeLabel.setText(String.format("Segment size %.0f (samples) Transform shape: [%d %d]",  nSamples, timeShape, shape[1])); 
+		}
+		else {
+			timeLabel.setText(String.format("Segment size %.0f (samples) Transform shape: NaN",  nSamples)); 
+		}
+	}
+
+	/**
+	 * Calculate the output shape. 
+	 */
+	private long[] calcShape() {
+
+		//bit tricky - do not want to recalculate the transforms every time the time slider moves. 
+		if  (this.exampleSound==null)  return null; 
+
+		ArrayList<DLTransform> transforms = getDLTransforms(); 
+		
+		if  (transforms==null)  return null; 
+
+		FreqTransform freqTransform = ((FreqTransform) transforms.get(transforms.size()-1)); 
+	
+		if (freqTransform.getSpecTransfrom()==null) return null; 
+		
+		double[][] data2D = freqTransform.getSpecTransfrom().getTransformedData();
+
+		long[] shape = new long[] {data2D.length, data2D[0].length};
+
+		return shape;
 	}
 
 
@@ -215,7 +257,7 @@ public abstract class DLTransformImage extends PamBorderPane{
 		transformschoiceBox.getItems().clear();
 		if (getDLTransforms()!=null && getDLTransforms().size()>0) {
 			transformschoiceBox.getItems().addAll(FXCollections.observableArrayList(getDLTransforms()));
-			transformschoiceBox.getSelectionModel().select(0);
+			transformschoiceBox.getSelectionModel().select(transformschoiceBox.getItems().size()-1);
 			//listener should handle drawing stuff. 
 		}
 	}
@@ -223,7 +265,7 @@ public abstract class DLTransformImage extends PamBorderPane{
 
 	/**
 	 * Get the current DL transforms. 
-	 * @param dlTransform
+	 * @param dlTransform - the DLTransform list. 
 	 */
 	public abstract ArrayList<DLTransform> getDLTransforms(); 
 
@@ -243,7 +285,14 @@ public abstract class DLTransformImage extends PamBorderPane{
 	 */
 	private void updateExampleSound(ExampleSoundType exampleSoundType) {
 		this.exampleSound = exampleSoundFactory.getExampleSound(exampleSoundType); 
+		updateExampleSound(exampleSound); 	
+	}
 
+	/**
+	 * Update the example sound. 
+	 * @param exampleSound - the new example sound. 
+	 */
+	public void updateExampleSound(ExampleSound exampleSound) {
 		//update the time slider to show the correct time. 
 		double maxMillis = 1000.0*exampleSound.getWave().length/exampleSound.getSampleRate(); 
 		this.timeSlider.setMin(0.0);
@@ -255,7 +304,10 @@ public abstract class DLTransformImage extends PamBorderPane{
 		this.plotPane.getAxis(Side.TOP).setLabel("Time (ms)");
 		this.plotPane.getAxis(Side.TOP).setMinVal(0);
 		this.plotPane.getAxis(Side.TOP).setMaxVal(maxMillis);
-		
+
+		if (getDLTransforms()==null) return; 
+
+		updateTransformImage();
 	}
 
 	/**
@@ -274,7 +326,7 @@ public abstract class DLTransformImage extends PamBorderPane{
 
 		DLTransform currentTransform =  getDLTransforms().get(0); 
 		for (int i=0; i<transformschoiceBox.getSelectionModel().getSelectedIndex()+1; i++) {
-			currentTransform =  getDLTransforms().get(i).transformData(currentTransform); 
+			currentTransform = getDLTransforms().get(i).transformData(currentTransform); 
 		}
 
 		//		System.out.println("Current transfrom: " + currentTransform.getDLTransformType() + " index: " + transformschoiceBox.getSelectionModel().getSelectedIndex()); 
@@ -313,7 +365,7 @@ public abstract class DLTransformImage extends PamBorderPane{
 					plotPane.getAxis(Side.LEFT).setMinVal(freqLims[0]/1000.0);
 					plotPane.getAxis(Side.LEFT).setMaxVal(freqLims[1]/1000.0);
 				}
-				
+
 				specImage = new SpectrogramImage(data2D, colArray, PamArrayUtils.minmax(data2D), false); 
 				transformsR = ((FreqTransform) currentTransform).getSpecTransfrom().getSpectrgram().getSampleRate(); 
 			}
@@ -332,11 +384,12 @@ public abstract class DLTransformImage extends PamBorderPane{
 				plotPane.getAxis(Side.LEFT).setMaxVal(data1DminMax[1]);
 
 				transformsR =  ((WaveTransform) currentTransform).getWaveData().getSampleRate(); 
-
 				//System.out.println("Spec wave data: " + ((WaveTransform) currentTransform).getWaveData().getScaledSampleAmpliudes()[10]); 
 			}
 		}
 
+		calcTimeBins(transformsR);
+		plotPane.repaint();
 	}
 
 
@@ -380,14 +433,12 @@ public abstract class DLTransformImage extends PamBorderPane{
 					getPlotCanvas().getGraphicsContext2D().strokeLine(x1, y1, x2, y2);
 				}
 			}
-
 		}
-
 	}
 
 
 	/**
-	 * String converter to show sensible names fro transforms
+	 * String converter to show sensible names for transforms
 	 * @author Jamie Macaulay
 	 *
 	 */
@@ -399,6 +450,7 @@ public abstract class DLTransformImage extends PamBorderPane{
 		}
 
 		public String toString(DLTransform myClassinstance) {
+			if (myClassinstance==null) return "null"; 
 			// convert a myClass instance to the text displayed in the choice box
 			return myClassinstance.getDLTransformType().toString(); 
 		}

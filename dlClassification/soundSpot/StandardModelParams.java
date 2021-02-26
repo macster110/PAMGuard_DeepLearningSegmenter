@@ -21,7 +21,7 @@ public class StandardModelParams implements Serializable, Cloneable {
 	/**
 	 * 
 	 */
-	public static final long serialVersionUID = 4L;
+	public static final long serialVersionUID = 6L;
 	
 	/**
 	 * The model path
@@ -94,5 +94,44 @@ public class StandardModelParams implements Serializable, Cloneable {
 		}
 		return newParams;
 	}
+	
+	@Override
+	public String toString() {
+		String string = "-------Transforms------\n";
+		if (dlTransfromParams==null) {
+			string+="There are no transform params\n"; 
+		}
+		else {
+			string += dlTransfromParams.size() + " transforms: " + "\n"; 
+			for (int i=0; i<dlTransfromParams.size(); i++) {
+				string+= dlTransfromParams.get(i).toString() + "\n"; 
+			}
+		}
+		
+		string+= "-------Class Names-------\n";
+		string+= "Num classes: " + this.numClasses + "\n"; ;
+
+		if (classNames==null) {
+			string+="There are no class names params\n"; 
+		}
+		else {
+			for (int i=0; i<classNames.length; i++) {
+				string+= classNames[i].className + "\n"; 
+			}
+		}
+		
+		string+= "-------Classification-------\n";
+
+		string+= "Threshold: " + threshold + "\n"; ;
+		
+		
+		string+= "-------Segments-------\n";
+
+		string+= "defaultSegmentLen: " + defaultSegmentLen + "\n"; ;
+
+		return string; 
+
+	}
+	
 
 }

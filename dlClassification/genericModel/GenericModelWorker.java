@@ -3,7 +3,6 @@ package rawDeepLearningClassifer.dlClassification.genericModel;
 import org.jamdev.jdl4pam.genericmodel.GenericModel;
 
 import rawDeepLearningClassifer.DLControl;
-import rawDeepLearningClassifer.dlClassification.soundSpot.GenericModelResult;
 import rawDeepLearningClassifer.dlClassification.soundSpot.StandardModelParams;
 
 /**
@@ -12,7 +11,7 @@ import rawDeepLearningClassifer.dlClassification.soundSpot.StandardModelParams;
  * @author Jamie Macaulay
  *
  */
-public class GenericModelWorker extends DLModelWorker<GenericModelResult> {
+public class GenericModelWorker extends DLModelWorker<GenericPrediction> {
 
 	/**
 	 * The generic model 
@@ -21,12 +20,15 @@ public class GenericModelWorker extends DLModelWorker<GenericModelResult> {
 
 	@Override
 	public float[] runModel(float[][][] transformedDataStack) {
-		return genericModel.runModel(transformedDataStack);
+		//System.out.println("RUN GENERIC MODEL: " + transformedDataStack.length);
+		float[]  results =  genericModel.runModel(transformedDataStack);
+		//System.out.println("GENERIC MODEL RESULTS: " + results== null ? null : results.length);
+		return results;
 	}
 
 	@Override
-	public GenericModelResult makeModelResult(float[] prob, double time) {
-		GenericModelResult model = new  GenericModelResult(prob);
+	public GenericPrediction makeModelResult(float[] prob, double time) {
+		GenericPrediction model = new  GenericPrediction(prob);
 		model.setAnalysisTime(time);
 		return model;
 	}
@@ -39,15 +41,31 @@ public class GenericModelWorker extends DLModelWorker<GenericModelResult> {
 			
 			GenericModelParams genericModelParams = new GenericModelParams(); 
 			
-			genericModelParams.defaultShape = genericModel.getInputShape().getShape(); 
-			genericModelParams.defualtOuput = genericModel.getOutShape().getShape(); 
+			genericModelParams.defaultShape = longArr2Long(genericModel.getInputShape().getShape()); 
+			genericModelParams.defualtOuput = longArr2Long(genericModel.getOutShape().getShape()); 
 
 		}
 		catch (Exception e) {
+			genericModel=null; 
 			e.printStackTrace();
 			//WarnOnce.showWarning(null, "Model Load Error", "There was an error loading the model file.", WarnOnce.OK_OPTION); 
 		}
 
+	}
+	
+	/**
+	 * Convert a long[] array to a Long[] array. 
+	 * @param inArr - the input long[] array. 
+	 * @return - copy of the input as Long objects instead of primitives. 
+	 */
+	private Long[] longArr2Long(long[] inArr) {
+		if (inArr==null) return null; 
+		Long[] longArr = new Long[inArr.length];
+		
+		for (int i=0; i<longArr.length ; i++) {
+			longArr[i] = inArr[i]; 
+		}
+		return longArr; 
 	}
 
 	@Override

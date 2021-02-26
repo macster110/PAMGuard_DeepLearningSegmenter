@@ -5,9 +5,9 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import PamUtils.PamArrayUtils;
-import rawDeepLearningClassifer.dlClassification.ModelResult;
+import rawDeepLearningClassifer.dlClassification.PredictionResult;
 import rawDeepLearningClassifer.dlClassification.dummyClassifier.DummyModelResult;
-import rawDeepLearningClassifer.dlClassification.soundSpot.GenericModelResult;
+import rawDeepLearningClassifer.dlClassification.genericModel.GenericPrediction;
 import rawDeepLearningClassifer.dlClassification.soundSpot.SoundSpotResult;
 
 /**
@@ -44,7 +44,7 @@ public class ModelResultBinaryFactory {
 	 * @param modelResult - the model result to write. 
 	 * @param dos
 	 */
-	public static void getPackedData(ModelResult modelResult, DataOutputStream dos, int type) {
+	public static void getPackedData(PredictionResult modelResult, DataOutputStream dos, int type) {
 
 		float[] probabilities = modelResult.getPrediction(); 
 		double maxVal = PamArrayUtils.max(probabilities); 
@@ -102,7 +102,7 @@ public class ModelResultBinaryFactory {
 	 * @param moduleVersion
 	 * @return
 	 */
-	public static ModelResult sinkData(DataInputStream dis) {
+	public static PredictionResult sinkData(DataInputStream dis) {
 		try {
 
 			//System.out.println("Make model result: "); 
@@ -124,7 +124,7 @@ public class ModelResultBinaryFactory {
 			}			
 			//System.out.println("ModelResultBinaryFactory Type: " + type); 
 
-			ModelResult result; 
+			PredictionResult result; 
 			//specific settings for different modules 
 			switch (type) {
 			case SOUND_SPOT:
@@ -135,7 +135,7 @@ public class ModelResultBinaryFactory {
 				break; 
 			default:
 				//ideally should never be used. 
-				result = new GenericModelResult(data, isBinary); 
+				result = new GenericPrediction(data, isBinary); 
 				break; 
 			}
 
@@ -155,12 +155,12 @@ public class ModelResultBinaryFactory {
 	 * @param modelResult - the model result 
 	 * @return the type flag for the subclass of the result. 
 	 */
-	public static int getType(ModelResult modelResult) {
+	public static int getType(PredictionResult modelResult) {
 		int type=0; 
-		if (modelResult instanceof GenericModelResult) {
+		if (modelResult instanceof GenericPrediction) {
 			type=SOUND_SPOT; 
 		}
-		if (modelResult instanceof GenericModelResult) {
+		if (modelResult instanceof GenericPrediction) {
 			type=GENERIC; 
 		}
 		if (modelResult instanceof DummyModelResult) {

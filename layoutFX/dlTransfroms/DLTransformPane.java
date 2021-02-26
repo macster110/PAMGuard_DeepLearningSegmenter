@@ -92,6 +92,8 @@ public abstract class DLTransformPane extends PamBorderPane implements DynamicSe
 	public void setAllowNotify(boolean allowNotify) {
 		this.allowNotify = allowNotify;
 	}
+	
+	
 
 
 }

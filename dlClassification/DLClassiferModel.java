@@ -24,7 +24,7 @@ public interface DLClassiferModel {
 	 * 
 	 * @return the deep learning model.
 	 */
-	public ArrayList<? extends ModelResult> runModel(ArrayList<GroupedRawData> rawDataUnit);
+	public ArrayList<? extends PredictionResult> runModel(ArrayList<GroupedRawData> rawDataUnit);
 
 	/**
 	 * Prepare the model. This is called on PAMGuard start up.
@@ -76,5 +76,10 @@ public interface DLClassiferModel {
 	 * @return
 	 */
 	public DLControl getDLControl();
+
+	/**
+	 * Check whether a model has been selected and can be loaded successfully. 
+	 */
+	public boolean checkModelOK();
 
 }

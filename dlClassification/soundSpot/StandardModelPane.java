@@ -71,12 +71,7 @@ public abstract class StandardModelPane extends SettingsPane<StandardModelParams
 	//	/**
 	//	 * True to use CUDA
 	//	 */
-	//	private CheckBox useCuda;
-
-	/**
-	 * The currently held parameters. 
-	 */
-	private StandardModelParams currentParams;
+	//	private CheckBox useCuda
 
 	/**
 	 * A pop over to show the advanced pane. 
@@ -243,8 +238,8 @@ public abstract class StandardModelPane extends SettingsPane<StandardModelParams
 
 		return mainPane; 
 	}
-	
-	
+
+
 	/**
 	 * Get a list of extension fitlers for the file dialog. 
 	 * e.g. 
@@ -298,7 +293,7 @@ public abstract class StandardModelPane extends SettingsPane<StandardModelParams
 		}
 
 		popOver.showingProperty().addListener((obs, old, newval)->{
-
+			//TODO?
 		});
 
 		popOver.show(advSettingsButton);
@@ -308,15 +303,18 @@ public abstract class StandardModelPane extends SettingsPane<StandardModelParams
 	 * Update the path label and tool tip text; 
 	 */
 	private void updatePathLabel() {
-		if (currentSelectedFile==null) {
-			pathLabel.setText("No classifier file selected");
+		if (currentSelectedFile==null || !dlClassifierModel.checkModelOK()) {
+			pathLabel.setText("No classifier model loaded: Select model");
 			pathLabel.setTooltip(new Tooltip("Use the Browse... button to select a .pk file"));
 			usedefaultSeg.setDisable(true);
 
 		}
-		pathLabel .setText(this.currentSelectedFile.getName()); 
-		pathLabel.setTooltip(new Tooltip(this.currentSelectedFile.getPath() + "\n" +" Processor " + Device.defaultDevice().toString()));
-		usedefaultSeg.setDisable(false);
+		else {
+			pathLabel .setText(this.currentSelectedFile.getName()); 
+			pathLabel.setTooltip(new Tooltip(this.currentSelectedFile.getPath() 
+					+ "\n" +" Processor " + Device.defaultDevice().toString()));
+			usedefaultSeg.setDisable(false);
+		}
 
 	}
 
@@ -329,30 +327,40 @@ public abstract class StandardModelPane extends SettingsPane<StandardModelParams
 
 		}
 		else {
-			currParams.modelPath =  currentSelectedFile.getPath(); 
+			if (currentSelectedFile==null){
+				currParams.modelPath = null; 
+			}
+			else {
+				currParams.modelPath =  currentSelectedFile.getPath(); 
+			}
 		}
 
 		currParams.threshold = detectionSpinner.getValue(); 
 		//		currParams.useCUDA = useCuda.isSelected(); 
 
+		System.out.println("StandardModelParams 1: " + currParams); 
+		//System.out.println("StandardModelParams 2: " + this.getAdvSettingsPane().getParams(currParams)); 
+
 		currParams = (StandardModelParams) this.getAdvSettingsPane().getParams(currParams);
 
 		currParams.useDefaultTransfroms = this.usedefaultSeg.isSelected(); 
-		
+
 		boolean[] speciesClass = new boolean[this.paramsClone.numClasses]; 
+
 		for (int i=0; i< speciesClass.length; i++) {
 			//System.out.println("Hello get: " + speciesIDBox.getItemBooleanProperty(i).get()); 
-			speciesClass[i] = speciesIDBox.getItemBooleanProperty(i).get(); 
+			if ( speciesIDBox.getItemBooleanProperty(i)==null) speciesClass[i]=false; 
+			else speciesClass[i] = speciesIDBox.getItemBooleanProperty(i).get(); 
 		}
-		
+
 		currParams.binaryClassification = speciesClass;
-	
+
 		return currParams;
 	}
 
 	@Override
 	public void setParams(StandardModelParams currParams) {
-		this.currentParams = currParams.clone(); 
+		this.paramsClone = currParams.clone(); 
 
 		pathLabel .setText(this.currentSelectedFile.getPath()); 
 
@@ -361,31 +369,31 @@ public abstract class StandardModelPane extends SettingsPane<StandardModelParams
 		//set the params on the advanced pane. 
 		this.getAdvSettingsPane().setParams(currParams);
 
-		if (currentParams.modelPath!=null) {
-			currentSelectedFile = new File(currentParams.modelPath);
-			newModelSelected( currentSelectedFile); 
+		if (paramsClone.modelPath!=null) {
+			currentSelectedFile = new File(paramsClone.modelPath);
+			newModelSelected(currentSelectedFile); 
 		}
-		
-	
+
+
 		setClassNames(currParams);
-		
+
 		usedefaultSeg.setSelected(currParams.useDefaultTransfroms); 
 		defaultSegmentLenChanged();
 
 		updatePathLabel(); 
 
 	}
-	
+
 	/**
 	 * Set the class names in the class name combo box. 
 	 * @param currParams
 	 */
 	private void setClassNames(StandardModelParams currParams) {
 		speciesIDBox.getItems().clear();
-		
+
 		int classNamesLen = 0 ; 
 		if (currParams.classNames!=null) classNamesLen = currParams.classNames.length; 
-			
+
 		for (int i=0; i<Math.max(classNamesLen, currParams.numClasses); i++) {
 			if (currParams.classNames!=null && currParams.classNames.length>i && currParams.classNames[i]!=null) {
 				speciesIDBox.getItems().add(currParams.classNames[i].className); 
@@ -394,7 +402,7 @@ public abstract class StandardModelPane extends SettingsPane<StandardModelParams
 				speciesIDBox.getItems().add("Class: " + i); 
 			}
 		}
-		
+
 		for (int i=0; i<speciesIDBox.getItems().size(); i++) {
 			speciesIDBox.getItemBooleanProperty(i).set(currParams.binaryClassification[i]);
 		}
@@ -421,10 +429,14 @@ public abstract class StandardModelPane extends SettingsPane<StandardModelParams
 		return paramsClone;
 	}
 
+	/**
+	 * Set the params clone. 
+	 * @param paramsClone
+	 */
 	public void setParamsClone(StandardModelParams paramsClone) {
 		this.paramsClone = paramsClone;
 	}
-	
+
 	/**
 	 * Get the currently selected model file. 
 	 * @return the currently selected model file. 
@@ -456,7 +468,7 @@ public abstract class StandardModelPane extends SettingsPane<StandardModelParams
 	public void setAdvSettingsPane(SettingsPane  advSettingsPane) {
 		this.advSettingsPane = advSettingsPane;
 	}
-	
+
 	public PamVBox getVBoxHolder() {
 		return vBoxHolder;
 	}

@@ -2,7 +2,7 @@ package rawDeepLearningClassifer.dlClassification;
 
 import PamguardMVC.DataUnitBaseData;
 import PamguardMVC.PamDataUnit;
-import rawDeepLearningClassifer.dlClassification.soundSpot.GenericModelResult;
+import rawDeepLearningClassifer.dlClassification.genericModel.GenericPrediction;
 
 /**
  * A data unit created from classification results of DL model. this data unit holds one model results, i.e. 
@@ -16,7 +16,7 @@ public class DLDataUnit extends PamDataUnit {
 	/**
 	 * The result for the model. 
 	 */
-	private ModelResult modelResult;
+	private PredictionResult modelResult;
 
 
 	/**
@@ -28,7 +28,7 @@ public class DLDataUnit extends PamDataUnit {
 	 * @param modelResult - the deep learning result
 	 */
 	public DLDataUnit(long timeMilliseconds,
-			int channelBitmap, long startSample, long durationSamples, 	ModelResult modelResult) {
+			int channelBitmap, long startSample, long durationSamples, 	PredictionResult modelResult) {
 		super(timeMilliseconds, channelBitmap, startSample, durationSamples); 
 
 		this.modelResult = modelResult; 
@@ -37,10 +37,10 @@ public class DLDataUnit extends PamDataUnit {
 	public DLDataUnit(DataUnitBaseData baseData, float[] data) {
 		super(baseData);
 		//System.out.println("DLDataUnit: " + this.getChannelBitmap()); 
-		this.modelResult = new GenericModelResult(data); 
+		this.modelResult = new GenericPrediction(data); 
 	}
 
-	public DLDataUnit(DataUnitBaseData baseData, ModelResult modelResult) {
+	public DLDataUnit(DataUnitBaseData baseData, PredictionResult modelResult) {
 		super(baseData);
 		//System.out.println("DLDataUnit: " + this.getChannelBitmap()); 
 		this.modelResult = modelResult; 
@@ -50,7 +50,7 @@ public class DLDataUnit extends PamDataUnit {
 	 * Get the model result. 
 	 * @return the model result. 
 	 */
-	public ModelResult getModelResult() {
+	public PredictionResult getPredicitionResult() {
 		return modelResult; 
 	}
 

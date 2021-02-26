@@ -7,29 +7,21 @@ import PamView.symbol.SymbolData;
 import PamguardMVC.PamDataBlock;
 import rawDeepLearningClassifer.DLControl;
 
-public class DLSymbolManager extends StandardSymbolManager {
+public class PredictionSymbolManager extends StandardSymbolManager {
 
-	/**
-	 * Reference ot the click control. 
-	 */
 	private DLControl dlControl;
 
-
-	public DLSymbolManager(DLControl dlControl, PamDataBlock pamDataBlock) {
+	public PredictionSymbolManager(DLControl dlControl, PamDataBlock pamDataBlock) {
 		super(pamDataBlock, new SymbolData());
 		this.dlControl = dlControl;
 		addSymbolOption(HAS_CHANNEL_OPTIONS);
-		addSymbolOption(HAS_SPECIAL_COLOUR);
-		addSymbolOption(HAS_SYMBOL);
-		super.setSpecialColourName("by probability");
+		addSymbolOption(HAS_LINE);
 	}
 	
-
 	@Override
 	protected StandardSymbolChooser createSymbolChooser(String displayName, GeneralProjector projector) {
 		return new StandardSymbolChooser(this, getPamDataBlock(), displayName, getDefaultSymbol(), projector);
 	}
 	
 
-	
 }

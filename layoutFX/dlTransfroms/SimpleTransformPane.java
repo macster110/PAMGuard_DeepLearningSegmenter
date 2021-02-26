@@ -210,7 +210,7 @@ public class SimpleTransformPane extends DLTransformPane {
 		
 		for (int i=0; i<spinners.size(); i++) {
 			//System.out.println("Set params: " + input.getDLTransformType() + " param val: " + simpleTransform.getParams()[i] + "  " + (simpleTransform.getParams()[i] instanceof Float)); 
-			if (simpleTransform.getParams()[i] instanceof Float) {
+			if (simpleTransform.getParams()[i] instanceof Float || simpleTransform.getParams()[i] instanceof Double) {
 				spinners.get(i).getValueFactory().setValue(simpleTransform.getParams()[i].doubleValue());
 
 			}
