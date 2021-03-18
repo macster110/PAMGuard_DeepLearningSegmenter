@@ -1,4 +1,4 @@
-package rawDeepLearningClassifer.layoutFX.dlTransfroms;
+package rawDeepLearningClassifier.layoutFX.dlTransfroms;
 
 import java.util.ArrayList;
 
@@ -9,8 +9,8 @@ import org.jamdev.jdl4pam.transforms.WaveTransform;
 
 import javafx.scene.control.Label;
 import pamViewFX.fxNodes.PamBorderPane;
-import rawDeepLearningClassifer.layoutFX.exampleSounds.ExampleSound;
-import rawDeepLearningClassifer.layoutFX.exampleSounds.ExampleSoundFactory.ExampleSoundType;
+import rawDeepLearningClassifier.layoutFX.exampleSounds.ExampleSound;
+import rawDeepLearningClassifier.layoutFX.exampleSounds.ExampleSoundFactory.ExampleSoundType;
 
 /**
  * Contains both a list of transforms and preview image of the waveform, spectrogram or other visualisation of 

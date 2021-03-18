@@ -1,14 +1,14 @@
-package rawDeepLearningClassifer.dlClassification.dummyClassifier;
+package rawDeepLearningClassifier.dlClassification.dummyClassifier;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import rawDeepLearningClassifer.DLControl;
-import rawDeepLearningClassifer.dlClassification.DLClassName;
-import rawDeepLearningClassifer.dlClassification.DLClassiferModel;
-import rawDeepLearningClassifer.dlClassification.PredictionResult;
-import rawDeepLearningClassifer.layoutFX.DLCLassiferModelUI;
-import rawDeepLearningClassifer.segmenter.SegmenterProcess.GroupedRawData;
+import rawDeepLearningClassifier.DLControl;
+import rawDeepLearningClassifier.dlClassification.DLClassName;
+import rawDeepLearningClassifier.dlClassification.DLClassiferModel;
+import rawDeepLearningClassifier.dlClassification.PredictionResult;
+import rawDeepLearningClassifier.layoutFX.DLCLassiferModelUI;
+import rawDeepLearningClassifier.segmenter.SegmenterProcess.GroupedRawData;
 
 /**
  * Classifier which returns a random results. Used for debugging and testing. 

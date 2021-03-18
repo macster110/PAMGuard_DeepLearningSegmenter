@@ -1,4 +1,4 @@
-package rawDeepLearningClassifer.segmenter;
+package rawDeepLearningClassifier.segmenter;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -23,7 +23,7 @@ import PamguardMVC.PamRawDataBlock;
 import PamguardMVC.debug.Debug;
 import clickDetector.ClickDetection;
 import clipgenerator.ClipDataUnit;
-import rawDeepLearningClassifer.DLControl;
+import rawDeepLearningClassifier.DLControl;
 
 
 /**

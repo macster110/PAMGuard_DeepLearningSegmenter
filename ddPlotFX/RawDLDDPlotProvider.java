@@ -1,9 +1,9 @@
-package rawDeepLearningClassifer.ddPlotFX;
+package rawDeepLearningClassifier.ddPlotFX;
 
 import PamguardMVC.PamDataBlock;
 import detectionPlotFX.data.DDDataProvider;
 import detectionPlotFX.layout.DetectionPlotDisplay;
-import rawDeepLearningClassifer.DLControl;
+import rawDeepLearningClassifier.DLControl;
 
 public class RawDLDDPlotProvider extends DDDataProvider {
 
@@ -19,7 +19,7 @@ public class RawDLDDPlotProvider extends DDDataProvider {
 
 	@Override
 	public RawDLDDDataInfo createDataInfo(DetectionPlotDisplay dddisplay) {
-		return new RawDLDDDataInfo(this, dlControl, dddisplay);
+		return new RawDLDDDataInfo(dlControl, dddisplay);
 	}
 
 }

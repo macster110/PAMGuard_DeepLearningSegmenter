@@ -1,4 +1,4 @@
-package rawDeepLearningClassifer.logging;
+package rawDeepLearningClassifier.logging;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -15,10 +15,10 @@ import binaryFileStorage.BinaryHeader;
 import binaryFileStorage.BinaryObjectData;
 import binaryFileStorage.ModuleFooter;
 import binaryFileStorage.ModuleHeader;
-import rawDeepLearningClassifer.DLControl;
-import rawDeepLearningClassifer.dlClassification.DLDetection;
-import rawDeepLearningClassifer.dlClassification.DLDetectionDataBlock;
-import rawDeepLearningClassifer.dlClassification.PredictionResult;
+import rawDeepLearningClassifier.DLControl;
+import rawDeepLearningClassifier.dlClassification.DLDetection;
+import rawDeepLearningClassifier.dlClassification.DLDetectionDataBlock;
+import rawDeepLearningClassifier.dlClassification.PredictionResult;
 
 /**
  * Saves and loads binary data for classified Deep Learning data units. 

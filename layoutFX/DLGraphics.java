@@ -1,4 +1,4 @@
-package rawDeepLearningClassifer.layoutFX;
+package rawDeepLearningClassifier.layoutFX;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -15,7 +15,7 @@ import PamView.PamSymbolType;
 import PamguardMVC.PamDataBlock;
 import PamguardMVC.PamDataUnit;
 import Spectrogram.SpectrogramProjector;
-import rawDeepLearningClassifer.dlClassification.DLDataUnit;
+import rawDeepLearningClassifier.dlClassification.DLDataUnit;
 
 /**
  * The detection graphics for the DL localiser. Forces the graphics to be one colour and paints some 

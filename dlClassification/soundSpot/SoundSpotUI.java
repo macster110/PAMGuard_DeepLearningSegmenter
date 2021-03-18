@@ -1,9 +1,9 @@
-package rawDeepLearningClassifer.dlClassification.soundSpot;
+package rawDeepLearningClassifier.dlClassification.soundSpot;
 
 import javax.swing.JPanel;
 
 import PamController.SettingsPane;
-import rawDeepLearningClassifer.layoutFX.DLCLassiferModelUI;
+import rawDeepLearningClassifier.layoutFX.DLCLassiferModelUI;
 
 
 /**

@@ -1,4 +1,4 @@
-package rawDeepLearningClassifer.logging;
+package rawDeepLearningClassifier.logging;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -12,10 +12,10 @@ import binaryFileStorage.BinaryHeader;
 import binaryFileStorage.BinaryObjectData;
 import binaryFileStorage.ModuleFooter;
 import binaryFileStorage.ModuleHeader;
-import rawDeepLearningClassifer.dlClassification.DLClassifyProcess;
-import rawDeepLearningClassifer.dlClassification.DLDataUnit;
-import rawDeepLearningClassifer.dlClassification.DLModelDataBlock;
-import rawDeepLearningClassifer.dlClassification.PredictionResult;
+import rawDeepLearningClassifier.dlClassification.DLClassifyProcess;
+import rawDeepLearningClassifier.dlClassification.DLDataUnit;
+import rawDeepLearningClassifier.dlClassification.DLModelDataBlock;
+import rawDeepLearningClassifier.dlClassification.PredictionResult;
 
 /**
  * Binary storage for the all the model results, i.e. all the returned probabilities. 

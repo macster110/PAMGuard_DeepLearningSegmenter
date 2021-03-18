@@ -1,4 +1,4 @@
-package rawDeepLearningClassifer.layoutFX.exampleSounds;
+package rawDeepLearningClassifier.layoutFX.exampleSounds;
 
 import java.io.IOException;
 

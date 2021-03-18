@@ -1,4 +1,4 @@
-package rawDeepLearningClassifer.dlClassification.soundSpot;
+package rawDeepLearningClassifier.dlClassification.soundSpot;
 
 import org.controlsfx.control.ToggleSwitch;
 import PamController.SettingsPane;
@@ -9,8 +9,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import pamViewFX.fxNodes.PamBorderPane;
 import pamViewFX.fxNodes.PamHBox;
-import rawDeepLearningClassifer.layoutFX.dlTransfroms.DLImageTransformPane;
-import rawDeepLearningClassifer.layoutFX.dlTransfroms.DLTransformImage;
+import rawDeepLearningClassifier.layoutFX.dlTransfroms.DLImageTransformPane;
+import rawDeepLearningClassifier.layoutFX.dlTransfroms.DLTransformImage;
 
 
 /**

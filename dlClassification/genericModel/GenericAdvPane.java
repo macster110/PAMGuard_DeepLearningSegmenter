@@ -1,4 +1,4 @@
-package rawDeepLearningClassifer.dlClassification.genericModel;
+package rawDeepLearningClassifier.dlClassification.genericModel;
 
 import PamController.SettingsPane;
 import javafx.geometry.Insets;
@@ -19,8 +19,8 @@ import javafx.stage.FileChooser;
 import pamViewFX.fxNodes.PamBorderPane;
 import pamViewFX.fxNodes.pamDialogFX.PamDialogFX;
 import pamViewFX.fxNodes.utilityPanes.PamToggleSwitch;
-import rawDeepLearningClassifer.DLControl;
-import rawDeepLearningClassifer.layoutFX.dlTransfroms.DLImageTransformPane;
+import rawDeepLearningClassifier.DLControl;
+import rawDeepLearningClassifier.layoutFX.dlTransfroms.DLImageTransformPane;
 
 /**
  * 

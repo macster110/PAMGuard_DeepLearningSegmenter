@@ -1,12 +1,12 @@
-package rawDeepLearningClassifer.logging;
+package rawDeepLearningClassifier.logging;
 
 import PamUtils.FrequencyFormat;
 import PamUtils.PamUtils;
 import PamguardMVC.PamDataUnit;
 import dataGram.DatagramProvider;
 import dataGram.DatagramScaleInformation;
-import rawDeepLearningClassifer.DLControl;
-import rawDeepLearningClassifer.dlClassification.DLDetection;
+import rawDeepLearningClassifier.DLControl;
+import rawDeepLearningClassifier.dlClassification.DLDetection;
 
 /**
  * The datagram provider for classified data deep learning units. this shows the freqeuncy distirbution 
@@ -37,7 +37,7 @@ public class DLDetectionDatagram implements DatagramProvider  {
 //			}
 //		}
 		for (int i = 0; i < nChan; i++) {
-			fftData = click.getRawDataTransforms().getPowerSpectrum(i, gramLen*2);
+			fftData = click.getDataTransforms().getPowerSpectrum(i, gramLen*2);
 			if (fftData!=null){
 			for (int s = 0; s < gramLen; s++) {
 //				dataGramLine[s] += Math.log(fftData[s]);

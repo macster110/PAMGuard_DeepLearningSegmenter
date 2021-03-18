@@ -1,4 +1,4 @@
-package rawDeepLearningClassifer.dlClassification.genericModel;
+package rawDeepLearningClassifier.dlClassification.genericModel;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,13 +11,12 @@ import org.jamdev.jdl4pam.transforms.WaveTransform;
 import org.jamdev.jdl4pam.transforms.DLTransformsFactory;
 import org.jamdev.jdl4pam.utils.DLUtils;
 import org.jamdev.jpamutils.wavFiles.AudioData;
-import org.pytorch.Module;
-import org.pytorch.Tensor;
+
 
 import PamUtils.PamCalendar;
-import rawDeepLearningClassifer.DLControl;
-import rawDeepLearningClassifer.dlClassification.soundSpot.StandardModelParams;
-import rawDeepLearningClassifer.segmenter.SegmenterProcess.GroupedRawData;
+import rawDeepLearningClassifier.DLControl;
+import rawDeepLearningClassifier.dlClassification.soundSpot.StandardModelParams;
+import rawDeepLearningClassifier.segmenter.SegmenterProcess.GroupedRawData;
 
 
 /**

@@ -1,10 +1,10 @@
-package rawDeepLearningClassifer.offline;
+package rawDeepLearningClassifier.offline;
 
 import java.awt.Frame;
 
 import offlineProcessing.OLProcessDialog;
 import offlineProcessing.OfflineTaskGroup;
-import rawDeepLearningClassifer.DLControl;
+import rawDeepLearningClassifier.DLControl;
 
 
 /**

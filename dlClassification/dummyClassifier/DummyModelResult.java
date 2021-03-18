@@ -1,6 +1,6 @@
-package rawDeepLearningClassifer.dlClassification.dummyClassifier;
+package rawDeepLearningClassifier.dlClassification.dummyClassifier;
 
-import rawDeepLearningClassifer.dlClassification.PredictionResult;
+import rawDeepLearningClassifier.dlClassification.PredictionResult;
 
 public class DummyModelResult implements PredictionResult {
 	

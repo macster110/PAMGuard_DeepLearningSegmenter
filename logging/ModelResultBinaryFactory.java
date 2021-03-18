@@ -1,14 +1,14 @@
-package rawDeepLearningClassifer.logging;
+package rawDeepLearningClassifier.logging;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
 import PamUtils.PamArrayUtils;
-import rawDeepLearningClassifer.dlClassification.PredictionResult;
-import rawDeepLearningClassifer.dlClassification.dummyClassifier.DummyModelResult;
-import rawDeepLearningClassifer.dlClassification.genericModel.GenericPrediction;
-import rawDeepLearningClassifer.dlClassification.soundSpot.SoundSpotResult;
+import rawDeepLearningClassifier.dlClassification.PredictionResult;
+import rawDeepLearningClassifier.dlClassification.dummyClassifier.DummyModelResult;
+import rawDeepLearningClassifier.dlClassification.genericModel.GenericPrediction;
+import rawDeepLearningClassifier.dlClassification.soundSpot.SoundSpotResult;
 
 /**
  * Handles the saving and loading of Model results from binary files. 

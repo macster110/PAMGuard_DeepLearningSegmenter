@@ -1,9 +1,10 @@
-package rawDeepLearningClassifer.dlClassification.soundSpot;
+package rawDeepLearningClassifier.dlClassification.soundSpot;
 
 import org.jamdev.jdl4pam.SoundSpot.SoundSpotModel;
 import org.jamdev.jdl4pam.SoundSpot.SoundSpotParams;
-import rawDeepLearningClassifer.DLControl;
-import rawDeepLearningClassifer.dlClassification.genericModel.DLModelWorker;
+
+import rawDeepLearningClassifier.DLControl;
+import rawDeepLearningClassifier.dlClassification.genericModel.DLModelWorker;
 
 
 /**

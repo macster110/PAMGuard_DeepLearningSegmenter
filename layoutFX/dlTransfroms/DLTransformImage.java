@@ -1,4 +1,4 @@
-package rawDeepLearningClassifer.layoutFX.dlTransfroms;
+package rawDeepLearningClassifier.layoutFX.dlTransfroms;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,9 +26,9 @@ import pamViewFX.fxNodes.sliders.ColourRangeSlider;
 import pamViewFX.fxNodes.utilsFX.ColourArray;
 import pamViewFX.fxNodes.utilsFX.ColourArray.ColourArrayType;
 import pamViewFX.fxPlotPanes.PlotPane;
-import rawDeepLearningClassifer.layoutFX.exampleSounds.ExampleSound;
-import rawDeepLearningClassifer.layoutFX.exampleSounds.ExampleSoundFactory;
-import rawDeepLearningClassifer.layoutFX.exampleSounds.ExampleSoundFactory.ExampleSoundType;
+import rawDeepLearningClassifier.layoutFX.exampleSounds.ExampleSound;
+import rawDeepLearningClassifier.layoutFX.exampleSounds.ExampleSoundFactory;
+import rawDeepLearningClassifier.layoutFX.exampleSounds.ExampleSoundFactory.ExampleSoundType;
 
 /**
  * 

@@ -1,4 +1,4 @@
-package rawDeepLearningClassifer.dataPlotFX;
+package rawDeepLearningClassifier.dataPlotFX;
 
 import PamView.symbol.StandardSymbolOptions;
 import PamView.symbol.modifier.SymbolModifier;
@@ -16,7 +16,7 @@ import pamViewFX.fxNodes.comboBox.ColorComboBox;
 import pamViewFX.fxNodes.sliders.ColourRangeSlider;
 import pamViewFX.fxNodes.utilsFX.ColourArray;
 import pamViewFX.symbol.StandardSymbolModifierPane;
-import rawDeepLearningClassifer.dlClassification.DLClassName;
+import rawDeepLearningClassifier.dlClassification.DLClassName;
 
 
 /*

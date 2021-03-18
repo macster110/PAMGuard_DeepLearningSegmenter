@@ -1,4 +1,4 @@
-package rawDeepLearningClassifer.dlClassification;
+package rawDeepLearningClassifier.dlClassification;
 
 /**
  * Model results for the classifier. 

@@ -1,4 +1,4 @@
-package rawDeepLearningClassifer.dlClassification;
+package rawDeepLearningClassifier.dlClassification;
 
 import PamguardMVC.PamDataBlock;
 import PamguardMVC.PamProcess;

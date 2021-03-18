@@ -1,4 +1,4 @@
-package rawDeepLearningClassifer;
+package rawDeepLearningClassifier;
 
 import PamController.PamController;
 import PamController.PamControllerInterface;

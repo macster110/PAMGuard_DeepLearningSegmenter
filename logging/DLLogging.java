@@ -1,4 +1,4 @@
-package rawDeepLearningClassifer.logging;
+package rawDeepLearningClassifier.logging;
 
 import java.sql.Types;
 
@@ -8,8 +8,8 @@ import generalDatabase.PamTableDefinition;
 import generalDatabase.PamTableItem;
 import generalDatabase.SQLLogging;
 import generalDatabase.SQLTypes;
-import rawDeepLearningClassifer.DLControl;
-import rawDeepLearningClassifer.dlClassification.DLDataUnit;
+import rawDeepLearningClassifier.DLControl;
+import rawDeepLearningClassifier.dlClassification.DLDataUnit;
 
 /**
  * Saves the classified DL data units to a database. 

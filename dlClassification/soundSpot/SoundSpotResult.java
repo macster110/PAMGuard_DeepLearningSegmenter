@@ -1,6 +1,6 @@
-package rawDeepLearningClassifer.dlClassification.soundSpot;
+package rawDeepLearningClassifier.dlClassification.soundSpot;
 
-import rawDeepLearningClassifer.dlClassification.genericModel.GenericPrediction;
+import rawDeepLearningClassifier.dlClassification.genericModel.GenericPrediction;
 
 /**
  * Result from the SoundSpotClassifier. 

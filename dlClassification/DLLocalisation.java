@@ -1,4 +1,4 @@
-package rawDeepLearningClassifer.dlClassification;
+package rawDeepLearningClassifier.dlClassification;
 
 import PamDetection.AbstractLocalisation;
 import PamDetection.LocContents;

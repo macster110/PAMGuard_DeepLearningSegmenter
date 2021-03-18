@@ -1,4 +1,4 @@
-package rawDeepLearningClassifer.dlClassification.soundSpot;
+package rawDeepLearningClassifier.dlClassification.soundSpot;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -7,7 +7,7 @@ import java.util.List;
 import org.jamdev.jdl4pam.transforms.DLTransform;
 import org.jamdev.jdl4pam.transforms.DLTransfromParams;
 
-import rawDeepLearningClassifer.dlClassification.DLClassName;
+import rawDeepLearningClassifier.dlClassification.DLClassName;
 
 /**
  * Parameters for the SoundSpot model. 

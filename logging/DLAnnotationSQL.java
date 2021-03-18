@@ -1,4 +1,4 @@
-package rawDeepLearningClassifer.logging;
+package rawDeepLearningClassifier.logging;
 
 import PamguardMVC.PamDataUnit;
 import generalDatabase.PamTableDefinition;

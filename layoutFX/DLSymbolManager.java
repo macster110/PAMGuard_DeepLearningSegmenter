@@ -1,11 +1,11 @@
-package rawDeepLearningClassifer.layoutFX;
+package rawDeepLearningClassifier.layoutFX;
 
 import PamView.GeneralProjector;
 import PamView.symbol.StandardSymbolChooser;
 import PamView.symbol.StandardSymbolManager;
 import PamView.symbol.SymbolData;
 import PamguardMVC.PamDataBlock;
-import rawDeepLearningClassifer.DLControl;
+import rawDeepLearningClassifier.DLControl;
 
 public class DLSymbolManager extends StandardSymbolManager {
 

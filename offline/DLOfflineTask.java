@@ -1,12 +1,12 @@
-package rawDeepLearningClassifer.offline;
+package rawDeepLearningClassifier.offline;
 
 import PamController.PamController;
 import PamguardMVC.PamDataUnit;
 import dataMap.OfflineDataMapPoint;
 import matchedTemplateClassifer.MTClassifierControl;
 import offlineProcessing.OfflineTask;
-import rawDeepLearningClassifer.DLControl;
-import rawDeepLearningClassifer.segmenter.SegmenterProcess;
+import rawDeepLearningClassifier.DLControl;
+import rawDeepLearningClassifier.segmenter.SegmenterProcess;
 
 public class DLOfflineTask extends OfflineTask<PamDataUnit<?,?>>{
 

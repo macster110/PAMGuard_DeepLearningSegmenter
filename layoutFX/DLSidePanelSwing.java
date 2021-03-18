@@ -1,4 +1,4 @@
-package rawDeepLearningClassifer.layoutFX;
+package rawDeepLearningClassifier.layoutFX;
 
 import java.awt.BorderLayout;
 
@@ -7,7 +7,7 @@ import javax.swing.JLabel;
 
 import PamView.PamSidePanel;
 import PamView.panel.PamPanel;
-import rawDeepLearningClassifer.DLControl;
+import rawDeepLearningClassifier.DLControl;
 
 /**
  * The DL side panel for the Swing GUI. Shows information on the current DL

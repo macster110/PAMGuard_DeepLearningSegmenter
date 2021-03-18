@@ -1,4 +1,4 @@
-package rawDeepLearningClassifer.dlClassification;
+package rawDeepLearningClassifier.dlClassification;
 
 import java.util.ArrayList;
 
@@ -11,13 +11,13 @@ import PamguardMVC.DataUnitBaseData;
 import PamguardMVC.PamDataUnit;
 import PamguardMVC.PamObservable;
 import PamguardMVC.PamProcess;
-import rawDeepLearningClassifer.DLControl;
-import rawDeepLearningClassifer.layoutFX.DLDetectionGraphics;
-import rawDeepLearningClassifer.layoutFX.DLGraphics;
-import rawDeepLearningClassifer.logging.DLAnnotation;
-import rawDeepLearningClassifer.logging.DLAnnotationType;
-import rawDeepLearningClassifer.segmenter.SegmenterDataBlock;
-import rawDeepLearningClassifer.segmenter.SegmenterProcess.GroupedRawData;
+import rawDeepLearningClassifier.DLControl;
+import rawDeepLearningClassifier.layoutFX.DLDetectionGraphics;
+import rawDeepLearningClassifier.layoutFX.DLGraphics;
+import rawDeepLearningClassifier.logging.DLAnnotation;
+import rawDeepLearningClassifier.logging.DLAnnotationType;
+import rawDeepLearningClassifier.segmenter.SegmenterDataBlock;
+import rawDeepLearningClassifier.segmenter.SegmenterProcess.GroupedRawData;
 
 /**
  * The deep learning classification process. This takes a segment of raw data from the segmenter. 
@@ -397,7 +397,7 @@ public class DLClassifyProcess extends PamProcess {
 		}
 
 		DataUnitBaseData basicData  = groupDataBuffer.get(0).getBasicData().clone(); 
-		basicData.setMillisecondDuration(1000.*groupDataBuffer.size()*dlControl.getDLParams().sampleHop/this.sampleRate);
+		basicData.setMillisecondDuration(1000.*rawdata[0].length/this.sampleRate);
 		basicData.setSampleDuration((long) (groupDataBuffer.size()*dlControl.getDLParams().sampleHop));
 
 		//		System.out.println("Model result: " + modelResult.size()); 

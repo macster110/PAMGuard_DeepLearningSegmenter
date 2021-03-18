@@ -1,4 +1,4 @@
-package rawDeepLearningClassifer.dlClassification.genericModel;
+package rawDeepLearningClassifier.dlClassification.genericModel;
 
 import java.util.ArrayList;
 
@@ -22,6 +22,8 @@ public class GenericModelTest {
 
 		//the audio file to test
 		String wavFilePath = "/Users/au671271/Google Drive/PAMGuard_dev/Deep_Learning/Right_whales_DG/SouthernRightWhale001-v1/sar98_trk3_8000.wav";
+		
+		wavFilePath = "/Users/au671271/Google Drive/PAMGuard_dev/Deep_Learning/Right_whales_DG/SouthernRightWhale001-v1/wav_files_timestamp/PAM_20010327_113000.wav";
 
 		//define some bits and pieces we need for the classiifer. 
 		float sr = 2000; 

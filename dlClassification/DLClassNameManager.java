@@ -1,8 +1,8 @@
-package rawDeepLearningClassifer.dlClassification;
+package rawDeepLearningClassifier.dlClassification;
 
 import java.util.Optional;
 
-import rawDeepLearningClassifer.DLControl;
+import rawDeepLearningClassifier.DLControl;
 
 /**
  * Manages assigning class names and unique identifier numbers for each class type.

@@ -1,14 +1,14 @@
-package rawDeepLearningClassifer.dlClassification;
+package rawDeepLearningClassifier.dlClassification;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import rawDeepLearningClassifer.dlClassification.genericModel.DLModelWorker;
-import rawDeepLearningClassifer.dlClassification.genericModel.GenericPrediction;
-import rawDeepLearningClassifer.dlClassification.soundSpot.SoundSpotResult;
-import rawDeepLearningClassifer.segmenter.SegmenterProcess.GroupedRawData;
+import rawDeepLearningClassifier.dlClassification.genericModel.DLModelWorker;
+import rawDeepLearningClassifier.dlClassification.genericModel.GenericPrediction;
+import rawDeepLearningClassifier.dlClassification.soundSpot.SoundSpotResult;
+import rawDeepLearningClassifier.segmenter.SegmenterProcess.GroupedRawData;
 
 /**
  * Creates a que for grouped data units for classiifcation. 

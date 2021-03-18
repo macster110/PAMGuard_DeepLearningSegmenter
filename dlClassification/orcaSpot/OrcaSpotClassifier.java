@@ -1,4 +1,4 @@
-package rawDeepLearningClassifer.dlClassification.orcaSpot;
+package rawDeepLearningClassifier.dlClassification.orcaSpot;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -9,14 +9,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import PamController.PamControlledUnitSettings;
 import PamController.PamSettingManager;
 import PamController.PamSettings;
-import rawDeepLearningClassifer.DLControl;
-import rawDeepLearningClassifer.dlClassification.DLClassName;
-import rawDeepLearningClassifer.dlClassification.DLClassiferModel;
-import rawDeepLearningClassifer.dlClassification.DLDataUnit;
-import rawDeepLearningClassifer.dlClassification.DLDetection;
-import rawDeepLearningClassifer.dlClassification.PredictionResult;
-import rawDeepLearningClassifer.layoutFX.DLCLassiferModelUI;
-import rawDeepLearningClassifer.segmenter.SegmenterProcess.GroupedRawData;
+import rawDeepLearningClassifier.DLControl;
+import rawDeepLearningClassifier.dlClassification.DLClassName;
+import rawDeepLearningClassifier.dlClassification.DLClassiferModel;
+import rawDeepLearningClassifier.dlClassification.DLDataUnit;
+import rawDeepLearningClassifier.dlClassification.DLDetection;
+import rawDeepLearningClassifier.dlClassification.PredictionResult;
+import rawDeepLearningClassifier.layoutFX.DLCLassiferModelUI;
+import rawDeepLearningClassifier.segmenter.SegmenterProcess.GroupedRawData;
 
 /**
  * Calls python.exe to run a python script and then returns a result. 

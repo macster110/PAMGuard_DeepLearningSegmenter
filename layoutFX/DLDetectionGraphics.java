@@ -1,4 +1,4 @@
-package rawDeepLearningClassifer.layoutFX;
+package rawDeepLearningClassifier.layoutFX;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -14,7 +14,7 @@ import PamView.PamSymbol;
 import PamView.PamSymbolType;
 import PamguardMVC.PamDataBlock;
 import PamguardMVC.PamDataUnit;
-import rawDeepLearningClassifer.dlClassification.DLDetection;
+import rawDeepLearningClassifier.dlClassification.DLDetection;
 
 /**
  * Graphics for the detected data units

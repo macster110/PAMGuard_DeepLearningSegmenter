@@ -1,4 +1,4 @@
-package rawDeepLearningClassifer.dlClassification.genericModel;
+package rawDeepLearningClassifier.dlClassification.genericModel;
 
 import java.io.File;
 import java.io.Serializable;
@@ -17,16 +17,16 @@ import PamController.PamControlledUnitSettings;
 import PamController.PamSettingManager;
 import PamController.PamSettings;
 import PamUtils.PamCalendar;
-import rawDeepLearningClassifer.DLControl;
-import rawDeepLearningClassifer.dlClassification.DLClassName;
-import rawDeepLearningClassifer.dlClassification.DLClassiferModel;
-import rawDeepLearningClassifer.dlClassification.DLTaskThread;
-import rawDeepLearningClassifer.dlClassification.PredictionResult;
-import rawDeepLearningClassifer.dlClassification.soundSpot.SoundSpotResult;
-import rawDeepLearningClassifer.dlClassification.soundSpot.SoundSpotWorker;
-import rawDeepLearningClassifer.dlClassification.soundSpot.StandardModelParams;
-import rawDeepLearningClassifer.layoutFX.DLCLassiferModelUI;
-import rawDeepLearningClassifer.segmenter.SegmenterProcess.GroupedRawData;
+import rawDeepLearningClassifier.DLControl;
+import rawDeepLearningClassifier.dlClassification.DLClassName;
+import rawDeepLearningClassifier.dlClassification.DLClassiferModel;
+import rawDeepLearningClassifier.dlClassification.DLTaskThread;
+import rawDeepLearningClassifier.dlClassification.PredictionResult;
+import rawDeepLearningClassifier.dlClassification.soundSpot.SoundSpotResult;
+import rawDeepLearningClassifier.dlClassification.soundSpot.SoundSpotWorker;
+import rawDeepLearningClassifier.dlClassification.soundSpot.StandardModelParams;
+import rawDeepLearningClassifier.layoutFX.DLCLassiferModelUI;
+import rawDeepLearningClassifier.segmenter.SegmenterProcess.GroupedRawData;
 import warnings.PamWarning;
 import warnings.WarningSystem;
 

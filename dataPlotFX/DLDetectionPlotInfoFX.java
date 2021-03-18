@@ -1,4 +1,4 @@
-package rawDeepLearningClassifer.dataPlotFX;
+package rawDeepLearningClassifier.dataPlotFX;
 
 import java.io.File;
 
@@ -10,8 +10,8 @@ import dataPlotsFX.layout.TDGraphFX;
 import dataPlotsFX.rawClipDataPlot.RawClipDataInfo;
 import javafx.scene.Node;
 import pamViewFX.fxGlyphs.PamSVGIcon;
-import rawDeepLearningClassifer.DLControl;
-import rawDeepLearningClassifer.dlClassification.DLDetection;
+import rawDeepLearningClassifier.DLControl;
+import rawDeepLearningClassifier.dlClassification.DLDetection;
 
 /**
  * Allows the deep learning results to be plotted on the TD display. 

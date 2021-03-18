@@ -1,11 +1,11 @@
-package rawDeepLearningClassifer.dlClassification;
+package rawDeepLearningClassifier.dlClassification;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import rawDeepLearningClassifer.DLControl;
-import rawDeepLearningClassifer.layoutFX.DLCLassiferModelUI;
-import rawDeepLearningClassifer.segmenter.SegmenterProcess.GroupedRawData;
+import rawDeepLearningClassifier.DLControl;
+import rawDeepLearningClassifier.layoutFX.DLCLassiferModelUI;
+import rawDeepLearningClassifier.segmenter.SegmenterProcess.GroupedRawData;
 
 /**
  * The classifier model. Each classifier must satisfy this interface.

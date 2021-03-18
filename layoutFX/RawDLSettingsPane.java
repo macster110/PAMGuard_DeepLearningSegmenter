@@ -1,4 +1,4 @@
-package rawDeepLearningClassifer.layoutFX;
+package rawDeepLearningClassifier.layoutFX;
 
 import PamController.SettingsPane;
 import PamDetection.RawDataUnit;
@@ -25,9 +25,9 @@ import pamViewFX.fxNodes.PamVBox;
 import pamViewFX.fxNodes.pamDialogFX.PamDialogFX;
 import pamViewFX.fxNodes.utilityPanes.GroupedSourcePaneFX;
 import pamViewFX.fxStyles.PamStylesManagerFX;
-import rawDeepLearningClassifer.DLControl;
-import rawDeepLearningClassifer.RawDLParams;
-import rawDeepLearningClassifer.dlClassification.DLClassiferModel;
+import rawDeepLearningClassifier.DLControl;
+import rawDeepLearningClassifier.RawDLParams;
+import rawDeepLearningClassifier.dlClassification.DLClassiferModel;
 
 /**
  * The settings pane. 
@@ -98,7 +98,7 @@ public class RawDLSettingsPane  extends SettingsPane<RawDLParams>{
 		mainPane.setMaxWidth(250);
 		mainPane.setPrefWidth(250);
 
-		mainPane.getStylesheets().add(PamStylesManagerFX.getPamStylesManagerFX().getCurStyle().getDialogCSS()); 
+		//mainPane.getStylesheets().add(PamStylesManagerFX.getPamStylesManagerFX().getCurStyle().getDialogCSS()); 
 
 	}
 

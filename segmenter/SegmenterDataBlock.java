@@ -1,9 +1,9 @@
-package rawDeepLearningClassifer.segmenter;
+package rawDeepLearningClassifier.segmenter;
 
 import PamguardMVC.PamDataBlock;
 import PamguardMVC.PamProcess;
-import rawDeepLearningClassifer.dlClassification.ModelResultDataUnit;
-import rawDeepLearningClassifer.segmenter.SegmenterProcess.GroupedRawData;
+import rawDeepLearningClassifier.dlClassification.ModelResultDataUnit;
+import rawDeepLearningClassifier.segmenter.SegmenterProcess.GroupedRawData;
 
 /**
  * Holds raw data segments which will be classified. 

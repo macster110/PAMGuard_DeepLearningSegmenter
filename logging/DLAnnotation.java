@@ -1,9 +1,9 @@
-package rawDeepLearningClassifer.logging;
+package rawDeepLearningClassifier.logging;
 
 import java.util.ArrayList;
 
 import annotation.DataAnnotation;
-import rawDeepLearningClassifer.dlClassification.PredictionResult;
+import rawDeepLearningClassifier.dlClassification.PredictionResult;
 
 /**
  * Deep learning results annotation. 

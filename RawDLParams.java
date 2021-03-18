@@ -1,10 +1,10 @@
-package rawDeepLearningClassifer;
+package rawDeepLearningClassifier;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 
 import PamView.GroupedSourceParameters;
-import rawDeepLearningClassifer.dlClassification.DLClassName;
+import rawDeepLearningClassifier.dlClassification.DLClassName;
 
 /**
  * Basic parameters for deep learning module.

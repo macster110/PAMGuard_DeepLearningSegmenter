@@ -1,4 +1,4 @@
-package rawDeepLearningClassifer.dlClassification.genericModel;
+package rawDeepLearningClassifier.dlClassification.genericModel;
 
 import java.io.File;
 import java.nio.file.Files;

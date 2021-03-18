@@ -1,4 +1,4 @@
-package rawDeepLearningClassifer.dlClassification.genericModel;
+package rawDeepLearningClassifier.dlClassification.genericModel;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -14,8 +14,8 @@ import org.jamdev.jdl4pam.transforms.jsonfile.DLTransformsParser;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import rawDeepLearningClassifer.dlClassification.DLClassName;
-import rawDeepLearningClassifer.dlClassification.DLClassNameManager;
+import rawDeepLearningClassifier.dlClassification.DLClassName;
+import rawDeepLearningClassifier.dlClassification.DLClassNameManager;
 
 /**
  * Functions for saving and loading generic model metadata information. Note this 

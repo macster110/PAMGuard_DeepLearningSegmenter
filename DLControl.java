@@ -1,4 +1,4 @@
-package rawDeepLearningClassifer;
+package rawDeepLearningClassifier;
 
 import java.awt.Frame;
 import java.io.Serializable;
@@ -22,28 +22,27 @@ import PamguardMVC.PamRawDataBlock;
 import dataPlotsFX.data.TDDataProviderRegisterFX;
 import detectionPlotFX.data.DDPlotRegister;
 import pamViewFX.fxNodes.pamDialogFX.PamDialogFX2AWT;
-import rawDeepLearningClassifer.dataPlotFX.DLDetectionPlotProvider;
-import rawDeepLearningClassifer.dataPlotFX.DLPredictionProvider;
-import rawDeepLearningClassifer.ddPlotFX.RawDLDDPlotProvider;
-import rawDeepLearningClassifer.dlClassification.DLClassName;
-import rawDeepLearningClassifer.dlClassification.DLClassNameManager;
-import rawDeepLearningClassifer.dlClassification.DLClassiferModel;
-import rawDeepLearningClassifer.dlClassification.DLClassifyProcess;
-import rawDeepLearningClassifer.dlClassification.dummyClassifier.DummyClassifier;
-import rawDeepLearningClassifer.dlClassification.genericModel.GenericDLClassifier;
-//import rawDeepLearningClassifer.dlClassification.orcaSpot.OrcaSpotClassifier;
-import rawDeepLearningClassifer.dlClassification.soundSpot.SoundSpotClassifier;
-import rawDeepLearningClassifer.layoutFX.DLSidePanelSwing;
-import rawDeepLearningClassifer.layoutFX.DLSymbolManager;
-import rawDeepLearningClassifer.layoutFX.PredictionSymbolManager;
-import rawDeepLearningClassifer.layoutFX.RawDLSettingsPane;
-import rawDeepLearningClassifer.logging.DLResultBinarySource;
-import rawDeepLearningClassifer.offline.DLOfflineProcess;
-import rawDeepLearningClassifer.logging.DLAnnotationType;
-import rawDeepLearningClassifer.logging.DLDataUnitDatagram;
-import rawDeepLearningClassifer.logging.DLDetectionBinarySource;
-import rawDeepLearningClassifer.logging.DLDetectionDatagram;
-import rawDeepLearningClassifer.segmenter.SegmenterProcess;
+import rawDeepLearningClassifier.dataPlotFX.DLDetectionPlotProvider;
+import rawDeepLearningClassifier.dataPlotFX.DLPredictionProvider;
+import rawDeepLearningClassifier.ddPlotFX.RawDLDDPlotProvider;
+import rawDeepLearningClassifier.dlClassification.DLClassName;
+import rawDeepLearningClassifier.dlClassification.DLClassNameManager;
+import rawDeepLearningClassifier.dlClassification.DLClassiferModel;
+import rawDeepLearningClassifier.dlClassification.DLClassifyProcess;
+import rawDeepLearningClassifier.dlClassification.dummyClassifier.DummyClassifier;
+import rawDeepLearningClassifier.dlClassification.genericModel.GenericDLClassifier;
+import rawDeepLearningClassifier.dlClassification.soundSpot.SoundSpotClassifier;
+import rawDeepLearningClassifier.layoutFX.DLSidePanelSwing;
+import rawDeepLearningClassifier.layoutFX.DLSymbolManager;
+import rawDeepLearningClassifier.layoutFX.PredictionSymbolManager;
+import rawDeepLearningClassifier.layoutFX.RawDLSettingsPane;
+import rawDeepLearningClassifier.logging.DLAnnotationType;
+import rawDeepLearningClassifier.logging.DLDataUnitDatagram;
+import rawDeepLearningClassifier.logging.DLDetectionBinarySource;
+import rawDeepLearningClassifier.logging.DLDetectionDatagram;
+import rawDeepLearningClassifier.logging.DLResultBinarySource;
+import rawDeepLearningClassifier.offline.DLOfflineProcess;
+import rawDeepLearningClassifier.segmenter.SegmenterProcess;
 
 /**
  * Module which uses an external deep learning classifier to identify any data unit

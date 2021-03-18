@@ -1,14 +1,15 @@
-package rawDeepLearningClassifer.dlClassification.genericModel;
+package rawDeepLearningClassifier.dlClassification.genericModel;
 
 import java.util.ArrayList;
 
 import org.jamdev.jdl4pam.transforms.DLTransform.DLTransformType;
 import org.json.JSONArray;
+
+import rawDeepLearningClassifier.dlClassification.soundSpot.StandardModelParams;
+
 import org.jamdev.jdl4pam.transforms.DLTransformsFactory;
 import org.jamdev.jdl4pam.transforms.DLTransfromParams;
 import org.jamdev.jdl4pam.transforms.SimpleTransformParams;
-
-import rawDeepLearningClassifer.dlClassification.soundSpot.StandardModelParams;
 
 /**
  * Parameters for the deep learning module. 

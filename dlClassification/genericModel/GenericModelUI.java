@@ -1,4 +1,4 @@
-package rawDeepLearningClassifer.dlClassification.genericModel;
+package rawDeepLearningClassifier.dlClassification.genericModel;
 
 import java.util.ArrayList;
 
@@ -8,8 +8,8 @@ import org.jamdev.jdl4pam.transforms.DLTransformsFactory;
 import org.jamdev.jdl4pam.transforms.DLTransfromParams;
 
 import PamController.SettingsPane;
-import rawDeepLearningClassifer.dlClassification.soundSpot.StandardModelParams;
-import rawDeepLearningClassifer.layoutFX.DLCLassiferModelUI;
+import rawDeepLearningClassifier.dlClassification.soundSpot.StandardModelParams;
+import rawDeepLearningClassifier.layoutFX.DLCLassiferModelUI;
 
 
 /**

@@ -1,4 +1,4 @@
-package rawDeepLearningClassifer.layoutFX;
+package rawDeepLearningClassifier.layoutFX;
 
 import javax.swing.JPanel;
 

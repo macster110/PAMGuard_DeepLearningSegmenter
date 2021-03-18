@@ -1,4 +1,4 @@
-package rawDeepLearningClassifer.dataPlotFX;
+package rawDeepLearningClassifier.dataPlotFX;
 
 import java.awt.Color;
 
@@ -14,9 +14,9 @@ import pamViewFX.fxNodes.utilsFX.ColourArray;
 import pamViewFX.fxNodes.utilsFX.PamUtilsFX;
 import pamViewFX.fxNodes.utilsFX.ColourArray.ColourArrayType;
 import pamViewFX.symbol.SymbolModifierPane;
-import rawDeepLearningClassifer.dlClassification.PredictionResult;
-import rawDeepLearningClassifer.logging.DLAnnotation;
-import rawDeepLearningClassifer.logging.DLAnnotationType;
+import rawDeepLearningClassifier.dlClassification.PredictionResult;
+import rawDeepLearningClassifier.logging.DLAnnotation;
+import rawDeepLearningClassifier.logging.DLAnnotationType;
 
 
 /**

@@ -1,4 +1,4 @@
-package rawDeepLearningClassifer.dlClassification.soundSpot;
+package rawDeepLearningClassifier.dlClassification.soundSpot;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -33,7 +33,7 @@ import pamViewFX.fxNodes.PamGridPane;
 import pamViewFX.fxNodes.PamHBox;
 import pamViewFX.fxNodes.PamSpinner;
 import pamViewFX.fxNodes.PamVBox;
-import rawDeepLearningClassifer.dlClassification.DLClassiferModel;
+import rawDeepLearningClassifier.dlClassification.DLClassiferModel;
 
 /**
  * Settings pane for SoundSpot
@@ -220,7 +220,7 @@ public abstract class StandardModelPane extends SettingsPane<StandardModelParams
 
 		gridPane.add(new Label("Min. prediction"), 0, 0);
 		gridPane.add(detectionSpinner = new PamSpinner<Double>(0.0, 1.0, 0.9, 0.1), 1, 0);
-		detectionSpinner.setPrefWidth(60);
+		detectionSpinner.setPrefWidth(80);
 		detectionSpinner.setEditable(true);
 		detectionSpinner.getStyleClass().add(Spinner.STYLE_CLASS_SPLIT_ARROWS_HORIZONTAL);
 
@@ -229,6 +229,7 @@ public abstract class StandardModelPane extends SettingsPane<StandardModelParams
 		gridPane.add(speciesIDBox, 3, 0);
 		speciesIDBox.setMaxWidth(100);
 		speciesIDBox.setPrefWidth(100);
+		speciesIDBox.prefHeightProperty().bind(detectionSpinner.heightProperty());
 
 		vBoxHolder = new PamVBox(); 
 		vBoxHolder.setSpacing(5);

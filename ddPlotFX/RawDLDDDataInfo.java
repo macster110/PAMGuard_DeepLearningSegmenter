@@ -1,10 +1,13 @@
-package rawDeepLearningClassifer.ddPlotFX;
+package rawDeepLearningClassifier.ddPlotFX;
 
 
 import detectionPlotFX.data.DDDataInfo;
 import detectionPlotFX.layout.DetectionPlotDisplay;
-import rawDeepLearningClassifer.DLControl;
-import rawDeepLearningClassifer.dlClassification.DLDetection;
+import detectionPlotFX.rawDDPlot.RawFFTPlot;
+import detectionPlotFX.rawDDPlot.RawSpectrumPlot;
+import detectionPlotFX.rawDDPlot.RawWaveformPlot;
+import rawDeepLearningClassifier.DLControl;
+import rawDeepLearningClassifier.dlClassification.DLDetection;
 
 /**
  * Data info for the raw data info. 
@@ -15,14 +18,14 @@ import rawDeepLearningClassifer.dlClassification.DLDetection;
 public class RawDLDDDataInfo extends DDDataInfo<DLDetection> {
 
 	
-	public RawDLDDDataInfo(RawDLDDPlotProvider rawDLPlotProvider, DLControl dlControl,
+	public RawDLDDDataInfo(DLControl dlControl,
 			DetectionPlotDisplay displayPlot) {
-		super(rawDLPlotProvider,  displayPlot,  dlControl.getDLClassifyProcess().getDLDetectionDatablock());
+		super(displayPlot,  dlControl.getDLClassifyProcess().getDLDetectionDatablock());
 		
 		//add the various click plots
-		super.addDetectionPlot(new DLWaveformPlot(displayPlot));
-		super.addDetectionPlot(new DLSpectrumPlot(displayPlot));
-		super.addDetectionPlot(new DLFFTPlot(displayPlot, displayPlot.getDetectionPlotProjector()));
+		super.addDetectionPlot(new RawWaveformPlot(displayPlot));
+		super.addDetectionPlot(new RawSpectrumPlot(displayPlot));
+		super.addDetectionPlot(new RawFFTPlot(displayPlot, displayPlot.getDetectionPlotProjector()));
 
 
 		super.setCurrentDetectionPlot(0);

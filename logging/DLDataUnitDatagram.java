@@ -1,10 +1,10 @@
-package rawDeepLearningClassifer.logging;
+package rawDeepLearningClassifier.logging;
 
 import PamguardMVC.PamDataUnit;
 import dataGram.DatagramProvider;
 import dataGram.DatagramScaleInformation;
-import rawDeepLearningClassifer.DLControl;
-import rawDeepLearningClassifer.dlClassification.DLDataUnit;
+import rawDeepLearningClassifier.DLControl;
+import rawDeepLearningClassifier.dlClassification.DLDataUnit;
 
 /**
  * Datagram showing the raw model outputs form the classifier. 

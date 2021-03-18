@@ -1,7 +1,7 @@
-package rawDeepLearningClassifer.dlClassification.genericModel;
+package rawDeepLearningClassifier.dlClassification.genericModel;
 
 import PamUtils.PamArrayUtils;
-import rawDeepLearningClassifer.dlClassification.PredictionResult;
+import rawDeepLearningClassifier.dlClassification.PredictionResult;
 
 /**
  * Result from the SoundSpot classifier.

@@ -1,4 +1,4 @@
-package rawDeepLearningClassifer.dlClassification.soundSpot;
+package rawDeepLearningClassifier.dlClassification.soundSpot;
 
 public class SoundSpotParams extends StandardModelParams {
 

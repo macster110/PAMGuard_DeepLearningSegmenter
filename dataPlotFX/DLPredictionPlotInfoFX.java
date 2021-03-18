@@ -1,4 +1,4 @@
-package rawDeepLearningClassifer.dataPlotFX;
+package rawDeepLearningClassifier.dataPlotFX;
 
 import PamController.PamController;
 import PamUtils.Coordinate3d;
@@ -22,8 +22,8 @@ import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
-import rawDeepLearningClassifer.DLControl;
-import rawDeepLearningClassifer.dlClassification.DLDataUnit;
+import rawDeepLearningClassifier.DLControl;
+import rawDeepLearningClassifier.dlClassification.DLDataUnit;
 
 /**
  * Plot the raw probability information. 
@@ -271,6 +271,9 @@ public class DLPredictionPlotInfoFX extends TDDataInfoFX {
 		switch (changeType) {
 
 		case PamController.CHANGED_PROCESS_SETTINGS:
+			lastUnits = null; 
+			break;
+		case PamController.RUN_NORMAL:
 			lastUnits = null; 
 			break;
 		}

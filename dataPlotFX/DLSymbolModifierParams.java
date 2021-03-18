@@ -1,4 +1,4 @@
-package rawDeepLearningClassifer.dataPlotFX;
+package rawDeepLearningClassifier.dataPlotFX;
 
 import PamView.symbol.modifier.SymbolModifierParams;
 import pamViewFX.fxNodes.utilsFX.ColourArray.ColourArrayType;

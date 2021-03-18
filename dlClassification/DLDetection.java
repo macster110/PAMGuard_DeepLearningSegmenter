@@ -1,4 +1,4 @@
-package rawDeepLearningClassifer.dlClassification;
+package rawDeepLearningClassifier.dlClassification;
 
 import java.util.ArrayList;
 import PamDetection.AbstractLocalisation;
@@ -13,7 +13,7 @@ import PamguardMVC.RawDataTransforms;
 import annotation.DataAnnotation;
 import bearinglocaliser.annotation.BearingAnnotation;
 import clipgenerator.ClipSpectrogram;
-import rawDeepLearningClassifer.logging.DLAnnotation;
+import rawDeepLearningClassifier.logging.DLAnnotation;
 
 /**
  * A detected DL data unit. These data units are only ever generated from raw 
@@ -157,13 +157,13 @@ public class DLDetection extends PamDataUnit implements PamDetection, RawDataHol
 		return rawDataTransforms.getSpectrogram(fftSize, fftHop);
 	}
 
-	/**
-	 * Get the RawDataTransforms which handles data transforms such as FFT calculations, spectrgorams, cepstrums's etc.  
-	 * @return the raw transforms associated with the data unit. 
-	 */
-	public RawDataTransforms getRawDataTransforms() {
-		return rawDataTransforms;
-	}
+//	/**
+//	 * Get the RawDataTransforms which handles data transforms such as FFT calculations, spectrgorams, cepstrums's etc.  
+//	 * @return the raw transforms associated with the data unit. 
+//	 */
+//	public RawDataTransforms getRawDataTransforms() {
+//		return rawDataTransforms;
+//	}
 
 	/***
 	 * Get the power spectrum for all channels. 
@@ -171,7 +171,13 @@ public class DLDetection extends PamDataUnit implements PamDetection, RawDataHol
 	 * @return the power sepctrums for all channels. 
 	 */
 	public double[][] getPowerSpectrum(int fftLength) {
-		return getRawDataTransforms().getPowerSpectrum(fftLength);
+		return getDataTransforms().getPowerSpectrum(fftLength);
+	}
+
+
+	@Override
+	public RawDataTransforms getDataTransforms() {
+		return this.rawDataTransforms;
 	}
 
 

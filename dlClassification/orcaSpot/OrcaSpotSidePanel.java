@@ -1,4 +1,4 @@
-package rawDeepLearningClassifer.dlClassification.orcaSpot;
+package rawDeepLearningClassifier.dlClassification.orcaSpot;
 
 import java.awt.BorderLayout;
 import java.awt.Component;

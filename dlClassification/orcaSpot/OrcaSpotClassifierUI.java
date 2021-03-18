@@ -1,9 +1,9 @@
-package rawDeepLearningClassifer.dlClassification.orcaSpot;
+package rawDeepLearningClassifier.dlClassification.orcaSpot;
 
 import javax.swing.SwingUtilities;
 
 import PamController.SettingsPane;
-import rawDeepLearningClassifer.layoutFX.DLCLassiferModelUI;
+import rawDeepLearningClassifier.layoutFX.DLCLassiferModelUI;
 
 /**
  * The user interface for OrcaSpot classifier. 

@@ -1,4 +1,4 @@
-package rawDeepLearningClassifer.layoutFX.dlTransfroms;
+package rawDeepLearningClassifier.layoutFX.dlTransfroms;
 
 
 /**

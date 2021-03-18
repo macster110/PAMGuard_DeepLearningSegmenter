@@ -1,4 +1,4 @@
-package rawDeepLearningClassifer.layoutFX.dlTransfroms;
+package rawDeepLearningClassifier.layoutFX.dlTransfroms;
 
 import java.util.ArrayList;
 
@@ -20,8 +20,6 @@ import pamViewFX.fxNodes.PamSpinner;
  *
  */
 public class SimpleTransformPane extends DLTransformPane {
-
-
 
 	/**
 	 * The transform associated with the settings pane. 

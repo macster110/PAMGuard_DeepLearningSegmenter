@@ -1,4 +1,4 @@
-package rawDeepLearningClassifer.dlClassification.orcaSpot;
+package rawDeepLearningClassifier.dlClassification.orcaSpot;
 
 
 import javax.sound.sampled.AudioFormat;

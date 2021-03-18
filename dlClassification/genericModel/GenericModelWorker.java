@@ -1,9 +1,9 @@
-package rawDeepLearningClassifer.dlClassification.genericModel;
+package rawDeepLearningClassifier.dlClassification.genericModel;
 
 import org.jamdev.jdl4pam.genericmodel.GenericModel;
 
-import rawDeepLearningClassifer.DLControl;
-import rawDeepLearningClassifer.dlClassification.soundSpot.StandardModelParams;
+import rawDeepLearningClassifier.DLControl;
+import rawDeepLearningClassifier.dlClassification.soundSpot.StandardModelParams;
 
 /**
  * Generic model worker. 

@@ -1,4 +1,4 @@
-package rawDeepLearningClassifer.dlClassification.genericModel;
+package rawDeepLearningClassifier.dlClassification.genericModel;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -19,9 +19,9 @@ import pamViewFX.PamGuiManagerFX;
 import pamViewFX.fxGlyphs.PamGlyphDude;
 import pamViewFX.fxNodes.PamButton;
 import pamViewFX.fxNodes.PamHBox;
-import rawDeepLearningClassifer.dlClassification.soundSpot.StandardAdvModelPane;
-import rawDeepLearningClassifer.dlClassification.soundSpot.StandardModelPane;
-import rawDeepLearningClassifer.dlClassification.soundSpot.StandardModelParams;
+import rawDeepLearningClassifier.dlClassification.soundSpot.StandardAdvModelPane;
+import rawDeepLearningClassifier.dlClassification.soundSpot.StandardModelPane;
+import rawDeepLearningClassifier.dlClassification.soundSpot.StandardModelParams;
 
 /**
  * 

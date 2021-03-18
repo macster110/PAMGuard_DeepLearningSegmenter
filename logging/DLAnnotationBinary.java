@@ -1,4 +1,4 @@
-package rawDeepLearningClassifer.logging;
+package rawDeepLearningClassifier.logging;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -12,8 +12,8 @@ import annotation.DataAnnotation;
 import annotation.binary.AnnotationBinaryData;
 import annotation.binary.AnnotationBinaryHandler;
 import binaryFileStorage.BinaryStore;
-import rawDeepLearningClassifer.dlClassification.DLDetection;
-import rawDeepLearningClassifer.dlClassification.PredictionResult;
+import rawDeepLearningClassifier.dlClassification.DLDetection;
+import rawDeepLearningClassifier.dlClassification.PredictionResult;
 
 /**
  * Saves deep learning annotations in binary files. 

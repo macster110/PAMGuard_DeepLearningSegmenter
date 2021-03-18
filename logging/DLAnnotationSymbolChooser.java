@@ -1,4 +1,4 @@
-package rawDeepLearningClassifer.logging;
+package rawDeepLearningClassifier.logging;
 
 import PamView.symbol.AnnotationSymbolChooser;
 import PamView.symbol.AnnotationSymbolOptions;

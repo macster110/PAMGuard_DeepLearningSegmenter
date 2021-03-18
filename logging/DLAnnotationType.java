@@ -1,4 +1,4 @@
-package rawDeepLearningClassifer.logging;
+package rawDeepLearningClassifier.logging;
 
 import PamView.symbol.PamSymbolChooser;
 import PamView.symbol.modifier.SymbolModifier;
@@ -6,8 +6,8 @@ import annotation.CentralAnnotationsList;
 import annotation.DataAnnotationType;
 import annotation.binary.AnnotationBinaryHandler;
 import generalDatabase.SQLLoggingAddon;
-import rawDeepLearningClassifer.DLControl;
-import rawDeepLearningClassifer.dataPlotFX.DLSymbolModifier;
+import rawDeepLearningClassifier.DLControl;
+import rawDeepLearningClassifier.dataPlotFX.DLSymbolModifier;
 
 /**
  * Annotation type for data from the matched click classifier. 
