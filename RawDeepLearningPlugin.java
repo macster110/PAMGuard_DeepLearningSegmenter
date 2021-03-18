@@ -73,7 +73,7 @@ public class RawDeepLearningPlugin implements PamPluginInterface {
 
 	@Override
 	public String getDescription() {
-		return getToolTip();
+		return "Raw Deep Learning Classifier";
 	}
 
 	@Override

@@ -28,7 +28,7 @@ public class GenericModelParams extends StandardModelParams implements Cloneable
 
 		ArrayList<DLTransfromParams> dlTransformParamsArr = new ArrayList<DLTransfromParams>();
 		//waveform transforms. 
-		dlTransformParamsArr.add(new SimpleTransformParams(DLTransformType.DECIMATE, 96000)); 
+		dlTransformParamsArr.add(new SimpleTransformParams(DLTransformType.DECIMATE, 96000.0)); 
 		//			dlTransformParamsArr.add(new SimpleTransformParams(DLTransformType.PREEMPHSIS, preemphases)); 
 		dlTransformParamsArr.add(new SimpleTransformParams(DLTransformType.SPECTROGRAM, 256, 100)); 
 		//in the python code they have an sfft of 129xN where N is the number of chunks. They then

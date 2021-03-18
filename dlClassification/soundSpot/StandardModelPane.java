@@ -339,7 +339,7 @@ public abstract class StandardModelPane extends SettingsPane<StandardModelParams
 		currParams.threshold = detectionSpinner.getValue(); 
 		//		currParams.useCUDA = useCuda.isSelected(); 
 
-		System.out.println("StandardModelParams 1: " + currParams); 
+		//System.out.println("StandardModelParams 1: " + currParams); 
 		//System.out.println("StandardModelParams 2: " + this.getAdvSettingsPane().getParams(currParams)); 
 
 		currParams = (StandardModelParams) this.getAdvSettingsPane().getParams(currParams);
@@ -391,9 +391,14 @@ public abstract class StandardModelPane extends SettingsPane<StandardModelParams
 	 */
 	private void setClassNames(StandardModelParams currParams) {
 		speciesIDBox.getItems().clear();
+		
 
-		int classNamesLen = 0 ; 
+		int classNamesLen = 0; 
+		
 		if (currParams.classNames!=null) classNamesLen = currParams.classNames.length; 
+		
+		//System.out.println("currParams.classNames: " + currParams.classNames + " " +  classNamesLen + " " + currParams.numClasses); 
+
 
 		for (int i=0; i<Math.max(classNamesLen, currParams.numClasses); i++) {
 			if (currParams.classNames!=null && currParams.classNames.length>i && currParams.classNames[i]!=null) {

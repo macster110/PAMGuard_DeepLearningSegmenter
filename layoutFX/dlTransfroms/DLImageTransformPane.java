@@ -7,10 +7,8 @@ import org.jamdev.jdl4pam.transforms.DLTransform.DLTransformType;
 import org.jamdev.jdl4pam.transforms.FreqTransform;
 import org.jamdev.jdl4pam.transforms.WaveTransform;
 
-import javafx.scene.control.Label;
 import pamViewFX.fxNodes.PamBorderPane;
 import rawDeepLearningClassifier.layoutFX.exampleSounds.ExampleSound;
-import rawDeepLearningClassifier.layoutFX.exampleSounds.ExampleSoundFactory.ExampleSoundType;
 
 /**
  * Contains both a list of transforms and preview image of the waveform, spectrogram or other visualisation of 
@@ -69,6 +67,10 @@ public class DLImageTransformPane  extends PamBorderPane {
 		return dlTransformPane;
 	}
 
+	/**
+	 * New example sound is set. 
+	 * @param exampleSound - the example sound. 
+	 */
 	private void newExampleSound(ExampleSound exampleSound) {
 		if (getDLTransforms()==null) return;
 

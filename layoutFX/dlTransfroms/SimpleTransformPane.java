@@ -139,7 +139,7 @@ public class SimpleTransformPane extends DLTransformPane {
 	 * @return a new spinner
 	 */
 	protected PamSpinner<Number> createSpinner(int i) {
-		return new PamSpinner<Number>(0.0, Integer.MAX_VALUE, 2, 0.01);
+		return new PamSpinner<Number>(0.0, Double.MAX_VALUE, 2, 0.01);
 	}
 
 	/**
@@ -207,12 +207,17 @@ public class SimpleTransformPane extends DLTransformPane {
 		SimpleTransform simpleTransform = (SimpleTransform) input;
 		
 		for (int i=0; i<spinners.size(); i++) {
+			
+			//spinners.get(i).getValueFactory().setValue(simpleTransform.getParams()[i] ); 
+			
 			//System.out.println("Set params: " + input.getDLTransformType() + " param val: " + simpleTransform.getParams()[i] + "  " + (simpleTransform.getParams()[i] instanceof Float)); 
 			if (simpleTransform.getParams()[i] instanceof Float || simpleTransform.getParams()[i] instanceof Double) {
+				//System.out.println("Double: simpleTransform.getParams()[i]: " + simpleTransform.getParams()[i] + "  " +spinners.get(i).getValueFactory());
 				spinners.get(i).getValueFactory().setValue(simpleTransform.getParams()[i].doubleValue());
 
 			}
 			else {
+				//System.out.println("Double: simpleTransform.getParams()[i]: " + simpleTransform.getParams()[i] + "  " +spinners.get(i).getValueFactory());
 				spinners.get(i).getValueFactory().setValue(simpleTransform.getParams()[i].intValue());
 			}
 		}
