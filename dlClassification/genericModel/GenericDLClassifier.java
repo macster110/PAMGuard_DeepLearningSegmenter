@@ -112,6 +112,8 @@ public class GenericDLClassifier implements DLClassiferModel, PamSettings {
 
 		//		System.out.println("SoundSpotClassifier: PamCalendar.isSoundFile(): " 
 		//		+ PamCalendar.isSoundFile() + "   " + (PamCalendar.isSoundFile() && !forceQueue));
+		
+		
 		/**
 		 * If a sound file is being analysed then SoundSpot can go as slow as it wants. if used in real time
 		 * then there is a buffer with a maximum queue size. 

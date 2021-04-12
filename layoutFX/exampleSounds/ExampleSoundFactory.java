@@ -49,12 +49,12 @@ public class ExampleSoundFactory {
 		switch (exampleSoundType) {
 		case BAT_CALL:
 			path = getClass().getResource("/Resources/exampleSounds/DUB_20200623_000152_885.wav"); 
-			exampleSound = new SimpleExampleSound(path.getFile()); 
+			exampleSound = new SimpleExampleSound(path); 
 			break;
 		case RIGHT_WHALE:
 			 //file = new File("src/rawDeepLearningClassifier/layoutFX/exampleSounds/southern_right_whale_clip2.wav"); 
 			path = getClass().getResource("/Resources/exampleSounds/southern_right_whale_clip2.wav"); 
-			exampleSound = new SimpleExampleSound(path.getFile()); 
+			exampleSound = new SimpleExampleSound(path); 
 			break;
 		default:
 			break;

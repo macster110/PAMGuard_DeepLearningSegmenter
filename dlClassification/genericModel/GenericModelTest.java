@@ -27,8 +27,8 @@ public class GenericModelTest {
 
 		//define some bits and pieces we need for the classiifer. 
 		float sr = 2000; 
-		//		int startchunk =  (int) (181.2*sr); //right whale call
-		int startchunk =  (int) (190.2*sr); 
+		int startchunk =  (int) (181.2*sr); //right whale call
+		//int startchunk =  (int) (190.2*sr); 
 
 		int chunkSize = 4000; 
 

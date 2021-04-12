@@ -3,8 +3,7 @@ package rawDeepLearningClassifier.dlClassification.genericModel;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import org.jamdev.jdl4pam.SoundSpot.SoundSpotModel;
-import org.jamdev.jdl4pam.SoundSpot.SoundSpotParams;
+import org.jamdev.jdl4pam.animalSpot.*;
 import org.jamdev.jdl4pam.transforms.DLTransform;
 import org.jamdev.jdl4pam.transforms.FreqTransform;
 import org.jamdev.jdl4pam.transforms.WaveTransform;
@@ -198,7 +197,7 @@ public abstract class DLModelWorker<T> {
 	 * Convert the parameters saved in the sound spot model to DLtransform parameters. 
 	 * @return the DLTransform parameters. 
 	 */
-	public ArrayList<DLTransform> model2DLTransforms(SoundSpotParams dlParams) {
+	public ArrayList<DLTransform> model2DLTransforms(AnimalSpotParams dlParams) {
 
 		ArrayList<DLTransform> transforms = DLTransformsFactory.makeDLTransforms(dlParams.dlTransforms); 
 

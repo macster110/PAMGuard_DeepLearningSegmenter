@@ -20,7 +20,7 @@ public class GenericModelWorker extends DLModelWorker<GenericPrediction> {
 
 	@Override
 	public float[] runModel(float[][][] transformedDataStack) {
-		//System.out.println("RUN GENERIC MODEL: " + transformedDataStack.length);
+		//System.out.println("RUN GENERIC MODEL: " + transformedDataStack.length +  "  " + transformedDataStack[0].length +  "  " + transformedDataStack[0][0].length);
 		float[]  results =  genericModel.runModel(transformedDataStack);
 		//System.out.println("GENERIC MODEL RESULTS: " + results== null ? null : results.length);
 		return results;

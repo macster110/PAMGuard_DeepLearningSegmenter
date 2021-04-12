@@ -36,7 +36,7 @@ public class DLTransformsPane extends PamBorderPane {
 	public static final short TRANSFORM_ORDER_CHANGE = 0x01; 
 
 	/**
-	 * A transform has had it's params changed. 
+	 * A transform has had it's parameters changed. 
 	 */
 	public static final short TRANSFORM_SETTINGS_CHANGE = 0x02; 
 

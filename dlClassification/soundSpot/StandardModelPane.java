@@ -44,12 +44,12 @@ import rawDeepLearningClassifier.dlClassification.DLClassiferModel;
 public abstract class StandardModelPane extends SettingsPane<StandardModelParams> {
 
 	/**
-	 * The main pane for the Soundspot sETTINGS
+	 * The main pane for the SoundSpot settings.
 	 */
 	private PamBorderPane mainPane;
 
 	/**
-	 * The directory chooser
+	 * The directory chooser.
 	 */
 	private FileChooser fileChooser;
 
@@ -67,7 +67,7 @@ public abstract class StandardModelPane extends SettingsPane<StandardModelParams
 	 * Detection spinner
 	 */
 	private PamSpinner<Double> detectionSpinner;
-	//
+
 	//	/**
 	//	 * True to use CUDA
 	//	 */
@@ -391,12 +391,12 @@ public abstract class StandardModelPane extends SettingsPane<StandardModelParams
 	 */
 	private void setClassNames(StandardModelParams currParams) {
 		speciesIDBox.getItems().clear();
-		
+
 
 		int classNamesLen = 0; 
-		
+
 		if (currParams.classNames!=null) classNamesLen = currParams.classNames.length; 
-		
+
 		//System.out.println("currParams.classNames: " + currParams.classNames + " " +  classNamesLen + " " + currParams.numClasses); 
 
 
@@ -409,9 +409,17 @@ public abstract class StandardModelPane extends SettingsPane<StandardModelParams
 			}
 		}
 
+
 		for (int i=0; i<speciesIDBox.getItems().size(); i++) {
-			speciesIDBox.getItemBooleanProperty(i).set(currParams.binaryClassification[i]);
+			if (currParams.binaryClassification!=null && i<currParams.binaryClassification.length) {
+				speciesIDBox.getItemBooleanProperty(i).set(currParams.binaryClassification[i]);
+			}
+			else {
+				speciesIDBox.getItemBooleanProperty(i).set(true);
+
+			}
 		}
+
 
 	}
 

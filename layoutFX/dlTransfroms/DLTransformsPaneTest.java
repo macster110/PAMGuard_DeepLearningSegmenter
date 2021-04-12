@@ -2,7 +2,7 @@ package rawDeepLearningClassifier.layoutFX.dlTransfroms;
 
 import java.util.ArrayList;
 
-import org.jamdev.jdl4pam.SoundSpot.SoundSpotParams;
+import org.jamdev.jdl4pam.animalSpot.AnimalSpotParams;
 import org.jamdev.jdl4pam.transforms.DLTransform;
 import org.jamdev.jdl4pam.transforms.DLTransformsFactory;
 import org.jamdev.jdl4pam.utils.DLUtils;
@@ -31,7 +31,7 @@ public class DLTransformsPaneTest extends Application {
 		String wavFilePath = "/Users/au671271/Google Drive/Aarhus_research/PAMGuard_bats_2020/deep_learning/BAT/example_wav/call_393_2019_S4U05619MOL2-20180917-051012_2525_2534.wav";
 
 		//create the DL params. 
-		SoundSpotParams dlParams = new SoundSpotParams();
+		AnimalSpotParams dlParams = new AnimalSpotParams();
 
 		AudioData soundData = null; 
 		//Open wav files. 

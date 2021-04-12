@@ -1,6 +1,7 @@
 package rawDeepLearningClassifier.layoutFX.exampleSounds;
 
 import java.io.IOException;
+import java.net.URL;
 
 import javax.sound.sampled.UnsupportedAudioFileException;
 
@@ -28,6 +29,15 @@ public class SimpleExampleSound implements ExampleSound{
 			System.out.println(file); 
 			e.printStackTrace();
 		} 
+	}
+
+	public SimpleExampleSound(URL path) {
+		try {
+			data = DLUtils.loadWavFile(path);
+		} catch (IOException | UnsupportedAudioFileException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override

@@ -9,12 +9,14 @@ import dataPlotsFX.data.TDDataProviderFX;
 import dataPlotsFX.layout.TDGraphFX;
 import dataPlotsFX.rawClipDataPlot.RawClipDataInfo;
 import javafx.scene.Node;
+import javafx.scene.paint.Color;
 import pamViewFX.fxGlyphs.PamSVGIcon;
 import rawDeepLearningClassifier.DLControl;
 import rawDeepLearningClassifier.dlClassification.DLDetection;
 
 /**
  * Allows the deep learning results to be plotted on the TD display. 
+ * 
  * @author Jamie Macaulay 
  *
  */
@@ -39,17 +41,17 @@ public class DLDetectionPlotInfoFX extends RawClipDataInfo {
 
 		double[][] spec =  rawDataProvider.getSpectrogram( this.getRawClipParams().fftLength, this.getRawClipParams().fftHop).getSpectrogram(iChan); 
 		//System.out.println("Getting a spectrogram: " + spec.length + " x " + spec[0].length + " " + spec[0][5]);
-
 		return spec; 
 	}
 
+	
 	private Node makeIcon() {
 		String resourcePath = "/Resources/modules/noun_Deep Learning_2486374.svg"; 
-
 		try {
-			PamSVGIcon svgsprite = PamSVGIcon.create(new File(getClass().getResource(resourcePath).toURI()));
-			svgsprite.getSpriteNode().setStyle("-fx-text-color: white");				
-			svgsprite.getSpriteNode().setStyle("-fx-fill: white");
+			PamSVGIcon iconMaker= new PamSVGIcon(); 
+			PamSVGIcon svgsprite = iconMaker.create(new File(getClass().getResource(resourcePath).toURI()), Color.WHITE);
+//			svgsprite.getSpriteNode().setStyle("-fx-text-color: white");				
+//			svgsprite.getSpriteNode().setStyle("-fx-fill: white");
 			svgsprite.setFitHeight(20);
 			svgsprite.setFitWidth(20);
 			return svgsprite.getSpriteNode(); 

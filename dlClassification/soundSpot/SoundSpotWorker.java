@@ -1,7 +1,7 @@
 package rawDeepLearningClassifier.dlClassification.soundSpot;
 
-import org.jamdev.jdl4pam.SoundSpot.SoundSpotModel;
-import org.jamdev.jdl4pam.SoundSpot.SoundSpotParams;
+import org.jamdev.jdl4pam.animalSpot.AnimalSpotModel;
+import org.jamdev.jdl4pam.animalSpot.AnimalSpotParams;
 
 import rawDeepLearningClassifier.DLControl;
 import rawDeepLearningClassifier.dlClassification.genericModel.DLModelWorker;
@@ -22,7 +22,7 @@ public class SoundSpotWorker extends DLModelWorker<SoundSpotResult> {
 	/**
 	 * Sound spot model. 
 	 */
-	private SoundSpotModel soundSpotModel; 
+	private AnimalSpotModel soundSpotModel; 
 
 
 	/**
@@ -38,7 +38,7 @@ public class SoundSpotWorker extends DLModelWorker<SoundSpotResult> {
 	public void prepModel(StandardModelParams soundSpotParams, DLControl dlControl) {
 		try {
 			//first open the model and get the correct parameters. 
-			soundSpotModel = new SoundSpotModel(soundSpotParams.modelPath); 
+			soundSpotModel = new AnimalSpotModel(soundSpotParams.modelPath); 
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -47,7 +47,7 @@ public class SoundSpotWorker extends DLModelWorker<SoundSpotResult> {
 
 		try {
 			//create the DL parameters.
-			SoundSpotParams dlParams = new SoundSpotParams(soundSpotModel.getTransformsString());
+			AnimalSpotParams dlParams = new AnimalSpotParams(soundSpotModel.getTransformsString());
 
 			setModelTransforms(model2DLTransforms(dlParams)); 
 			soundSpotParams.defaultSegmentLen = dlParams.seglen; //the segment length in microseconds. 
@@ -114,7 +114,7 @@ public class SoundSpotWorker extends DLModelWorker<SoundSpotResult> {
 	 * Get the currently loaded mode. 
 	 * @return - the currently loaded mode. 
 	 */
-	public SoundSpotModel getModel() {
+	public AnimalSpotModel getModel() {
 		return soundSpotModel;
 	}
 

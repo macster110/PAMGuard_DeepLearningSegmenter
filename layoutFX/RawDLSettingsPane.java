@@ -164,10 +164,10 @@ public class RawDLSettingsPane  extends SettingsPane<RawDLParams>{
 		segmenterGridPane.add(reMergeSeg, 1, 2);
 		segmenterGridPane.add(new Label("segments"), 2, 2);
 
-
 		vBox.getChildren().add(segmenterGridPane);
 
 		Label label2 = new Label("Deep Learning Model"); 
+		label2.setPadding(new Insets(5,0,0,0));
 		PamGuiManagerFX.titleFont2style(label2);
 		
 		vBox.getChildren().add(label2);
