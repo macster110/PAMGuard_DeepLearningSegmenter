@@ -33,6 +33,9 @@ import rawDeepLearningClassifier.layoutFX.dlTransfroms.DLTransformImage;
  */
 public class StandardAdvModelPane extends SettingsPane<StandardModelParams> {
 	
+	/**
+	 * The main pane. 
+	 */
 	protected PamBorderPane mainPane;
 	
 	/**
