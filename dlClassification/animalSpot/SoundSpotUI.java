@@ -1,4 +1,4 @@
-package rawDeepLearningClassifier.dlClassification.soundSpot;
+package rawDeepLearningClassifier.dlClassification.animalSpot;
 
 import javax.swing.JPanel;
 

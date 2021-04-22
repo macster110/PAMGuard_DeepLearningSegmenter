@@ -20,7 +20,7 @@ class LabelTransfromPane extends DLTransformPane {
 		Label label = new Label(name); 
 		this.setLeft(label); 
 		BorderPane.setAlignment(label, Pos.CENTER_LEFT);
-		//this.setStyle("-fx-background-color: #F0591E;");
+		this.setStyle("-fx-background-color: rgba(205, 205, 205, 1);");
 
 	}
 	

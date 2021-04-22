@@ -1,9 +1,10 @@
 package rawDeepLearningClassifier.dlClassification.genericModel;
 
+import org.apache.commons.io.FilenameUtils;
 import org.jamdev.jdl4pam.genericmodel.GenericModel;
 
 import rawDeepLearningClassifier.DLControl;
-import rawDeepLearningClassifier.dlClassification.soundSpot.StandardModelParams;
+import rawDeepLearningClassifier.dlClassification.animalSpot.StandardModelParams;
 
 /**
  * Generic model worker. 
@@ -34,15 +35,26 @@ public class GenericModelWorker extends DLModelWorker<GenericPrediction> {
 	}
 
 	@Override
-	public void prepModel(StandardModelParams soundSpotParams, DLControl dlControl) {
+	public void prepModel(StandardModelParams genericParams, DLControl dlControl) {
 		try {
 			//first open the model and get the correct parameters. 
-			genericModel = new GenericModel(soundSpotParams.modelPath); 
+			genericModel = new GenericModel(genericParams.modelPath); 
 			
+			String extension = FilenameUtils.getExtension(genericParams.modelPath);
+			if (extension.equals("pb")) {
+				//TensorFlow models don't need softmax?? Need to look into this more. 
+				this.setEnableSoftMax(false);
+			}
+			else {
+				this.setEnableSoftMax(true);
+			}
+
+						
 			GenericModelParams genericModelParams = new GenericModelParams(); 
 			
 			genericModelParams.defaultShape = longArr2Long(genericModel.getInputShape().getShape()); 
 			genericModelParams.defualtOuput = longArr2Long(genericModel.getOutShape().getShape()); 
+			
 
 		}
 		catch (Exception e) {

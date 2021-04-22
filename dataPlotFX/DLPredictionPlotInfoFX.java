@@ -1,5 +1,6 @@
 package rawDeepLearningClassifier.dataPlotFX;
 
+
 import PamController.PamController;
 import PamUtils.Coordinate3d;
 import PamView.GeneralProjector;
@@ -14,7 +15,6 @@ import dataPlotsFX.TDManagedSymbolChooserFX;
 import dataPlotsFX.TDSymbolChooserFX;
 import dataPlotsFX.data.TDDataInfoFX;
 import dataPlotsFX.data.TDDataProviderFX;
-import dataPlotsFX.data.TDScaleInfo;
 import dataPlotsFX.data.generic.GenericScaleInfo;
 import dataPlotsFX.layout.TDGraphFX;
 import dataPlotsFX.projector.TDProjectorFX;
@@ -267,7 +267,8 @@ public class DLPredictionPlotInfoFX extends TDDataInfoFX {
 	 * 
 	 * @param changeType - notification flag.
 	 */
-	public void notifyModelChanged(int changeType) {
+	public void notifyChange(int changeType) {
+		System.out.println("Prediction NOTIFYMODELCHANGED: "); 
 		switch (changeType) {
 
 		case PamController.CHANGED_PROCESS_SETTINGS:

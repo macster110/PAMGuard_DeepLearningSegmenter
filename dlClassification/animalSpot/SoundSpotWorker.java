@@ -1,4 +1,4 @@
-package rawDeepLearningClassifier.dlClassification.soundSpot;
+package rawDeepLearningClassifier.dlClassification.animalSpot;
 
 import org.jamdev.jdl4pam.animalSpot.AnimalSpotModel;
 import org.jamdev.jdl4pam.animalSpot.AnimalSpotParams;

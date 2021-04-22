@@ -19,9 +19,9 @@ import pamViewFX.PamGuiManagerFX;
 import pamViewFX.fxGlyphs.PamGlyphDude;
 import pamViewFX.fxNodes.PamButton;
 import pamViewFX.fxNodes.PamHBox;
-import rawDeepLearningClassifier.dlClassification.soundSpot.StandardAdvModelPane;
-import rawDeepLearningClassifier.dlClassification.soundSpot.StandardModelPane;
-import rawDeepLearningClassifier.dlClassification.soundSpot.StandardModelParams;
+import rawDeepLearningClassifier.dlClassification.animalSpot.StandardAdvModelPane;
+import rawDeepLearningClassifier.dlClassification.animalSpot.StandardModelPane;
+import rawDeepLearningClassifier.dlClassification.animalSpot.StandardModelParams;
 
 /**
  * 

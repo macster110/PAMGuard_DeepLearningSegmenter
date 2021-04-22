@@ -157,6 +157,8 @@ public class DLTransformsPane extends PamBorderPane {
 				sampleRate = ((WaveTransform) dlTransforms.get(i)).getWaveData().getSampleRate(); 
 			}
 
+		//	System.out.println("Set DL transfroms: " + dlTransforms.get(i).getDLTransformType()); 
+
 			dlTransformPanes.add(DataTransformPaneFactory.getSettingsPane(dlTransforms.get(i))); 
 			dlTransformPanes.get(i).setParams(dlTransforms.get(i));
 			dlTransformPanes.get(i).addSettingsListener(()->{

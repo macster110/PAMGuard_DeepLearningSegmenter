@@ -6,9 +6,9 @@ import java.io.IOException;
 
 import PamUtils.PamArrayUtils;
 import rawDeepLearningClassifier.dlClassification.PredictionResult;
+import rawDeepLearningClassifier.dlClassification.animalSpot.SoundSpotResult;
 import rawDeepLearningClassifier.dlClassification.dummyClassifier.DummyModelResult;
 import rawDeepLearningClassifier.dlClassification.genericModel.GenericPrediction;
-import rawDeepLearningClassifier.dlClassification.soundSpot.SoundSpotResult;
 
 /**
  * Handles the saving and loading of Model results from binary files. 

@@ -22,9 +22,10 @@ import rawDeepLearningClassifier.dlClassification.DLClassName;
 import rawDeepLearningClassifier.dlClassification.DLClassiferModel;
 import rawDeepLearningClassifier.dlClassification.DLTaskThread;
 import rawDeepLearningClassifier.dlClassification.PredictionResult;
-import rawDeepLearningClassifier.dlClassification.soundSpot.SoundSpotResult;
-import rawDeepLearningClassifier.dlClassification.soundSpot.SoundSpotWorker;
-import rawDeepLearningClassifier.dlClassification.soundSpot.StandardModelParams;
+import rawDeepLearningClassifier.dlClassification.animalSpot.SoundSpotResult;
+import rawDeepLearningClassifier.dlClassification.animalSpot.SoundSpotWorker;
+import rawDeepLearningClassifier.dlClassification.animalSpot.StandardModelParams;
+import rawDeepLearningClassifier.dlClassification.animalSpot.SoundSpotClassifier.TaskThread;
 import rawDeepLearningClassifier.layoutFX.DLCLassiferModelUI;
 import rawDeepLearningClassifier.segmenter.SegmenterProcess.GroupedRawData;
 import warnings.PamWarning;
@@ -33,18 +34,14 @@ import warnings.WarningSystem;
 
 /**
  * A generic model - can be load any model but requires manually setting model 
-. 
+ * *
  * @author Jamie Macaulay
  * 
  *
  */
 public class GenericDLClassifier implements DLClassiferModel, PamSettings {
 
-	/**
-	 * Holds a list of segmented raw data units which need to be classified. 
-	 */
-	private List<ArrayList<GroupedRawData>> queue = Collections.synchronizedList(new ArrayList<ArrayList<GroupedRawData>>());
-
+	
 	/**
 	 * The DL control. 
 	 */
@@ -70,7 +67,12 @@ public class GenericDLClassifier implements DLClassiferModel, PamSettings {
 	 */
 	PamWarning genericModelWarning = new PamWarning("Generic deep learning classifier", "",2);
 
-	private boolean forceQueue; 
+	private boolean forceQueue;
+
+	/**
+	 * Generic Worker thread for real time
+	 */
+	private GenericTaskThread workerThread; 
 
 
 	public GenericDLClassifier(DLControl dlControl) {
@@ -103,6 +105,17 @@ public class GenericDLClassifier implements DLClassiferModel, PamSettings {
 			genericModelWarning.setWarningMessage("There is no loaded deep learning model. Generic model classifier disabled.");
 			WarningSystem.getWarningSystem().addWarning(genericModelWarning);
 		}
+		
+		if ((!PamCalendar.isSoundFile() || forceQueue) && !dlControl.isViewer()) {
+			//for real time only
+			if (workerThread!=null) {
+				workerThread.stopTaskThread();
+			}
+			
+			workerThread = new GenericTaskThread(genericModelWorker);
+			workerThread.setPriority(Thread.MAX_PRIORITY);
+			workerThread.start();
+		}
 	}
 
 	@Override
@@ -130,8 +143,8 @@ public class GenericDLClassifier implements DLClassiferModel, PamSettings {
 			}
 			
 			for (int i =0; i<modelResult.size(); i++) {
-				modelResult.get(i).setClassNameID(getClassNameIDs()); 
-				modelResult.get(i).setBinaryClassification(isBinaryResult(modelResult.get(i))); 
+				modelResult.get(i).setClassNameID(getClassNameIDs(genericModelParams)); 
+				modelResult.get(i).setBinaryClassification(isBinaryResult(modelResult.get(i), genericModelParams)); 
 				modelResult.get(i).setTimeMillis(groupedRawData.get(i).getTimeMilliseconds());
 
 			}
@@ -140,11 +153,11 @@ public class GenericDLClassifier implements DLClassiferModel, PamSettings {
 		}
 		else {
 			//add to a buffer if in real time. 
-			if (queue.size()>DLModelWorker.MAX_QUEUE_SIZE) {
+			if (workerThread.getQueue().size()>DLModelWorker.MAX_QUEUE_SIZE) {
 				//we are not doing well - clear the buffer
-				queue.clear();
+				workerThread.getQueue().clear();
 			}
-			queue.add(groupedRawData);
+			workerThread.getQueue().add(groupedRawData);
 		}
 		return null;
 	}
@@ -305,23 +318,23 @@ public class GenericDLClassifier implements DLClassiferModel, PamSettings {
 		}
 
 		@Override
-		public void newResult(GenericPrediction soundSpotResult, GroupedRawData groupedRawData) {
-			soundSpotResult.setClassNameID(getClassNameIDs()); 
-			soundSpotResult.setBinaryClassification(isBinaryResult(soundSpotResult)); 
-			newResult(soundSpotResult, groupedRawData);
+		public void newResult(GenericPrediction modelResult, GroupedRawData groupedRawData) {
+			modelResult.setClassNameID(getClassNameIDs(genericModelParams)); 
+			modelResult.setBinaryClassification(isBinaryResult(modelResult, genericModelParams)); 
+			newResult(modelResult, groupedRawData);
 		}
 
 	}
-
+	
 	/**
 	 * Get the class name IDs
 	 * @return an array of class name IDs
-	 */
-	private short[] getClassNameIDs() {
-		if (genericModelParams.classNames==null || genericModelParams.classNames.length<=0) return null; 
-		short[] nameIDs = new short[genericModelParams.classNames.length]; 
-		for (int i = 0 ; i<genericModelParams.classNames.length; i++) {
-			nameIDs[i] = genericModelParams.classNames[i].ID; 
+	 */ 
+	public static short[] getClassNameIDs(StandardModelParams standardModelParams) {
+		if (standardModelParams.classNames==null || standardModelParams.classNames.length<=0) return null; 
+		short[] nameIDs = new short[standardModelParams.classNames.length]; 
+		for (int i = 0 ; i<standardModelParams.classNames.length; i++) {
+			nameIDs[i] = standardModelParams.classNames[i].ID; 
 		}
 		return nameIDs; 
 	}
@@ -333,7 +346,7 @@ public class GenericDLClassifier implements DLClassiferModel, PamSettings {
 	 * @param modelResult - the model results
 	 * @return the model results. 
 	 */
-	private boolean isBinaryResult(GenericPrediction modelResult) {
+	public static boolean isBinaryResult(GenericPrediction modelResult, StandardModelParams genericModelParams) {
 		for (int i=0; i<modelResult.getPrediction().length; i++) {
 			if (modelResult.getPrediction()[i]>genericModelParams.threshold && genericModelParams.binaryClassification[i]) {
 				//				System.out.println("SoundSpotClassifier: prediciton: " + i + " passed threshold with val: " + modelResult.getPrediction()[i]); 
@@ -342,6 +355,38 @@ public class GenericDLClassifier implements DLClassiferModel, PamSettings {
 		}
 		return  false;
 	}
+
+
+
+//	/**
+//	 * Get the class name IDs
+//	 * @return an array of class name IDs
+//	 */
+//	private short[] getClassNameIDs() {
+//		if (genericModelParams.classNames==null || genericModelParams.classNames.length<=0) return null; 
+//		short[] nameIDs = new short[genericModelParams.classNames.length]; 
+//		for (int i = 0 ; i<genericModelParams.classNames.length; i++) {
+//			nameIDs[i] = genericModelParams.classNames[i].ID; 
+//		}
+//		return nameIDs; 
+//	}
+//
+//
+//
+//	/**
+//	 * Check whether a model passes a binary test...
+//	 * @param modelResult - the model results
+//	 * @return the model results. 
+//	 */
+//	private boolean isBinaryResult(GenericPrediction modelResult) {
+//		for (int i=0; i<modelResult.getPrediction().length; i++) {
+//			if (modelResult.getPrediction()[i]>genericModelParams.threshold && genericModelParams.binaryClassification[i]) {
+//				//				System.out.println("SoundSpotClassifier: prediciton: " + i + " passed threshold with val: " + modelResult.getPrediction()[i]); 
+//				return true; 
+//			}
+//		}
+//		return  false;
+//	}
 
 
 }

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import org.jamdev.jdl4pam.transforms.DLTransform.DLTransformType;
 import org.json.JSONArray;
 
-import rawDeepLearningClassifier.dlClassification.soundSpot.StandardModelParams;
+import rawDeepLearningClassifier.dlClassification.animalSpot.StandardModelParams;
 
 import org.jamdev.jdl4pam.transforms.DLTransformsFactory;
 import org.jamdev.jdl4pam.transforms.DLTransfromParams;

@@ -123,12 +123,12 @@ public class DLImageTransformPane  extends PamBorderPane {
 				}
 				//if we switch to a high frequency want to the interp not to just select the lowest band
 				
-				else if (params[1].doubleValue()<highestFreq/10) {
-//					System.out.println("----HERE 2----" + exampleSound.getSampleRate()/10.0 + "  " + params[1].doubleValue());
-					params[1]=highestFreq; //nyquist
-				}
+//				else if (params[1].doubleValue()<highestFreq/10) {
+////					System.out.println("----HERE 2----" + exampleSound.getSampleRate()/10.0 + "  " + params[1].doubleValue());
+//					params[1]=highestFreq; //nyquist
+//				}
 
-				System.out.println("Interp params: " + params[0] + "  " + params[1] + "  " + params[2]); 
+				//System.out.println("Interp params: " + params[0] + "  " + params[1] + "  " + params[2]); 
 				freqTranform.setParams(params);
 
 				dlTransformPane.getDLTransformPanes().get(transforms.indexOf(dlTransfrom)).setParams(freqTranform);

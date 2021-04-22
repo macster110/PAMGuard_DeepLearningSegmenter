@@ -5,9 +5,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import rawDeepLearningClassifier.dlClassification.animalSpot.SoundSpotResult;
 import rawDeepLearningClassifier.dlClassification.genericModel.DLModelWorker;
 import rawDeepLearningClassifier.dlClassification.genericModel.GenericPrediction;
-import rawDeepLearningClassifier.dlClassification.soundSpot.SoundSpotResult;
 import rawDeepLearningClassifier.segmenter.SegmenterProcess.GroupedRawData;
 
 /**

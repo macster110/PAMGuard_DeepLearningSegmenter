@@ -14,7 +14,7 @@ import org.jamdev.jpamutils.wavFiles.AudioData;
 
 import PamUtils.PamCalendar;
 import rawDeepLearningClassifier.DLControl;
-import rawDeepLearningClassifier.dlClassification.soundSpot.StandardModelParams;
+import rawDeepLearningClassifier.dlClassification.animalSpot.StandardModelParams;
 import rawDeepLearningClassifier.segmenter.SegmenterProcess.GroupedRawData;
 
 
@@ -39,6 +39,10 @@ public abstract class DLModelWorker<T> {
 	 */
 	private ArrayList<DLTransform> modelTransforms;
 
+	/**
+	 * True to enable normalisation of results using softmax; 
+	 */
+	private boolean enableSoftMax = true;
 
 
 	/**
@@ -50,14 +54,14 @@ public abstract class DLModelWorker<T> {
 	public synchronized ArrayList<T> runModel(ArrayList<GroupedRawData> rawDataUnits, float sampleRate, int iChan) {
 
 		try {
-			
+
 			//the number of chunks. 
 			int numChunks = rawDataUnits.size(); 
-			
+
 			//PamCalendar.isSoundFile(); 
 			//create an audio data object from the raw data chunk
 			long timeStart = System.nanoTime(); 
-			
+
 			//data input into the model - a stack of spectrogram images. 
 			float[][][] transformedDataStack = new float[numChunks][][]; 
 
@@ -84,9 +88,9 @@ public abstract class DLModelWorker<T> {
 
 				//the transformed data
 				transformedData = ((FreqTransform) transform).getSpecTransfrom().getTransformedData(); 
-				
+
 				//System.out.println("DLModelWorker: Input shape: " + transformedData.length + "  " + transformedData[0].length + PamCalendar.formatDBDateTime(rawDataUnits.get(j).getTimeMilliseconds(), true));
-				
+
 				transformedDataStack[j] = DLUtils.toFloatArray(transformedData); 
 
 			}
@@ -101,15 +105,15 @@ public abstract class DLModelWorker<T> {
 
 			int numclasses = (int) (output.length/transformedDataStack.length); 
 
-//			System.out.println(PamCalendar.formatDBDateTime(rawDataUnits.get(0).getTimeMilliseconds(), true) + 
-//					" Time to run model: " + (time2-time1) + " ms for spec of len: " + transformedDataStack.length + 
-//					"output: " + output.length + " " + numclasses); 
+			//			System.out.println(PamCalendar.formatDBDateTime(rawDataUnits.get(0).getTimeMilliseconds(), true) + 
+			//					" Time to run model: " + (time2-time1) + " ms for spec of len: " + transformedDataStack.length + 
+			//					"output: " + output.length + " " + numclasses); 
 
 			ArrayList<T> modelResults = new ArrayList<T>(); 
 			float[] prob; 
 			float[] classOut; 
 			for (int i=0; i<transformedDataStack.length; i++) {
-				
+
 
 				/**
 				 * This is super weird. Reading the documentation for copeOfRange the index from and index to are enclusive. So 
@@ -118,26 +122,32 @@ public abstract class DLModelWorker<T> {
 				 */
 				classOut = Arrays.copyOfRange(output, i*numclasses, (i+1)*numclasses); 
 
-//				System.out.println("The copyOfRange is: " + i*numclasses + " to " + ((i+1)*numclasses-1) + " class out len: " + classOut.length); 
+				//				System.out.println("The copyOfRange is: " + i*numclasses + " to " + ((i+1)*numclasses-1) + " class out len: " + classOut.length); 
 
-				prob = new float[classOut.length]; 
 
-				for (int j=0; j<classOut.length; j++) {
-					//python code for this. 
-					//	    	prob = torch.nn.functional.softmax(out).numpy()[n, 1]
-					//                    pred = int(prob >= ARGS.threshold)		    	
-					//softmax function
-					prob[j] = (float) DLUtils.softmax(classOut[j], classOut); 
-					//System.out.println("The probability is: " + j + ": " + prob[j]); 
+				if (enableSoftMax) {
+					prob = new float[classOut.length]; 
+					for (int j=0; j<classOut.length; j++) {
+						//python code for this. 
+						//	    	prob = torch.nn.functional.softmax(out).numpy()[n, 1]
+						//                    pred = int(prob >= ARGS.threshold)		    	
+						//softmax function
+						prob[j] = (float) DLUtils.softmax(classOut[j], classOut); 
+						//System.out.println("The probability is: " + j + ": " + prob[j]); 
+					}
 				}
+				else {
+					prob = classOut; 
+				}
+
 
 				//does this pass binary classification
 				long timeEnd = System.nanoTime(); 
 
-				T soundSpotResult = makeModelResult(prob, (timeEnd-timeStart)/1000/1000/1000); 
+				T modelResult = makeModelResult(prob, (timeEnd-timeStart)/1000/1000/1000); 
 				//				soundSpotResult.setAnalysisTime((timeEnd-timeStart)/1000/1000/1000);
 
-				modelResults.add(soundSpotResult);
+				modelResults.add(modelResult);
 			}
 
 			return modelResults;
@@ -216,6 +226,24 @@ public abstract class DLModelWorker<T> {
 
 		return transforms; 
 
+	}
+	
+	
+
+	/**
+	 * Check whether the results are normalised with a softmax function. 
+	 * @return true if results are normalised using a softmax function
+	 */
+	public boolean isEnableSoftMax() {
+		return enableSoftMax;
+	}
+
+	/**
+	 * Set whether the results are normalised with a softmax function. 
+	 * @param set to true if results are normalised using a softmax function
+	 */
+	public void setEnableSoftMax(boolean enableSoftMax) {
+		this.enableSoftMax = enableSoftMax;
 	}
 
 

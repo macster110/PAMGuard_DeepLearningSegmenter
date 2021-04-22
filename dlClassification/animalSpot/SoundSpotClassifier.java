@@ -1,4 +1,4 @@
-package rawDeepLearningClassifier.dlClassification.soundSpot;
+package rawDeepLearningClassifier.dlClassification.animalSpot;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -21,16 +21,22 @@ import warnings.PamWarning;
 import warnings.WarningSystem;
 
 /**
- * A deep learning classifier trained using the OrcaSpot and run natively in Java.
+ * A deep learning classifier running models wihc have been created using the
+ * AnimalSpot framework .
  * <p>
- * This method has numerous advantages, it greatly simplifies the setup, which requires only that
- * the pytorch TorchScript library is installed and that the library location is added to the virtual
- * machine arguments e.g.  
- * -Djava.library.path=/Users/au671271/libtorch/lib 
+ * AnimalSpot uses Pytorch models which contains a JSON string for the
+ * transforms Users can select a .py file - PAMGaurd will open it, find the
+ * embedded JSON string and set up the transforms.
  * <p>
- * It also means that np python code is called which greatly increases speed. 
+ * <Previous comments on why to use native Java rather than calling python> This
+ * method has numerous advantages, it greatly simplifies the setup, which
+ * requires only that the pytorch TorchScript library is installed and that the
+ * library location is added to the virtual machine arguments e.g.
+ * -Djava.library.path=/Users/au671271/libtorch/lib
+ * <p>
+ * It also means that np python code is called which greatly increases speed.
  * 
- * @author JamieMacaulay 
+ * @author JamieMacaulay
  *
  */
 public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
@@ -44,12 +50,6 @@ public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 	 * The user interface for sound spot. 
 	 */
 	private SoundSpotUI soundSpotUI; 
-
-
-	/**
-	 * Holds a list of segmented raw data units which need to be classified. 
-	 */
-	private List<ArrayList<GroupedRawData>> queue = Collections.synchronizedList(new ArrayList<ArrayList<GroupedRawData>>());
 
 	/**
 	 * Sound spot parameters. 
@@ -70,8 +70,11 @@ public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 	/**
 	 * Sound spot warning. 
 	 */
-	PamWarning soundSpotWarning = new PamWarning("SoundSpotClassifier", "",2);
+	PamWarning soundSpotWarning = new PamWarning("AnimalSpot_Classifier", "",2);
 
+	/**
+	 * Runs the deep leanring on a different thread with a data buffer. For real time only. 
+	 */
 	private DLTaskThread workerThread; 
 
 	public SoundSpotClassifier(DLControl dlControl) {
@@ -106,11 +109,11 @@ public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 		}
 		else {
 			//add to a buffer if in real time. 
-			if (queue.size()>DLModelWorker.MAX_QUEUE_SIZE) {
+			if (workerThread.getQueue().size()>DLModelWorker.MAX_QUEUE_SIZE) {
 				//we are not doing well - clear the buffer
-				queue.clear();
+				workerThread.getQueue().clear();
 			}
-			queue.add(groupedRawData);
+			workerThread.getQueue().add(groupedRawData);
 		}
 		return null;
 	}
@@ -249,7 +252,7 @@ public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 		}
 
 		if (	getSoundSpotWorker().getModel()==null) {
-			soundSpotWarning.setWarningMessage("There is no loaded classifier model. SoundSpot disabled.");
+			soundSpotWarning.setWarningMessage("There is no loaded classifier model. AnimalSpot disabled.");
 			WarningSystem.getWarningSystem().addWarning(soundSpotWarning);
 		}
 
@@ -274,7 +277,7 @@ public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 
 	@Override
 	public String getName() {
-		return "SoundSpot";
+		return "AnimalSpot";
 	}
 
 	@Override
@@ -302,7 +305,7 @@ public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 		if (soundSpotParmas==null) {
 			soundSpotParmas = new StandardModelParams(); 
 		}
-		System.out.println("SoundSpot have been saved. : " + soundSpotParmas.modelPath); 
+		//System.out.println("SoundSpot have been saved. : " + soundSpotParmas.modelPath); 
 		return soundSpotParmas;
 
 	}
@@ -317,7 +320,7 @@ public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 		StandardModelParams newParameters = (StandardModelParams) pamControlledUnitSettings.getSettings();
 		if (newParameters!=null) {
 			soundSpotParmas = newParameters.clone();
-			System.out.println("SoundSpot have been restored. : " + soundSpotParmas.modelPath); 
+			//System.out.println("SoundSpot have been restored. : " + soundSpotParmas.modelPath); 
 		}
 		else soundSpotParmas = new StandardModelParams(); 
 		return true;

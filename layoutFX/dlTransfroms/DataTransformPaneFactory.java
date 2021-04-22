@@ -89,8 +89,41 @@ public class DataTransformPaneFactory {
 			((SimpleTransformPane) settingsPane).setSpinnerMinMaxValues(0, 0, Integer.MAX_VALUE,   500);
 			((SimpleTransformPane) settingsPane).setSpinnerMinMaxValues(1, 0,Integer.MAX_VALUE,   500);
 			break;
+		case ENHANCE:
+			settingsPane = new SimpleTransformPane((SimpleTransform) dlTransfrom, new String[]{"Enhancement "}); 
+			((SimpleTransformPane) settingsPane).setSpinnerMinMaxValues(0, 0.0, Double.MAX_VALUE,   1.0);			
+			break;
+		case FILTER_ISOLATED_SPOTS:
+			//TODO
+			break;
+		case GAUSSIAN_FILTER:
+			settingsPane = new SimpleTransformPane((SimpleTransform) dlTransfrom, new String[]{"Sigma "}); 
+			((SimpleTransformPane) settingsPane).setSpinnerMinMaxValues(0, 0.0, Double.MAX_VALUE,   1.0);	
+			break;
+		case MEDIANFILTER:
+			settingsPane = new LabelTransfromPane(dlTransfrom, DLTransformType.MEDIANFILTER.toString()); 
+			settingsPane.setPadding(new Insets(0,0,0,20));
+			break;
+		case REDUCETONALNOISE_MEAN:
+			settingsPane = new SimpleTransformPane((SimpleTransform) dlTransfrom, new String[]{"Time const. length "}); 
+			((SimpleTransformPane) settingsPane).setSpinnerMinMaxValues(0, 1, Integer.MAX_VALUE,   1);	
+			break;
+		case REDUCETONALNOISE_MEDIAN:
+			settingsPane = new LabelTransfromPane(dlTransfrom, DLTransformType.REDUCETONALNOISE_MEDIAN.toString()); 
+			settingsPane.setPadding(new Insets(0,0,0,20));
+			break;
+		case SPECNORMALISESTD:
+			settingsPane = new SimpleTransformPane((SimpleTransform) dlTransfrom, new String[]{"Mean ", "Std "}); 
+			((SimpleTransformPane) settingsPane).setSpinnerMinMaxValues(0, 0.0, Double.MAX_VALUE,   0.1);
+			((SimpleTransformPane) settingsPane).setSpinnerMinMaxValues(1, 0.0, Double.MAX_VALUE,   0.1);
+			break;
+		case SPECNORMALISE_MINIMAX:
+			settingsPane = new LabelTransfromPane(dlTransfrom, DLTransformType.SPECNORMALISE_MINIMAX.toString()); 
+			settingsPane.setPadding(new Insets(0,0,0,20));
+			break;
 		default:
 			break;
+	
 		}
 		return settingsPane;	
 
