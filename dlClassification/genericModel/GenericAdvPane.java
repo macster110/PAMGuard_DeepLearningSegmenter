@@ -233,11 +233,12 @@ public class GenericAdvPane extends SettingsPane<GenericModelParams> {
 		// the class names. 
 		//have a max just in-case someone wants to input 1000 in which case 1000 text fields will be create. 
 		classNumber =  new Spinner<Integer>(1, 64, 2,  1);
+		classNumber.setEditable(true);
 		classNumber .setPrefWidth(80);
 		classNumber .getStyleClass().add(Spinner.STYLE_CLASS_SPLIT_ARROWS_HORIZONTAL);
 		classNumber.valueProperty().addListener((obsval, oldVal, newVal)->{
 			populateClassNameFields(newVal); 
-			newSettings();
+			//newSettings();
 		});
 
 		HBox classNumberHolder = new HBox(); 
@@ -263,7 +264,7 @@ public class GenericAdvPane extends SettingsPane<GenericModelParams> {
 	/**
 	 * New settings. 
 	 */
-	private void newSettings() {
+	public void newSettings() {
 		if (setParams) return; 
 		genericClassifier.getModelUI().getSettingsPane().setParams(this.getParams(currentInput));
 	}

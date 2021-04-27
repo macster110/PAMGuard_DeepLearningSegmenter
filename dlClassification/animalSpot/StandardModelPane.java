@@ -76,7 +76,7 @@ public abstract class StandardModelPane extends SettingsPane<StandardModelParams
 	/**
 	 * A pop over to show the advanced pane. 
 	 */
-	private PopOver popOver;
+	protected PopOver popOver;
 
 	/**
 	 * Advanced settings pane. 
@@ -174,8 +174,10 @@ public abstract class StandardModelPane extends SettingsPane<StandardModelParams
 		advButton.setOnAction((action)->{
 			//pop up window with adv settings.
 			showAdvPane(advButton); 
-
 		});
+		
+		
+		
 		PamHBox advSettingsBox = new PamHBox(); 
 		advSettingsBox.setSpacing(5);
 		advSettingsBox.getChildren().addAll(new Label("Advanced"), advButton); 
@@ -296,6 +298,10 @@ public abstract class StandardModelPane extends SettingsPane<StandardModelParams
 		popOver.showingProperty().addListener((obs, old, newval)->{
 			//TODO?
 		});
+//		
+//		popOver.setOnCloseRequest((event)->{
+//			getAdvSettingsPane().getParams(this.get); 
+//		});
 
 		popOver.show(advSettingsButton);
 	}

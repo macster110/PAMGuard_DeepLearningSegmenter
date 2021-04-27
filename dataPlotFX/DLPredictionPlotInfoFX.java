@@ -64,7 +64,7 @@ public class DLPredictionPlotInfoFX extends TDDataInfoFX {
 		
 		this.dlControl=dlContorl; 
 
-		probabilityScaleInfo = new GenericScaleInfo(0, 1, ParameterType.PROBABILITY, ParameterUnits.PROBABILITY);
+		probabilityScaleInfo = new GenericScaleInfo(-0.1, 1.1, ParameterType.PROBABILITY, ParameterUnits.PROBABILITY);
 
 		frequencyInfo = new GenericScaleInfo(0, 1, ParameterType.FREQUENCY, ParameterUnits.HZ);
 		

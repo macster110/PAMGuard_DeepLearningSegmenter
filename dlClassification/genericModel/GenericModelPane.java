@@ -77,7 +77,13 @@ public class GenericModelPane extends StandardModelPane  {
 
 		this.setParamsClone(getParams(getParamsClone())); 
 		
+		
 		super.showAdvPane(advSettingsButton);
+		
+		//bit messy 
+		this.popOver.setOnHidden((event)->{
+		this.setParams(getParams(getParamsClone())); 
+		});
 		
 	}
 	
