@@ -59,7 +59,7 @@ public class RawDLSettingsPane  extends SettingsPane<RawDLParams>{
 	private ComboBox<String> dlModelBox;
 
 	/**
-	 * The winodw length spinner for the segmenter process
+	 * The window length spinner for the segmenter process
 	 */
 	private PamSpinner<Integer> windowLength;
 

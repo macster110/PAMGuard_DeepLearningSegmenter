@@ -14,10 +14,12 @@ import PamController.SettingsPane;
 import PamView.dialog.warn.WarnOnce;
 import ai.djl.Device;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.Alert.AlertType;
@@ -108,7 +110,9 @@ public abstract class StandardModelPane extends SettingsPane<StandardModelParams
 	 */
 	private PamVBox vBoxHolder;
 
-	protected PamHBox defaultSegBox; 
+	protected PamHBox defaultSegBox;
+
+	private ProgressIndicator modelLoadIndicator; 
 
 
 	public StandardModelPane(DLClassiferModel soundSpotClassifier) {
@@ -137,6 +141,11 @@ public abstract class StandardModelPane extends SettingsPane<StandardModelParams
 		/**Basic classifier info**/
 		pathLabel = new Label("No classifier file selected"); 
 		PamButton pamButton = new PamButton("", PamGlyphDude.createPamGlyph(MaterialDesignIcon.FILE, PamGuiManagerFX.iconSize)); 
+		
+		modelLoadIndicator = new ProgressIndicator(-1);
+		modelLoadIndicator.setVisible(false);
+		modelLoadIndicator.prefHeightProperty().bind(pamButton.heightProperty().subtract(3));
+		
 		pamButton.setMinWidth(30);
 		pamButton.setTooltip(new Tooltip("Browse to selcect a model file"));
 		
@@ -160,16 +169,43 @@ public abstract class StandardModelPane extends SettingsPane<StandardModelParams
 			if (file==null) {
 				return; 
 			}
+			
+			modelLoadIndicator.setVisible(true);
 
-			newModelSelected(file); 
+			pathLabel.setText("Loading model...");
+			
+            // separate non-FX thread - load the model 
+			//on a separate thread so we can show a moving load 
+			//bar on the FX thread. Otherwise the GUI locks up  
+			//whilst stuff is loaded. 
+			new Thread() {
+				// runnable for that thread
+				public void run() {
+					try {
+						newModelSelected(file); 
+						Thread.sleep(5000);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 
-			updatePathLabel(); 
-			setClassNames(this.paramsClone);  
+					Platform.runLater(new Runnable() {
+						public void run() {
+							modelLoadIndicator.setVisible(false);
+							updatePathLabel(); 
+							setClassNames(paramsClone);  
+						}
+					});
+				}
+			}.start();
+
+			
+			
 		});
 
 		PamHBox hBox = new PamHBox(); 
 		hBox.setSpacing(5);
-		hBox.getChildren().addAll(pathLabel, pamButton); 
+		hBox.getChildren().addAll(modelLoadIndicator, pathLabel, pamButton); 
 		hBox.setAlignment(Pos.CENTER_RIGHT);
 
 		PamButton advButton = new PamButton("", PamGlyphDude.createPamGlyph(MaterialDesignIcon.SETTINGS, PamGuiManagerFX.iconSize)); 
