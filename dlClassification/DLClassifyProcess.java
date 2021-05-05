@@ -9,8 +9,10 @@ import PamView.GroupedSourceParameters;
 import PamView.PamDetectionOverlayGraphics;
 import PamguardMVC.DataUnitBaseData;
 import PamguardMVC.PamDataUnit;
+import PamguardMVC.PamInstantProcess;
 import PamguardMVC.PamObservable;
 import PamguardMVC.PamProcess;
+import binaryFileStorage.DataUnitFileInformation;
 import rawDeepLearningClassifier.DLControl;
 import rawDeepLearningClassifier.layoutFX.DLDetectionGraphics;
 import rawDeepLearningClassifier.layoutFX.DLGraphics;
@@ -31,7 +33,7 @@ import rawDeepLearningClassifier.segmenter.SegmenterProcess.GroupedRawData;
  * @author Jamie Macaulay
  *
  */
-public class DLClassifyProcess extends PamProcess {
+public class DLClassifyProcess extends PamInstantProcess {
 
 	/**
 	 *  Holds all model results but no other information 
@@ -78,7 +80,10 @@ public class DLClassifyProcess extends PamProcess {
 
 
 	public DLClassifyProcess(DLControl dlControl, SegmenterDataBlock parentDataBlock) {
-		super(dlControl, parentDataBlock);
+		super(dlControl);
+		
+		
+		this.setParentDataBlock(parentDataBlock);
 
 		//		this.setParentDataBlock(parentDataBlock);
 
@@ -121,6 +126,8 @@ public class DLClassifyProcess extends PamProcess {
 	 * Setup the classification process. 
 	 */
 	private void setupClassifierProcess() {
+
+		System.out.println("Setup raw deep learning classiifer process: "); 
 
 		if (dlControl.getDLParams()==null) {
 			System.err.println("SegmenterProcess.setupSegmenter: The DLParams are null???");
@@ -189,7 +196,7 @@ public class DLClassifyProcess extends PamProcess {
 	 * Run the model if the classification buffer is full. 
 	 */
 	private void runModel() {
-		
+
 		if (classificationBuffer.size()<=0) return; 
 
 		//run the deep learning algorithm 
@@ -199,13 +206,13 @@ public class DLClassifyProcess extends PamProcess {
 		if (modelResults==null) {
 			return; //there has been a problem
 		}
-		
+
 		for (int i=0; i<classificationBufferTemp.size(); i++) {
 			if (modelResults.get(i)!=null) {
 				//if the model is null there may be a buffer on a different thread 
-//				System.out.println("Compare Times: " + PamCalendar.formatDBDateTime(modelResults.get(i).getTimeMillis(), true)  + 
-//						"   " + PamCalendar.formatDBDateTime(classificationBufferTemp.get(i).getTimeMilliseconds(), true) + "  " +
-//						modelResults.get(i).getPrediction()[1]); 
+				//				System.out.println("Compare Times: " + PamCalendar.formatDBDateTime(modelResults.get(i).getTimeMillis(), true)  + 
+				//						"   " + PamCalendar.formatDBDateTime(classificationBufferTemp.get(i).getTimeMilliseconds(), true) + "  " +
+				//						modelResults.get(i).getPrediction()[1]); 
 				newModelResult(modelResults.get(i), classificationBufferTemp.get(i)); 
 			}
 		}
@@ -232,7 +239,7 @@ public class DLClassifyProcess extends PamProcess {
 			//there is a new parent data unit. 
 			return true; 
 		}
-		
+
 		//get the start time. Use min value instead of first data just in case units ar enot in order. 
 		long min = Long.MAX_VALUE;
 		for (GroupedRawData groupedRawData:  classificationBuffer2) {
@@ -242,9 +249,9 @@ public class DLClassifyProcess extends PamProcess {
 		}
 
 		double timeDiff = rawDataUnit.getTimeMilliseconds()-min; 
-		
+
 		if (timeDiff>=this.dlControl.getDLParams().maxBufferTime) {
-//		if (timeDiff>=this.dlControl.getDLParams().maxBufferTime) {
+			//		if (timeDiff>=this.dlControl.getDLParams().maxBufferTime) {
 
 			//we are overr the max buffer size. 
 			return true; 
@@ -282,7 +289,7 @@ public class DLClassifyProcess extends PamProcess {
 		//create a new data unit - always add to the model result section. 
 		DLDataUnit dlDataUnit = new DLDataUnit(pamRawData.getTimeMilliseconds(), pamRawData.getChannelBitmap(), 
 				pamRawData.getStartSample(), pamRawData.getSampleDuration(), modelResult); 
-		
+
 
 		dlDataUnit.setFrequency(new double[] {0, dlControl.getDLClassifyProcess().getSampleRate()/2});
 		dlDataUnit.setDurationInMilliseconds(pamRawData.getDurationInMilliseconds()); 
@@ -327,15 +334,16 @@ public class DLClassifyProcess extends PamProcess {
 						clearBuffer(i) ;
 						if (dlDetection!=null) {
 							this.dlDetectionDataBlock.addPamData(dlDetection);
-//							System.out.println("Amplitude: " + dlDetection.getAmplitudeDB()  
-//							+ "  " + dlDetection.getMeasuredAmplitudeType());
+							//							System.out.println("Amplitude: " + dlDetection.getAmplitudeDB()  
+							//							+ "  " + dlDetection.getMeasuredAmplitudeType());
 						}
 
 					}
 				}
 				else {
 					//need to go by the parent data unit for merging data not the segments. 
-					//System.out.println("Save click annotation 0 "); 
+
+					//System.out.println("New model data " + pamRawData.getParentDataUnit().getUID() + " " + groupDataBuffer[i].size()); 
 
 					if (pamRawData.getParentDataUnit()!=lastParentDataUnit[i]) {
 						//save any data
@@ -350,6 +358,7 @@ public class DLClassifyProcess extends PamProcess {
 								}
 							}
 							else {
+								System.out.println("Save click annotation to " + lastParentDataUnit[i].getUID()); 
 								addDLAnnotation(lastParentDataUnit[i],groupDataBuffer[i],modelResultDataBuffer[i]); 
 								clearBuffer(i); 
 							}
@@ -358,11 +367,38 @@ public class DLClassifyProcess extends PamProcess {
 					lastParentDataUnit[i]=pamRawData.getParentDataUnit();
 					groupDataBuffer[i].add(pamRawData); 
 					modelResultDataBuffer[i].add(modelResult); 
+
+					//System.out.println("Buffer click annotation to " + lastParentDataUnit[i].getUID() + " " + groupDataBuffer[i].size()); 
 				}
 			}
 		}
 	}
 
+
+	/**
+	 * Only to be used if clicks or clips are being processed. 
+	 */
+	public void forceClickDataSave(PamDataUnit dataUnit) {
+
+		//need to implement multiple groups. 
+		for (int i=0; i<getSourceParams().countChannelGroups(); i++) {
+
+			//			System.out.println("RawDataIn: chan: " + pamRawData.getChannelBitmap()+ "  " +
+			//			PamUtils.hasChannel(getSourceParams().getGroupChannels(i), pamRawData.getChannelBitmap()) + 
+			//			" grouped source: " +getSourceParams().getGroupChannels(i)); 
+
+			if (PamUtils.hasChannel(getSourceParams().getGroupChannels(i), PamUtils.getSingleChannel(dataUnit.getChannelBitmap()))) {
+				if (groupDataBuffer[i].size()>0) {
+
+					//System.out.println("Save click annotation to " + lastParentDataUnit[i].getUID()); 
+					addDLAnnotation(dataUnit,groupDataBuffer[i],modelResultDataBuffer[i]); 
+					lastParentDataUnit[i]=null;
+					clearBuffer(i); 
+				}
+
+			}
+		}
+	}
 
 	/**
 	 * Make a positive DL detection from a number of model results and corresponding chunks of raw sound data. 
@@ -384,12 +420,12 @@ public class DLClassifyProcess extends PamProcess {
 
 		//copy all data into a new data buffer making sure to compensate for hop size.  
 		for (int i=0; i<groupDataBuffer.size(); i++) {
-			
+
 			int copyLen = dlControl.getDLParams().sampleHop; 
-			
+
 			//at the end have to copy the entire length or else we miss the end of the detection...
 			if (i==groupDataBuffer.size()-1) copyLen = dlControl.getDLParams().rawSampleSize; 
-			
+
 			for (int j=0; j<chans; j++) {
 				System.arraycopy(groupDataBuffer.get(i).getRawData()[j], 0, rawdata[j], 
 						i*dlControl.getDLParams().sampleHop, copyLen);
@@ -413,6 +449,7 @@ public class DLClassifyProcess extends PamProcess {
 	 * Clear the data unit buffer. 
 	 */
 	private void clearBuffer(int group) {
+		//System.out.println("CLEAR BUFFER: "); 
 		//do not clear because the arrays are referenced by other data. Prevent
 		//the need to clone the arrays
 		groupDataBuffer[group] = new ArrayList<GroupedRawData>();
@@ -432,8 +469,14 @@ public class DLClassifyProcess extends PamProcess {
 			ArrayList<PredictionResult> modelResult) {
 
 		//System.out.println("DLClassifyProces: Add annnotation to  " + parentDataUnit); 
-
 		parentDataUnit.addDataAnnotation(new DLAnnotation(dlAnnotationType, modelResult)); 
+		//parentDataUnit.updateDataUnit(System.currentTimeMillis());
+
+		DataUnitFileInformation fileInfo = parentDataUnit.getDataUnitFileInformation();
+		if (fileInfo != null) {
+			fileInfo.setNeedsUpdate(true);
+		}
+		parentDataUnit.updateDataUnit(System.currentTimeMillis());
 	}
 
 	@Override

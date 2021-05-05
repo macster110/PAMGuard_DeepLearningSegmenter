@@ -8,18 +8,15 @@ import PamController.PamController;
 import PamDetection.PamDetection;
 import PamDetection.RawDataUnit;
 import PamUtils.PamArrayUtils;
-import PamUtils.PamCalendar;
 import PamUtils.PamUtils;
 import PamView.GroupedSourceParameters;
 import PamView.PamDetectionOverlayGraphics;
 import PamView.PamSymbol;
 import PamView.PamSymbolType;
-import PamView.symbol.modifier.SymbolModifierParams;
 import PamguardMVC.PamDataBlock;
 import PamguardMVC.PamDataUnit;
 import PamguardMVC.PamObservable;
 import PamguardMVC.PamProcess;
-import PamguardMVC.PamRawDataBlock;
 import PamguardMVC.debug.Debug;
 import clickDetector.ClickDetection;
 import clipgenerator.ClipDataUnit;
@@ -35,7 +32,7 @@ import rawDeepLearningClassifier.DLControl;
 public class SegmenterProcess extends PamProcess {
 
 	/**
-	 * the maximum allowed drift between the sample clocks and the file clock before the clopck is reset. 
+	 * the maximum allowed drift between the sample clocks and the file clock before the clock is reset. 
 	 */
 	private static final double MAX_MILLIS_DRIFT = 2;
 
@@ -76,7 +73,8 @@ public class SegmenterProcess extends PamProcess {
 		//			addOutputDataBlock(outputData = new RecyclingDataBlock<FFTDataUnit>(FFTDataUnit.class, "Raw FFT Data", 
 		//					this, fftControl.fftParameters.channelMap));
 
-		segmenterDataBlock = new SegmenterDataBlock("Segmented Raw Data", this, dlControl.getDLParams().groupedSourceParams.getChanOrSeqBitmap());
+		segmenterDataBlock = new SegmenterDataBlock("Segmented Raw Data", this,
+				dlControl.getDLParams().groupedSourceParams.getChanOrSeqBitmap());
 		addOutputDataBlock(segmenterDataBlock);
 
 		setProcessName("Segmenter");  

@@ -9,6 +9,7 @@ import rawDeepLearningClassifier.dlClassification.PredictionResult;
 import rawDeepLearningClassifier.dlClassification.animalSpot.SoundSpotResult;
 import rawDeepLearningClassifier.dlClassification.dummyClassifier.DummyModelResult;
 import rawDeepLearningClassifier.dlClassification.genericModel.GenericPrediction;
+import rawDeepLearningClassifier.dlClassification.ketos.KetosResult;
 
 /**
  * Handles the saving and loading of Model results from binary files. 
@@ -37,6 +38,11 @@ public class ModelResultBinaryFactory {
 	 * Flag for model res
 	 */
 	public static final int DUMMY_RESULT = 2; 
+	
+	/**
+	 * Flag for model res
+	 */
+	public static final int KETOS = 3; 
 
 
 	/**
@@ -82,7 +88,10 @@ public class ModelResultBinaryFactory {
 			//specific settings for different modules 
 			switch (type) {
 			case SOUND_SPOT:
-
+				//no extra info to write 
+				break; 
+			case KETOS:
+				//no extra info to write beyond defaults
 				break; 
 			default:
 				//no extra information. 
@@ -133,6 +142,9 @@ public class ModelResultBinaryFactory {
 			case DUMMY_RESULT:
 				result = new DummyModelResult(data);  
 				break; 
+			case KETOS:
+				result = new KetosResult(data);  
+				break; 
 			default:
 				//ideally should never be used. 
 				result = new GenericPrediction(data, isBinary); 
@@ -157,15 +169,20 @@ public class ModelResultBinaryFactory {
 	 */
 	public static int getType(PredictionResult modelResult) {
 		int type=0; 
-		if (modelResult instanceof GenericPrediction) {
-			type=SOUND_SPOT; 
+		if (modelResult instanceof SoundSpotResult) {
+			return SOUND_SPOT; 
 		}
+		if (modelResult instanceof KetosResult) {
+			return KETOS; 
+		}
+		//must be last because this is often sub classed
 		if (modelResult instanceof GenericPrediction) {
-			type=GENERIC; 
+			return GENERIC; 
 		}
 		if (modelResult instanceof DummyModelResult) {
-			type=DUMMY_RESULT; 
+			return DUMMY_RESULT; 
 		}
+
 		return type;
 	}
 

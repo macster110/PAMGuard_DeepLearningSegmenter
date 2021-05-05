@@ -26,6 +26,9 @@ public class DLOfflineTask extends OfflineTask<PamDataUnit<?,?>>{
 		this.dlControl.getDLClassifyProcess().clearOldData();	
 
 		super.addAffectedDataBlock(this.dlControl.getDLClassifyProcess().getDLDetectionDatablock());
+		//prediction datablock may also be affected. 
+		super.addAffectedDataBlock(this.dlControl.getDLClassifyProcess().getDLPredictionDataBlock());
+
 
 
 	}
@@ -37,8 +40,20 @@ public class DLOfflineTask extends OfflineTask<PamDataUnit<?,?>>{
 
 	@Override
 	public boolean processDataUnit(PamDataUnit<?, ?> dataUnit) {
+		
+//		System.out.println("--------------");
+//		System.out.println("Offline task start: " + dataUnit.getUpdateCount() + " data " + dataUnit +  " ");
+
 		//Process a data unit
 		dlControl.getSegmenter().newData(dataUnit); 
+		
+		//force click data save
+		dlControl.getDLClassifyProcess().forceClickDataSave(dataUnit);
+
+		/**
+		 * So the issue here is that the classification is not on tje same thread...
+		 */
+//		System.out.println("Offline task complete: " + dataUnit.getUpdateCount() + " data " + dataUnit +  " no. annotations: " + dataUnit.getNumDataAnnotations() );
 		return true;
 	}
 
@@ -49,6 +64,17 @@ public class DLOfflineTask extends OfflineTask<PamDataUnit<?,?>>{
 	public void prepareTask() {	
 		count=0; 
 		prepProcess(); 
+				
+		//this is important so that the offline taks knows that the 
+		//parent datablock (e.g. if clicks or clips) needs to be saved because
+		// an annotation has been added to it. 
+		super.addAffectedDataBlock(dlControl.getParentDataBlock());
+		super.getOfflineTaskGroup().setSummaryLists();
+		
+//		for (int i=0; i<super.getNumAffectedDataBlocks(); i++) {
+//			System.out.println("AFFECTED DATA BLOCKS: " + super.getAffectedDataBlock(i));
+//		}
+
 		this.setParentDataBlock(dlControl.getParentDataBlock());
 		//dlControl.setNotifyProcesses(true);
 		this.dlControl.getDLModel().prepModel(); 
@@ -70,6 +96,7 @@ public class DLOfflineTask extends OfflineTask<PamDataUnit<?,?>>{
 
 	@Override
 	public void newDataLoad(long startTime, long endTime, OfflineDataMapPoint mapPoint) {
+		prepProcess();
 		dlControl.update(MTClassifierControl.PROCESSING_START);
 		// called whenever new data is loaded. 
 	}
@@ -109,7 +136,9 @@ public class DLOfflineTask extends OfflineTask<PamDataUnit<?,?>>{
 	 * @return true if it's possible to run the task. 
 	 */
 	public boolean canRun() {
-		prepProcess();
+		/**
+		 * Removed prep process here because it caused the buffers result for click detections, 
+		 */
 		//had to put this in here for some reason??
 		this.setParentDataBlock(dlControl.getParentDataBlock());
 		//System.out.println("Datablock: " + getDataBlock() + " Control datablock" +  dlControl.getParentDataBlock()); 

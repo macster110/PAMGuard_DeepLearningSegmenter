@@ -16,7 +16,6 @@ public class DLAnnotationSymbolChooser implements AnnotationSymbolChooser {
 	@Override
 	public SymbolData getSymbolData(PamDataUnit dataUnit, SymbolData symbolData, DataAnnotation annotation,
 			AnnotationSymbolOptions annotationSymbolOptions) {
-		// TODO Auto-generated method stub
 		return new SymbolData();
 	}
 

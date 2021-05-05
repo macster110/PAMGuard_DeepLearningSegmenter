@@ -139,10 +139,13 @@ public abstract class StandardModelPane extends SettingsPane<StandardModelParams
 		PamButton pamButton = new PamButton("", PamGlyphDude.createPamGlyph(MaterialDesignIcon.FILE, PamGuiManagerFX.iconSize)); 
 		pamButton.setMinWidth(30);
 		pamButton.setTooltip(new Tooltip("Browse to selcect a model file"));
+		
 
 		pamButton.setOnAction((action)->{
-
+			
+			fileChooser.getExtensionFilters().clear();
 			fileChooser.getExtensionFilters().addAll(getExtensionFilters()); 
+
 
 			Path path = currentSelectedFile.toPath();
 			if(path!=null && Files.exists(path, LinkOption.NOFOLLOW_LINKS)) {
