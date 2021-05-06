@@ -37,6 +37,8 @@ public class GenericModelWorker extends DLModelWorker<GenericPrediction> {
 	@Override
 	public void prepModel(StandardModelParams genericParams, DLControl dlControl) {
 		try {
+			
+			if (genericParams.modelPath==null) return; 
 			//first open the model and get the correct parameters. 
 			genericModel = new GenericModel(genericParams.modelPath); 
 			
