@@ -357,8 +357,15 @@ public abstract class StandardModelPane extends SettingsPane<StandardModelParams
 		}
 		else {
 			pathLabel .setText(this.currentSelectedFile.getName()); 
-			pathLabel.setTooltip(new Tooltip(this.currentSelectedFile.getPath() 
-					+ "\n" +" Processor " + Device.defaultDevice().toString()));
+			try {
+				pathLabel.setTooltip(new Tooltip(this.currentSelectedFile.getPath() 
+						+ "\n" +" Processor " + Device.defaultDevice().toString()));
+			}
+			catch (Exception e) {
+				//sometimes get an error here for some reason
+				//does not make a difference other than tooltip. 
+				System.err.println("StandardModelPane: Error getting the default device!");
+			}
 			usedefaultSeg.setDisable(false);
 		}
 
