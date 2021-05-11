@@ -61,13 +61,13 @@ public class DLPredictionPlotInfoFX extends TDDataInfoFX {
 
 	public DLPredictionPlotInfoFX(TDDataProviderFX tdDataProvider, DLControl dlContorl, TDGraphFX tdGraph, PamDataBlock pamDataBlock) {
 		super(tdDataProvider, tdGraph, pamDataBlock);
-		
+
 		this.dlControl=dlContorl; 
 
 		probabilityScaleInfo = new GenericScaleInfo(-0.1, 1.1, ParameterType.PROBABILITY, ParameterUnits.PROBABILITY);
 
 		frequencyInfo = new GenericScaleInfo(0, 1, ParameterType.FREQUENCY, ParameterUnits.HZ);
-		
+
 		addScaleInfo(probabilityScaleInfo);
 		addScaleInfo(frequencyInfo);
 	}
@@ -93,13 +93,13 @@ public class DLPredictionPlotInfoFX extends TDDataInfoFX {
 		g.setLineDashes(null);
 
 
-//		double[] f = pamDataUnit.getFrequency();
-//		if (f == null) {
-//			return null;
-//		}
-//		if (f.length == 1) {
-//			System.out.println("GenericDataPlotInfo: Single frequency measure in data unit " + pamDataUnit.toString());
-//		}
+		//		double[] f = pamDataUnit.getFrequency();
+		//		if (f == null) {
+		//			return null;
+		//		}
+		//		if (f.length == 1) {
+		//			System.out.println("GenericDataPlotInfo: Single frequency measure in data unit " + pamDataUnit.toString());
+		//		}
 
 		if (dataUnit.getPredicitionResult().isBinaryClassification()) {
 			g.setFill(Color.color(this.color.getRed(), this.color.getGreen(), this.color.getBlue(), 
@@ -125,7 +125,7 @@ public class DLPredictionPlotInfoFX extends TDDataInfoFX {
 		double x1 = tdProjector.getTimePix(pamDataUnit.getEndTimeInMilliseconds()-scrollStart);
 		double y = Math.min(y0,  y1);
 		double h = Math.abs(y1-y0);
-		
+
 		//System.out.println(" Frequency: " + x0 + " " + x1 + " " +  " y: " +  y0 + " " + y1); 
 		g.strokeRect(x0, y, x1-x0, h);
 		if (dataUnit.getPredicitionResult().isBinaryClassification()) {
@@ -159,7 +159,7 @@ public class DLPredictionPlotInfoFX extends TDDataInfoFX {
 
 		//System.out.println("Get data type: " + getScaleInfo().getDataType()); 
 		if (getScaleInfo().getDataType().equals(ParameterType.FREQUENCY)) { // frequency data !
-			
+
 			return drawFrequencyData(plotNumber, pamDataUnit, g, scrollStart, tdProjector, type);
 		}
 		else {
@@ -170,7 +170,7 @@ public class DLPredictionPlotInfoFX extends TDDataInfoFX {
 
 
 	/**
-	 * Draw the prediction. 
+	 * Draw the prediction as a line.
 	 * @param plotNumber - the plot number. 
 	 * @param pamDataUnit - the pam data unit. 
 	 * @param g - the graphics context. 
@@ -201,7 +201,9 @@ public class DLPredictionPlotInfoFX extends TDDataInfoFX {
 		if (tC < -1000 || tC>tdProjector.getWidth()+1000) {
 			return null;
 		}
-
+		
+		//TODO -must sort out wrap
+		//dlControl.getDLParams().sampleHop; 
 
 		double dataPixel; 
 		Coordinate3d c; 
@@ -219,26 +221,21 @@ public class DLPredictionPlotInfoFX extends TDDataInfoFX {
 
 			dataPixel = tdProjector.getYPix(dataUnit.getPredicitionResult().getPrediction()[i]);
 
+
 			if (lastUnits[i]==null) {
 				lastUnits[i] = new Point2D(tC, dataPixel); 
 				return null; 
 			}
 			else {
-
 				if (tC>lastUnits[i].getX()) {
-					g.strokeLine(tC, dataPixel, lastUnits[i].getX(), lastUnits[i].getY());					
-				}
-				else {
-					lastUnits = null; 
-					return null; 
+					//System.out.println("tC: " + tC + " lastUnits[i].getX(): " + lastUnits[i].getX());
+					g.strokeLine(tC, dataPixel, lastUnits[i].getX(), lastUnits[i].getY());				
 				}
 				lastUnits[i] = new Point2D(tC, dataPixel); 
 			}
 
 			//getSymbolChooser().getPamSymbol(pamDataUnit,type).draw(g, new Point2D(tC, dataPixel));
-
 			tdProjector.addHoverData(new HoverData(c , pamDataUnit, 0, plotNumber));
-
 		}
 
 		return null; 

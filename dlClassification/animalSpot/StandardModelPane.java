@@ -400,6 +400,10 @@ public abstract class StandardModelPane extends SettingsPane<StandardModelParams
 		}
 
 		currParams.binaryClassification = speciesClass;
+		
+		//get class names from the paramClone as these may have been set by a loaded model
+		//instea of a use changing a control.
+		currParams.classNames = paramsClone.classNames; 
 
 		return currParams;
 	}
@@ -442,7 +446,7 @@ public abstract class StandardModelPane extends SettingsPane<StandardModelParams
 
 		if (currParams.classNames!=null) classNamesLen = currParams.classNames.length; 
 
-		//System.out.println("currParams.classNames: " + currParams.classNames + " " +  classNamesLen + " " + currParams.numClasses); 
+		//System.out.println("SET CLASS NAMES: currParams.classNames: " + currParams.classNames + " " +  classNamesLen + " " + currParams.numClasses); 
 
 
 		for (int i=0; i<Math.max(classNamesLen, currParams.numClasses); i++) {

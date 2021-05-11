@@ -83,6 +83,9 @@ public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 		this.soundSpotUI= new SoundSpotUI(this); 
 		//load the previous settings
 		PamSettingManager.getInstance().registerSettings(this);
+		
+		System.out.println("LOADED CLASS NAMES: currParams.classNames: " + soundSpotParmas.classNames); 
+
 	}
 
 
@@ -305,7 +308,7 @@ public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 		if (soundSpotParmas==null) {
 			soundSpotParmas = new StandardModelParams(); 
 		}
-		//System.out.println("SoundSpot have been saved. : " + soundSpotParmas.modelPath); 
+		//System.out.println("SoundSpot have been saved. : " + soundSpotParmas.classNames); 
 		return soundSpotParmas;
 
 	}
@@ -320,7 +323,7 @@ public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 		StandardModelParams newParameters = (StandardModelParams) pamControlledUnitSettings.getSettings();
 		if (newParameters!=null) {
 			soundSpotParmas = newParameters.clone();
-			//System.out.println("SoundSpot have been restored. : " + soundSpotParmas.modelPath); 
+		//System.out.println("SoundSpot have been restored. : " + soundSpotParmas.classNames); 
 		}
 		else soundSpotParmas = new StandardModelParams(); 
 		return true;
