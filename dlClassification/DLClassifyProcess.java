@@ -285,6 +285,8 @@ public class DLClassifyProcess extends PamInstantProcess {
 	public void newModelResult(PredictionResult modelResult, GroupedRawData pamRawData) {
 
 		//the model result may be null if the classifier uses a new thread. 
+		
+		System.out.println("New segment: parent UID: " + pamRawData.getParentDataUnit().getUID());
 
 		//create a new data unit - always add to the model result section. 
 		DLDataUnit dlDataUnit = new DLDataUnit(pamRawData.getTimeMilliseconds(), pamRawData.getChannelBitmap(), 
@@ -376,26 +378,38 @@ public class DLClassifyProcess extends PamInstantProcess {
 
 
 	/**
-	 * Only to be used if clicks or clips are being processed. 
+	 * The classifier process works with a few buffers. The classificationBuffer
+	 * saves enough raw data so that arrays of images can be sent to the deep
+	 * learning model (which is faster). The next buffer involves detections -
+	 * either making one because there are model results that pass threshold or
+	 * saving the predictions to an existing detection. For offline processing these
+	 * buffers are problematic because they are only cleared when the next data unit
+	 * is added. This function can be used to bypass the buffers. Add raw data to
+	 * the segmenter process and the buffers will fill. Then call this function to
+	 * run the deep learning algorohtm and save the detections as annotation to a
+	 * data unit.
+	 * 
+	 * @param dataUnit - the data unit to add prediciton annotations to
+	 * 
 	 */
-	public void forceClickDataSave(PamDataUnit dataUnit) {
-
+	public void forceRunClassifier(PamDataUnit dataUnit) {
+		//first call run model to clear out the classification buffer if needs be
+		runModel(); 
+		classificationBuffer.clear(); 
+		
 		//need to implement multiple groups. 
 		for (int i=0; i<getSourceParams().countChannelGroups(); i++) {
-
+			  //System.out.println("Nummber segments " + modelResultDataBuffer[i].size() + " data unit len: " + dataUnit.getSampleDurationAsInt() + " samples");; 
 			//			System.out.println("RawDataIn: chan: " + pamRawData.getChannelBitmap()+ "  " +
 			//			PamUtils.hasChannel(getSourceParams().getGroupChannels(i), pamRawData.getChannelBitmap()) + 
 			//			" grouped source: " +getSourceParams().getGroupChannels(i)); 
-
 			if (PamUtils.hasChannel(getSourceParams().getGroupChannels(i), PamUtils.getSingleChannel(dataUnit.getChannelBitmap()))) {
 				if (groupDataBuffer[i].size()>0) {
-
-					//System.out.println("Save click annotation to " + lastParentDataUnit[i].getUID()); 
+				  //System.out.println("Save click annotation to " + lastParentDataUnit[i].getUID()); 
 					addDLAnnotation(dataUnit,groupDataBuffer[i],modelResultDataBuffer[i]); 
 					lastParentDataUnit[i]=null;
 					clearBuffer(i); 
 				}
-
 			}
 		}
 	}

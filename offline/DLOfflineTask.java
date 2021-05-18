@@ -26,11 +26,8 @@ public class DLOfflineTask extends OfflineTask<PamDataUnit<?,?>>{
 		this.dlControl.getDLClassifyProcess().clearOldData();	
 
 		super.addAffectedDataBlock(this.dlControl.getDLClassifyProcess().getDLDetectionDatablock());
-		//prediction datablock may also be affected. 
+		//prediction data block may also be affected. 
 		super.addAffectedDataBlock(this.dlControl.getDLClassifyProcess().getDLPredictionDataBlock());
-
-
-
 	}
 
 	@Override
@@ -41,17 +38,18 @@ public class DLOfflineTask extends OfflineTask<PamDataUnit<?,?>>{
 	@Override
 	public boolean processDataUnit(PamDataUnit<?, ?> dataUnit) {
 		
+	
 //		System.out.println("--------------");
-//		System.out.println("Offline task start: " + dataUnit.getUpdateCount() + " data " + dataUnit +  " ");
+//		System.out.println("Offline task start: " + dataUnit.getUpdateCount() + " UID " + dataUnit.getUID());
 
 		//Process a data unit
 		dlControl.getSegmenter().newData(dataUnit); 
-		
+				
 		//force click data save
-		dlControl.getDLClassifyProcess().forceClickDataSave(dataUnit);
+		dlControl.getDLClassifyProcess().forceRunClassifier(dataUnit);
 
 		/**
-		 * So the issue here is that the classification is not on tje same thread...
+		 * So the issue here is that the classification is not on the same thread...
 		 */
 //		System.out.println("Offline task complete: " + dataUnit.getUpdateCount() + " data " + dataUnit +  " no. annotations: " + dataUnit.getNumDataAnnotations() );
 		return true;
