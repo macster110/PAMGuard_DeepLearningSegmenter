@@ -3,6 +3,8 @@ package rawDeepLearningClassifier.dlClassification.genericModel;
 import org.apache.commons.io.FilenameUtils;
 import org.jamdev.jdl4pam.genericmodel.GenericModel;
 
+import PamModel.PamModel;
+import PamModel.PamModel.PluginClassloader;
 import rawDeepLearningClassifier.DLControl;
 import rawDeepLearningClassifier.dlClassification.animalSpot.StandardModelParams;
 
@@ -36,9 +38,14 @@ public class GenericModelWorker extends DLModelWorker<GenericPrediction> {
 
 	@Override
 	public void prepModel(StandardModelParams genericParams, DLControl dlControl) {
+		ClassLoader origCL = Thread.currentThread().getContextClassLoader();
 		try {
-			
 			if (genericParams.modelPath==null) return; 
+			
+			// get the plugin class loader and set it as the context class loader
+			PluginClassloader newCL = PamModel.getPamModel().getClassLoader();
+			Thread.currentThread().setContextClassLoader(newCL);
+			
 			//first open the model and get the correct parameters. 
 			genericModel = new GenericModel(genericParams.modelPath); 
 			
@@ -64,6 +71,8 @@ public class GenericModelWorker extends DLModelWorker<GenericPrediction> {
 			e.printStackTrace();
 			//WarnOnce.showWarning(null, "Model Load Error", "There was an error loading the model file.", WarnOnce.OK_OPTION); 
 		}
+		
+		Thread.currentThread().setContextClassLoader(origCL);
 
 	}
 	
