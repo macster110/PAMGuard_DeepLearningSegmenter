@@ -1,10 +1,7 @@
 package rawDeepLearningClassifier.dataPlotFX;
 
-import java.io.File;
-
 import PamguardMVC.PamDataBlock;
 import PamguardMVC.PamDataUnit;
-import dataModelFX.DataModelStyle;
 import dataPlotsFX.data.TDDataProviderFX;
 import dataPlotsFX.layout.TDGraphFX;
 import dataPlotsFX.rawClipDataPlot.RawClipDataInfo;
