@@ -4,12 +4,8 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
-import java.util.ArrayList;
-
-import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -66,7 +62,8 @@ public abstract class ImportExportPane extends PamHBox {
 		
 		//import the settings holder.
 		Button button = new Button("Import"); 
-		button.setGraphic(PamGlyphDude.createPamGlyph(MaterialDesignIcon.FILE_XML, PamGuiManagerFX.iconSize));
+//		button.setGraphic(PamGlyphDude.createPamGlyph(MaterialDesignIcon.FILE_XML, PamGuiManagerFX.iconSize));
+		button.setGraphic(PamGlyphDude.createPamIcon("mdi2f-file-excel", PamGuiManagerFX.iconSize));
 		button.setOnAction((action)->{
 
 			Path path = currentSettingsFile.toPath();
@@ -109,7 +106,8 @@ public abstract class ImportExportPane extends PamHBox {
 		
 		//import the settings holder.
 		Button button = new Button("Export"); 
-		button.setGraphic(PamGlyphDude.createPamGlyph(MaterialDesignIcon.FILE_EXPORT, PamGuiManagerFX.iconSize));
+//		button.setGraphic(PamGlyphDude.createPamGlyph(MaterialDesignIcon.FILE_EXPORT, PamGuiManagerFX.iconSize));
+		button.setGraphic(PamGlyphDude.createPamIcon("mdi2f-file-export", PamGuiManagerFX.iconSize));
 		button.setOnAction((action)->{
 
 			Path path = currentSettingsFile.toPath();

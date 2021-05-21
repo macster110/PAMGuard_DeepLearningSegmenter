@@ -1,25 +1,10 @@
 package rawDeepLearningClassifier.dlClassification.genericModel;
 
 import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.LinkOption;
-import java.nio.file.Path;
 import java.util.ArrayList;
 
-import org.controlsfx.control.PopOver;
-
-import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
-import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.layout.Pane;
-import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
-import pamViewFX.PamGuiManagerFX;
-import pamViewFX.fxGlyphs.PamGlyphDude;
 import pamViewFX.fxNodes.PamButton;
-import pamViewFX.fxNodes.PamHBox;
-import rawDeepLearningClassifier.dlClassification.animalSpot.StandardAdvModelPane;
 import rawDeepLearningClassifier.dlClassification.animalSpot.StandardModelPane;
 import rawDeepLearningClassifier.dlClassification.animalSpot.StandardModelParams;
 

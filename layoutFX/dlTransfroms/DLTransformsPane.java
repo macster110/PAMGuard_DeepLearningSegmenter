@@ -8,7 +8,6 @@ import org.jamdev.jdl4pam.transforms.DLTransform.DLTransformType;
 import org.jamdev.jdl4pam.transforms.FreqTransform;
 import org.jamdev.jdl4pam.transforms.WaveTransform;
 
-import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
@@ -73,7 +72,8 @@ public class DLTransformsPane extends PamBorderPane {
 		Label label = new Label("Add Transform"); 
 
 		MenuButton splitButton = new MenuButton(); 
-		splitButton.setGraphic(PamGlyphDude.createPamGlyph(MaterialDesignIcon.PLUS));
+//		splitButton.setGraphic(PamGlyphDude.createPamGlyph(MaterialDesignIcon.PLUS));
+		splitButton.setGraphic(PamGlyphDude.createPamIcon("mdi2p-plus"));
 
 		DLTransformType[]  dlTransformTypes = DLTransformType.values(); 
 

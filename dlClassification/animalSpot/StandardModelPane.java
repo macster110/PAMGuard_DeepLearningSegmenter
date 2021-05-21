@@ -13,7 +13,6 @@ import org.controlsfx.control.ToggleSwitch;
 import PamController.SettingsPane;
 import PamView.dialog.warn.WarnOnce;
 import ai.djl.Device;
-import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -140,7 +139,8 @@ public abstract class StandardModelPane extends SettingsPane<StandardModelParams
 
 		/**Basic classifier info**/
 		pathLabel = new Label("No classifier file selected"); 
-		PamButton pamButton = new PamButton("", PamGlyphDude.createPamGlyph(MaterialDesignIcon.FILE, PamGuiManagerFX.iconSize)); 
+//		PamButton pamButton = new PamButton("", PamGlyphDude.createPamGlyph(MaterialDesignIcon.FILE, PamGuiManagerFX.iconSize)); 
+		PamButton pamButton = new PamButton("", PamGlyphDude.createPamIcon("mdi2f-file", PamGuiManagerFX.iconSize)); 
 		
 		modelLoadIndicator = new ProgressIndicator(-1);
 		modelLoadIndicator.setVisible(false);
@@ -208,7 +208,8 @@ public abstract class StandardModelPane extends SettingsPane<StandardModelParams
 		hBox.getChildren().addAll(modelLoadIndicator, pathLabel, pamButton); 
 		hBox.setAlignment(Pos.CENTER_RIGHT);
 
-		PamButton advButton = new PamButton("", PamGlyphDude.createPamGlyph(MaterialDesignIcon.SETTINGS, PamGuiManagerFX.iconSize)); 
+//		PamButton advButton = new PamButton("", PamGlyphDude.createPamGlyph(MaterialDesignIcon.SETTINGS, PamGuiManagerFX.iconSize)); 
+		PamButton advButton = new PamButton("", PamGlyphDude.createPamIcon("mdi2c-cog", PamGuiManagerFX.iconSize)); 
 		advButton.setMinWidth(30);
 		advButton.setOnAction((action)->{
 			//pop up window with adv settings.

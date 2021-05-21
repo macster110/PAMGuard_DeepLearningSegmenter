@@ -5,7 +5,6 @@ import PamDetection.RawDataUnit;
 import PamguardMVC.PamDataBlock;
 import clickDetector.ClickDetection;
 import clipgenerator.ClipDataUnit;
-import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -24,7 +23,6 @@ import pamViewFX.fxNodes.PamSpinner;
 import pamViewFX.fxNodes.PamVBox;
 import pamViewFX.fxNodes.pamDialogFX.PamDialogFX;
 import pamViewFX.fxNodes.utilityPanes.GroupedSourcePaneFX;
-import pamViewFX.fxStyles.PamStylesManagerFX;
 import rawDeepLearningClassifier.DLControl;
 import rawDeepLearningClassifier.RawDLParams;
 import rawDeepLearningClassifier.dlClassification.DLClassiferModel;
@@ -144,7 +142,8 @@ public class RawDLSettingsPane  extends SettingsPane<RawDLParams>{
 
 		//button to set default hop size
 		Button defaultButton = new Button();
-		defaultButton.setGraphic(PamGlyphDude.createPamGlyph(MaterialDesignIcon.REFRESH, PamGuiManagerFX.iconSize-3));
+//		defaultButton.setGraphic(PamGlyphDude.createPamGlyph(MaterialDesignIcon.REFRESH, PamGuiManagerFX.iconSize-3));
+		defaultButton.setGraphic(PamGlyphDude.createPamIcon("mdi2r-refresh", PamGuiManagerFX.iconSize-3));
 		defaultButton.setTooltip(new Tooltip("Set default hop size"));
 		defaultButton.setOnAction((action)->{
 			hopLength.getValueFactory().setValue(Math.round(windowLength.getValue()/2));
