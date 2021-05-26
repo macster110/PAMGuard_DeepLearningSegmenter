@@ -239,6 +239,8 @@ public class GenericDLClassifier implements DLClassiferModel, PamSettings {
 	 */
 	public ArrayList<DLTransfromParams> getDLTransformParams(ArrayList<DLTransform> dlTransfroms) {
 		ArrayList<DLTransfromParams> dlTransformParams = new ArrayList<DLTransfromParams>(); 
+		
+		if (genericModelParams.dlTransfroms==null) return null; 
 		//need to set the generic model params. 
 		for (int i=0; i<genericModelParams.dlTransfroms.size(); i++) {
 			dlTransformParams.add(new SimpleTransformParams(dlTransfroms.get(i).getDLTransformType(), ((SimpleTransform) dlTransfroms.get(i)).getParams())); 
