@@ -19,6 +19,7 @@ import PamView.PamSidePanel;
 import PamView.WrapperControlledGUISwing;
 import PamguardMVC.PamDataBlock;
 import PamguardMVC.PamRawDataBlock;
+import ai.djl.engine.Engine;
 import dataPlotsFX.data.TDDataProviderRegisterFX;
 import detectionPlotFX.data.DDPlotRegister;
 import pamViewFX.fxNodes.pamDialogFX.PamDialogFX2AWT;
@@ -177,6 +178,14 @@ public class DLControl extends PamControlledUnit implements PamSettings {
 
 		PamRawDataBlock rawDataBlock = PamController.getInstance()
 				.getRawDataBlock(rawDLParmas.groupedSourceParams.getDataSource());
+		
+		/**
+		 * In the latest release of djl (0.11.0) there is a bug with the dll's of tensorflow and 
+		 * pytorch. If tensorflow is loaded before pytorch there is a conglict in dll's and 
+		 * pytorch models will not load. This is a workaround for now and the bug has been logged and 
+		 * will bne fixed in subsequent djl releases. 
+		 */
+		Engine.getEngine("PyTorch"); 
 
 		// segment the raw sound data
 		addPamProcess(segmenterProcess = new SegmenterProcess(this, rawDataBlock));
