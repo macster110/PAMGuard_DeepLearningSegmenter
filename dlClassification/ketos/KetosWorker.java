@@ -9,6 +9,8 @@ import org.jamdev.jdl4pam.transforms.DLTransform;
 import org.jamdev.jdl4pam.transforms.DLTransformsFactory;
 import org.jamdev.jdl4pam.transforms.jsonfile.DLTransformsParser;
 
+import PamModel.PamModel;
+import PamModel.PamModel.PluginClassloader;
 import rawDeepLearningClassifier.DLControl;
 import rawDeepLearningClassifier.dlClassification.animalSpot.StandardModelParams;
 import rawDeepLearningClassifier.dlClassification.genericModel.DLModelWorker;
@@ -41,7 +43,17 @@ public class KetosWorker extends DLModelWorker<KetosResult> {
 	 * Prepare the model 
 	 */
 	public void prepModel(StandardModelParams ketosDLParams, DLControl dlControl) {
+		ClassLoader origCL = Thread.currentThread().getContextClassLoader();
 		try {
+
+			// get the plugin class loader and set it as the context class loader
+			// NOTE THAT THIS IS REQUIRED TO MAKE THIS MODULE RUN AS A PLUGIN WHEN THE CLASS FILES
+			// ARE BUNDLED INTO A FATJAR, HOWEVER THIS WILL STOP THE PLUGIN FROM RUNNING AS A SEPARATE
+			// PROJECT IN ECLIPSE.  So while testing the code and debugging, make sure the 
+			if (DLControl.PLUGIN_BUILD) {
+				PluginClassloader newCL = PamModel.getPamModel().getClassLoader();
+				Thread.currentThread().setContextClassLoader(newCL);
+			}
 			//first open the model and get the correct parameters. 
 			ketosModel = new KetosModel(new File(ketosDLParams.modelPath)); 
 		}
@@ -51,23 +63,23 @@ public class KetosWorker extends DLModelWorker<KetosResult> {
 		}
 
 		try {
-			
+
 			//read the JSON string from the the file. 
 			String jsonString  = DLTransformsParser.readJSONString(new File(ketosModel.getAudioReprFile()));
 
 			//convert the JSON string to a parameters object. 
 			KetosParams ketosParams = new KetosParams(jsonString); 			
 
-//			System.out.println(ketosParams.toString());
+			//			System.out.println(ketosParams.toString());
 
 			//generate the transforms from the KetosParams objectts. 
 			ArrayList<DLTransform> transforms =	DLTransformsFactory.makeDLTransforms(ketosParams.dlTransforms); 
-			
+
 			//System.out.println("Ketos transforms: " + transforms); 
 
 			//set the transforms. 
 			setModelTransforms(transforms); 
-			
+
 			//ketosDLParams.dlTransfroms = transforms; //this is done after prep model in the settings pane. 
 			ketosDLParams.defaultSegmentLen = ketosParams.seglen*1000.; //the segment length in microseconds. 
 			//ketosParams.classNames = new String[] {"Noise", "Right Whale"}; // FIXME; 
@@ -88,20 +100,21 @@ public class KetosWorker extends DLModelWorker<KetosResult> {
 			//					System.out.println("Class name " + i + "  "  + dlParams.classNames[i]); 
 			//				}
 			//			}
-//			ketosDLParams.classNames = dlControl.getClassNameManager().makeClassNames(ketosParams.classNames); 
-//
-//						if (ketosParams.classNames!=null) {
-//							for (int i = 0; i<ketosDLParams.classNames.length; i++) {
-//								System.out.println("Class name " + i + "  "  + ketosDLParams.classNames[i].className + " ID " + ketosDLParams.classNames[i].ID ); 
-//							}
-//						}
-		
+			//			ketosDLParams.classNames = dlControl.getClassNameManager().makeClassNames(ketosParams.classNames); 
+			//
+			//						if (ketosParams.classNames!=null) {
+			//							for (int i = 0; i<ketosDLParams.classNames.length; i++) {
+			//								System.out.println("Class name " + i + "  "  + ketosDLParams.classNames[i].className + " ID " + ketosDLParams.classNames[i].ID ); 
+			//							}
+			//						}
+
 		}
 		catch (Exception e) {
 			ketosModel=null; 
 			e.printStackTrace();
 			//WarnOnce.showWarning(null, "Model Metadata Error", "There was an error extracting the metadata from the model.", WarnOnce.OK_OPTION); 
 		}
+		Thread.currentThread().setContextClassLoader(origCL);
 	}
 
 
@@ -110,8 +123,8 @@ public class KetosWorker extends DLModelWorker<KetosResult> {
 	public float[] runModel(float[][][] transformedDataStack) {
 		return ketosModel.runModel(transformedDataStack);
 	}
-	
-	
+
+
 	@Override
 	public KetosResult makeModelResult(float[]  prob, double time) {
 		KetosResult soundSpotResult =  new KetosResult(prob); 

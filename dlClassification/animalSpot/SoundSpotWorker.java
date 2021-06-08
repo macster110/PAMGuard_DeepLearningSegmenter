@@ -3,6 +3,8 @@ package rawDeepLearningClassifier.dlClassification.animalSpot;
 import org.jamdev.jdl4pam.animalSpot.AnimalSpotModel;
 import org.jamdev.jdl4pam.animalSpot.AnimalSpotParams;
 
+import PamModel.PamModel;
+import PamModel.PamModel.PluginClassloader;
 import rawDeepLearningClassifier.DLControl;
 import rawDeepLearningClassifier.dlClassification.genericModel.DLModelWorker;
 
@@ -36,7 +38,18 @@ public class SoundSpotWorker extends DLModelWorker<SoundSpotResult> {
 	 * Prepare the model 
 	 */
 	public void prepModel(StandardModelParams soundSpotParams, DLControl dlControl) {
+		ClassLoader origCL = Thread.currentThread().getContextClassLoader();
 		try {
+			
+			// get the plugin class loader and set it as the context class loader
+			// NOTE THAT THIS IS REQUIRED TO MAKE THIS MODULE RUN AS A PLUGIN WHEN THE CLASS FILES
+			// ARE BUNDLED INTO A FATJAR, HOWEVER THIS WILL STOP THE PLUGIN FROM RUNNING AS A SEPARATE
+			// PROJECT IN ECLIPSE.  So while testing the code and debugging, make sure the 
+			if (DLControl.PLUGIN_BUILD) {
+				PluginClassloader newCL = PamModel.getPamModel().getClassLoader();
+				Thread.currentThread().setContextClassLoader(newCL);
+			}
+			
 			//first open the model and get the correct parameters. 
 			soundSpotModel = new AnimalSpotModel(soundSpotParams.modelPath); 
 		}
@@ -84,6 +97,8 @@ public class SoundSpotWorker extends DLModelWorker<SoundSpotResult> {
 			e.printStackTrace();
 			//WarnOnce.showWarning(null, "Model Metadata Error", "There was an error extracting the metadata from the model.", WarnOnce.OK_OPTION); 
 		}
+		
+		Thread.currentThread().setContextClassLoader(origCL);
 	}
 
 

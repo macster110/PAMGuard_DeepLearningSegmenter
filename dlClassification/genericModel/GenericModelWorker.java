@@ -46,10 +46,7 @@ public class GenericModelWorker extends DLModelWorker<GenericPrediction> {
 			// NOTE THAT THIS IS REQUIRED TO MAKE THIS MODULE RUN AS A PLUGIN WHEN THE CLASS FILES
 			// ARE BUNDLED INTO A FATJAR, HOWEVER THIS WILL STOP THE PLUGIN FROM RUNNING AS A SEPARATE
 			// PROJECT IN ECLIPSE.  So while testing the code and debugging, make sure the 
-			// stillDebuggingCode boolean is set to true so that the class loader isn't changed.  When
-			// ready to compile into a fatjar, however, set it to false
-			boolean stillDebuggingCode = true;
-			if (!stillDebuggingCode) {
+			if (DLControl.PLUGIN_BUILD) {
 				PluginClassloader newCL = PamModel.getPamModel().getClassLoader();
 				Thread.currentThread().setContextClassLoader(newCL);
 			}

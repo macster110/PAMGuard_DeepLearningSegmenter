@@ -89,6 +89,12 @@ import rawDeepLearningClassifier.segmenter.SegmenterProcess;
  *
  */
 public class DLControl extends PamControlledUnit implements PamSettings {
+	
+	/**
+	 * PLUGIN_BUILD boolean is set to true so that the class loader isn't changed.  When
+	 * ready to compile into a fatjar set to true. When using eclipse set to false. 
+	 */
+	public static final boolean PLUGIN_BUILD = true; //default is false. 
 
 	/**
 	 * Flag for processing start
