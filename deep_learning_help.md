@@ -46,10 +46,10 @@ If the data source has already produced data units, e.g. clicks or clips, then t
 
 ### Segmentation
 
-The segmentation section defines how the raw data is segmented. The 
+The segmentation section defines how the raw data is segmented. Some deep learning models require a specific segmnt size and others can be run with different segment sizes. The Window Length is the size of the segment in smaples. The Hop Length is the overlap (from the strat of the segment). A Hop Length which is the same as the segment length means no overlap. If a prediciton passes threshold then the raw data from segments is saved to PAMGuard binary files. If concurrent segments pass a prediciton threshold then they are saved as one data unit. The Max remergae is the maximum number of segments that can form a single data unit before a new data unit is created. 
 
 ### Deep learning model 
 
-The deep leanring model section is used to select the deep leanring model. The user must select the framework the mdoel is from. 
+The deep learning model section is used to select the deep leanring model. The user must select the framework the mdoel is from. 
 
 ###
