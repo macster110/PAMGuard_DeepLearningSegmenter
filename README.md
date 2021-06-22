@@ -16,6 +16,12 @@ The structure of the module is as follows.
 3) The deep learning model: passes the transformed data to the model and waits for a result.
 4) Data packaging: packages the results into a data unit which is passed onto PAMGuard's displays and downstream processes.
 
+<p align="center">
+  <img width="900" height="380" src = "resources/deep_learning_module_process.png">
+</p>
+
+_A diagram of how the deep learning module works in PAMGuard. An input waveform is segmented into chunks. A series of transforms are applied to each chunk creating the input for the deep learning model. The transformed chunks are sent to the model. The results from the model are saved and can be viewed in real time (e.g. mitigation) or in post processing (e.g. data from SoundTraps)._
+
 The module is based on AWS's [deep java library (djl)](https://djl.ai/) and [JPAM](https://github.com/macster110/jpam) which does most of the heavy lifting loading and runnng models and is model independent i.e. you can use models trained in PyTorch, Tensorflow etc. The main job of the PAMGuard module is therefore to convert the raw sound data into a format suitable for a loaded model and provide a user interface. The deep learning module is designed primarily to work with existing model frameworks - i.e. used in conjuction with libraries that are used to train different models that package the required metadata for transforming acoustic data into the model.
 
 ## Deep Learning Models
@@ -24,7 +30,7 @@ The module is based on AWS's [deep java library (djl)](https://djl.ai/) and [JPA
 A generic model allows a user to load any model compatible with the djl (PyTorch (JIT), Tenserflow, ONXX)library and then manually set up a series of transforms using PAMGuard's transform library. It is recomended that users use an existing framework instead of a generic model as these models will automatically generate the required transforms. 
 
 ### AnimalSpot
-[ANIMAL-SPOT](https://github.com/ChristianBergler/ANIMAL-SPOT) is a deep learning based framework which was initially designed for [killer whale sound detection]((https://github.com/ChristianBergler/ORCA-SPOT)) in noise heavy underwater recordings (see [Bergler et al. 2019](https://www.nature.com/articles/s41598-019-47335-w). It has now been expanded to a be species independent framework for training acoustic deep learning models using pytorch and python. Imported AnimalSpot model will automatically set up their own data transforms and output classes. 
+[ANIMAL-SPOT](https://github.com/ChristianBergler/ANIMAL-SPOT) is a deep learning based framework which was initially designed for [killer whale sound detection]((https://github.com/ChristianBergler/ORCA-SPOT)) in noise heavy underwater recordings (see [Bergler et al. 2019](https://www.nature.com/articles/s41598-019-47335-w)). AnimalSpot has now been expanded to a be species independent framework for training acoustic deep learning models using PyTorch and Python. Imported AnimalSpot model will automatically set up their own data transforms and output classes. 
 
 ### Ketos
 [Ketos](https://meridian.cs.dal.ca/2015/04/12/ketos/) is an acoustic deep learning framework based on Tensorflow and developed by Meridian. It has excellent resources and tutorials and pytorch libraries can be installed easily via pip. Imported Ketos model will automatically set up their own data transforms and output classes. 
