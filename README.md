@@ -29,7 +29,7 @@ A generic model allows a user to load any model compatible with the djl (PyTorch
 ### Ketos
 [Ketos](https://meridian.cs.dal.ca/2015/04/12/ketos/) is an acoustic deep learning framework based on Tensorflow and developed by Meridian. It has excellent resources and tutorials and pytorch libraries can be installed easily via pip. Imported Ketos model will automatically set up their own data transforms and output classes. 
 
-## Using deep Learning Segmenter
+## Deep learning module quick start
 
 ### Installing the module
 The module is now a core module in PAMGaurd and will be released with version 2.01.06. 
@@ -37,19 +37,21 @@ The module is now a core module in PAMGaurd and will be released with version 2.
 ### Adding to PAMGuard's data model
 The module is  straightforward to use. Go to _ _File ->Add Modules -> Classifiers -> Raw Deep LEarning Classifier_ _ . This will add the module to the PAMGuard data model. Once the module has been added to the data model go to  _ _Settings -> Deep Learning Segmenter_ _ to open the module settings. Select the channels, window length, hop size and deep leanring model and you are ready to start analysing data. A PAMGuard settings files which simulates and localises simulated dolphin whistles using the OrcaSpot model is located in the resources folder. 
 
+
 <p align="center">
-<center><img src="resources/PG_DL_settings.png" width="512"></center>
+  <img width="512" height="512" src = "resources/PG_DL_settings.png">
 </p>
 
-An example the user interface for loading a model. The module allows a users to select a model framework and then load a model file. The model will geenrate a list of transforms that convert the raw sound data to a suitbale input. Users have the option to edit transforms associated with a loaded model if necessary. 
+_An example the user interface for loading a model. The module allows a users to select a model framework and then load a model file. The model will geenrate a list of transforms that convert the raw sound data to a suitbale input. Users have the option to edit transforms associated with a loaded model if necessary._
 
 <center><img src="resources/OrcaSpot_help1.png" width="1024"></center>
-An example of OrcaSpot (a now retired framework) working on some simulated data and explanations of the various GUI components. Here the output from the algorithm is being sent to a beam former which provides a bearing to the detected Orca call.
 
-### Tutorials and help
-The offical module help is [here](https://github.com/macster110/PAMGuard_resources). 
+_An example of OrcaSpot (a now retired framework) working on some simulated data and explanations of the various GUI components. Here the output from the algorithm is being sent to a beam former which provides a bearing to the detected Orca call._
 
-Tutorials can be found [here](https://github.com/macster110/PAMGuard_resources). 
+## Tutorials and help
+A detailed module help file is [here](https://github.com/macster110/PAMGuard_resources). 
+
+Comprehensive tutorials can be found [here](https://github.com/macster110/PAMGuard_resources). 
 
 ## Development Environment
 The best way to develop a PAMGuard external plugin is to download the PAMGuard project [(instruction here for Eclipse)](https://www.pamguard.org/15_SourceCode.html) (use the  Maven branch) and copy and past this repository in as a package in the main src folder. Then, in PamModel.java around line 753 in the classifiers group add
