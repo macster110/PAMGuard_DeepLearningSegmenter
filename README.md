@@ -16,7 +16,7 @@ The structure of the module is as follows.
 3) The deep learning model: passes the transformed data to the model and waits for a result.
 4) Data packaging: packages the results into a data unit which is passed onto PAMGuard's displays and downstream processes.
 
-The module is based on AWS's [deep java library (djl)](https://djl.ai/) which does most of the heavy lifting loading and runnng models and is model independent i.e. you can use models trained in PyTorch, Tenserflow etc. The main job of the PAMGuard module is therfore to convert the raw sound data into a format suitable for a loaded model and provide a user interface. The deep learning module is therfore designed primarily to work with model frameworks - i.e. used in conjuction with libraries that are used to train different models that package the required metadata for transforming acoustic data into the model.
+The module is based on AWS's [deep java library (djl)](https://djl.ai/) and [JPAM](https://github.com/macster110/jpam) which does most of the heavy lifting loading and runnng models and is model independent i.e. you can use models trained in PyTorch, Tensorflow etc. The main job of the PAMGuard module is therefore to convert the raw sound data into a format suitable for a loaded model and provide a user interface. The deep learning module is designed primarily to work with existing model frameworks - i.e. used in conjuction with libraries that are used to train different models that package the required metadata for transforming acoustic data into the model.
 
 ## Deep Learning Models
 
@@ -24,15 +24,18 @@ The module is based on AWS's [deep java library (djl)](https://djl.ai/) which do
 A generic model allows a user to load any model compatible with the djl (PyTorch (JIT), Tenserflow, ONXX)library and then manually set up a series of transforms using PAMGuard's transform library. It is recomended that users use an existing framework instead of a generic model as these models will automatically generate the required transforms. 
 
 ### AnimalSpot
-[ANIMAL-SPOT](https://github.com/ChristianBergler/ORCA-SPOT) is a deep learning based algorithm which was initially designed for killer whale sound detection in noise heavy underwater recordings. 
+[ANIMAL-SPOT](https://github.com/ChristianBergler/ANIMAL-SPOT) is a deep learning based framework which was initially designed for [killer whale sound detection]((https://github.com/ChristianBergler/ORCA-SPOT)) in noise heavy underwater recordings (see [Bergler et al. 2019](https://www.nature.com/articles/s41598-019-47335-w). It has now been expanded to a be species independent framework for training acoustic deep learning models using pytorch and python.
+
+### Ketos
+[Ketos](https://meridian.cs.dal.ca/2015/04/12/ketos/) is an acoustic deep learning framework based on Tensorflow and developed by Meridian. It has excellent resources and tutorials and pytorch libraries can be installed easily via pip. 
 
 ## Using deep Learning Segmenter
 
-### Installing the Plugin
-Installing the PAMGuard plugin is easy and detailed on the [PAMGuard website](https://www.pamguard.org/66_CreatingExternalPlug-ins.html). The jar file is located in the resources folder (currently not available until we are out of beta). 
+### Installing the module
+The module is now a core module in PAMGaurd and will be released with version 2.01.06. 
 
 ### Adding to PAMGuard's data model
-The module is  straightforward to use. Go to _ _File ->Add Modules -> Classifiers -> Deep Learning Segmener_ _ . This will add the module to the PAMGuard data model. Once the module has been added to the data model go to  _ _Settings -> Deep Learning Segmenter_ _ to open the module settings. Select the channels, window length, hop size and deep leanring model and you are ready to start analysing data. A PAMGuard settings files which simulates and localises simulated dolphin whistles using the OrcaSpot model is located in the resources folder. 
+The module is  straightforward to use. Go to _ _File ->Add Modules -> Classifiers -> Raw Deep LEarning Classifier_ _ . This will add the module to the PAMGuard data model. Once the module has been added to the data model go to  _ _Settings -> Deep Learning Segmenter_ _ to open the module settings. Select the channels, window length, hop size and deep leanring model and you are ready to start analysing data. A PAMGuard settings files which simulates and localises simulated dolphin whistles using the OrcaSpot model is located in the resources folder. 
 
 <p align="center">
 <center><img src="resources/PG_DL_settings.png" width="512"></center>
@@ -42,6 +45,11 @@ An example the user interface for loading a model. The module allows a users to 
 
 <center><img src="resources/OrcaSpot_help1.png" width="1024"></center>
 An example of OrcaSpot (a now retired framework) working on some simulated data and explanations of the various GUI components. Here the output from the algorithm is being sent to a beam former which provides a bearing to the detected Orca call.
+
+### Tutorials and help
+The offical module help is [here](https://github.com/macster110/PAMGuard_resources). 
+
+Tutorials can be found [here](https://github.com/macster110/PAMGuard_resources). 
 
 ## Development Environment
 The best way to develop a PAMGuard external plugin is to download the PAMGuard project [(instruction here for Eclipse)](https://www.pamguard.org/15_SourceCode.html) (use the  Maven branch) and copy and past this repository in as a package in the main src folder. Then, in PamModel.java around line 753 in the classifiers group add
@@ -54,9 +62,6 @@ The best way to develop a PAMGuard external plugin is to download the PAMGuard p
 ```
 Adding a new DeepLearning model requires a new class satisfying the interface ```DLClassifierModel``` in the _ deepLearningClassiifcation _ package. This then needs to be added to an array (```ArrayList<DLClassiferModel> dlModels```) in ```DLControl```.
 
-## TODO and Missing Features
-* There are no help files. 
-* Plug module jar file still needs to be created.  
 
 ## Depracated
 ### OrcaSpot
