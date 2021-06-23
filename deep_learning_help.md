@@ -42,11 +42,13 @@ The deep learning module accepts any raw data source i.e. any data source that c
 
 If the data is continous, e.g. from the Sound Acquisiiton module then deep leanring data units are saved to PAMGuard's datamanagement system if they pass a user defined prediciton threshold. The raw waveform data for segments whcih pass prediciton threshold is also saved. 
 
-If the data source has already produced data units, e.g. clicks or clips, then the deep learning results are saved as annotation attached the data unit. The data is segmented in exactly the same way as continous data and thus, depending on the lenght of raw data, there can be more than one prediciton per dat unit. 
+If the data source has already produced data units, e.g. clicks or clips, then the deep learning results are saved as annotation attached the data unit. The data is segmented in exactly the same way as continous data and thus, depending on the lenght of raw data, there can be more than one prediciton per dat unit.
+
+Channel grouping controls are used to arrnage channels into groups. Channels in the same group are saved togethe for downstream processes. So for example if channels 0 and 2 and are in a group then the raw waveform data from both channel 0 and 2 will be saved and can be used in downstream processes, e.g. for localisation. 
 
 ### Segmentation
 
-The segmentation section defines how the raw data is segmented. Some deep learning models require a specific segmnt size and others can be run with different segment sizes. The Window Length is the size of the segment in smaples. The Hop Length is the overlap (from the strat of the segment). A Hop Length which is the same as the segment length means no overlap. If a prediciton passes threshold then the raw data from segments is saved to PAMGuard binary files. If concurrent segments pass a prediciton threshold then they are saved as one data unit. The Max remergae is the maximum number of segments that can form a single data unit before a new data unit is created. 
+The segmentation section defines how the raw data is segmented. Some deep learning models require a specific segment size and others can be run with different segment sizes. The _Window Length_ is the size of the segment in samples. The _Hop Length_ is the overlap (from the strat of the segment). A _Hop Length_ which is the same as the segment length means no overlap. If a prediciton passes threshold then the raw data from segments is saved to PAMGuard binary files. If concurrent segments pass a prediciton threshold then they are saved as one data unit. The _Max. re-merge_ is the maximum number of segments that can form a single data unit before a new data unit is created. 
 
 ### Deep Learning Model 
 
@@ -64,6 +66,18 @@ A generic model must be set up via the Advanced menu button.
 
 
 
-### AnimalSpot and Ketos models
+#### AnimalSpot and Ketos models
 
-If using an AnimalSpot or Ketos model then all transforms are automatically set up. A "
+If using an AnimalSpot or Ketos model then all transforms are automatically set up. The transforms can be viewed and altered via the Advanced menu button but in the majority of cases these settings should not be used. It is advisiable to select "Use defualt segment length" to change the _Window length_ to the default for the selected model. Note that this is often necessary for Ketos models but usually not a requirement for AnimalSpot models. 
+
+
+## Running
+### Real time
+I  real time the deep learning model runs autimtically when priocessing starts. A warning will appear if there are issues with the model and/or it cannot cope with real time speeds. 
+
+### Viewer Mode
+
+
+## Viewing and exporting results
+
+
