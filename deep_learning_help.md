@@ -64,14 +64,21 @@ Once the model has loaded there a some unique options depending on the currently
 
 A generic model must be set up via the Advanced menu button. 
 
+<p align="center">
+  <img width="700" height="630" src = "resources/deep_leanring_module_help.png">
+</p>
+
+The _transforms_ tab in the advanced menu pane allows a user to set up a set of transforms. The + button adds a transforms and these can be dragged in order using the drag handles on the left of each transform. Each transform pane can be expanded to show transform specific settings. The bottoms of the advanced settings pane shows a preview of the data that will be input into the deep learning model, including the shape size. 
 
 
+<p align="center">
+  <img width="700" height="630" src = "resources/deep_leanring_module_help.png">
+</p>
 
 
 #### AnimalSpot and Ketos models
 
 If using an AnimalSpot or Ketos model then all transforms are automatically set up. The transforms can be viewed and altered via the Advanced menu button but in the majority of cases these settings should not be used. It is advisiable to select "Use defualt segment length" to change the _Window length_ to the default for the selected model. Note that this is often necessary for Ketos models but usually not a requirement for AnimalSpot models. 
-
 
 ## Running
 ### Real time
@@ -81,9 +88,9 @@ I  real time the deep learning model runs automatically when priocessing starts.
 The deep learning module can be re-run on _detector_ data (e.g. click or clip detections) in PAMGuard _viewer_ mode.Detections can be reclassified by selecting the _Settings > Raw Deep Learning Classifier > Reclassify detections_. Select the data range in the reprocessing dialog e.g. Loaded Data and select _Start_. Detections without a deep leanring annotation will have one added and detections with an exisiting annotation will have it overwritten. 
 
 ## Viewing and exporting results
-Output from the deep learning module can be view in PAMGuard viewer mode, or extracted from binary files using MATLAB or R. 
+Output from the deep learning module can be viewed in PAMGuard viewer mode, or extracted from binary files using MATLAB or R. 
 
 ### PAMGuard viewer mode
-
+Detections form continous raw data are shown in the datagram in the same way as all data streams in PAMGuard. The Time base display FX is best way to view the data outputs from the deep learning algorithm. 
 
 
