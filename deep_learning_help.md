@@ -28,15 +28,15 @@ A generic model allows a user to load any model compatible with the djl (PyTorch
 The module can be added from the _File>  Add modules > Classifier > Raw deep learning classifier_ menu or by right clicking in the data model. More than one instance of the module can be added if multiple deep leanring models are required. 
 
 ## Module settings
-
-The module settings are opened by selecting the  _Settings > Raw deep learning classifier_ menu. The d
+The module settings are opened by selecting the  _Settings > Raw deep learning classifier_ menu. The main settings pane is shown below and is split into three sections, _Raw Sound Data_, _Segmentation_ and _Deep Learning Model_
 
 <p align="center">
   <img width="700" height="630" src = "resources/deep_leanring_module_help.png">
 </p>
+_The main settings pane for the deep learning module with descriptions_
 
 
-### Raw Data source
+### Raw Sound Data
 
 The deep learning module accepts any raw data source i.e. any data source that contains raw waveform data.
 
@@ -48,8 +48,22 @@ If the data source has already produced data units, e.g. clicks or clips, then t
 
 The segmentation section defines how the raw data is segmented. Some deep learning models require a specific segmnt size and others can be run with different segment sizes. The Window Length is the size of the segment in smaples. The Hop Length is the overlap (from the strat of the segment). A Hop Length which is the same as the segment length means no overlap. If a prediciton passes threshold then the raw data from segments is saved to PAMGuard binary files. If concurrent segments pass a prediciton threshold then they are saved as one data unit. The Max remergae is the maximum number of segments that can form a single data unit before a new data unit is created. 
 
-### Deep learning model 
+### Deep Learning Model 
 
-The deep learning model section is used to select the deep leanring model. The user must select the framework the mdoel is from. 
+The deep learning model section is used to select the deep learning model. The user must select the framework the model is from the in drop down menu e.g. Generic model. Note that each model type has a unique user interface which then appears below the drop down menu, however, currently these all look fairly similar. 
 
-###
+All the model types require the user to first select a model file using the browse button (File icon). A wait icon will appear and the model will be loaded. if the model loading is successful then the filename of the model will appear (e.g.  saved_model.pb)
+
+_Note: when you first load a model  be connected to the internet as PAMGuard will download the correcty libraries for your computer to open the speciifc model. On Windows machine these libraries are found in a hidden folder called ai.djl. in your user account folder._
+
+Once the model has loaded there a some unique options depending on the currently selected framework. 
+
+#### Generic Model
+
+A generic model must be set up via the Advanced menu button. 
+
+
+
+### AnimalSpot and Ketos models
+
+If using an AnimalSpot or Ketos model then all transforms are automatically set up. A "
