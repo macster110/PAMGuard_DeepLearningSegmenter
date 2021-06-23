@@ -66,6 +66,8 @@ A generic model must be set up via the Advanced menu button.
 
 
 
+
+
 #### AnimalSpot and Ketos models
 
 If using an AnimalSpot or Ketos model then all transforms are automatically set up. The transforms can be viewed and altered via the Advanced menu button but in the majority of cases these settings should not be used. It is advisiable to select "Use defualt segment length" to change the _Window length_ to the default for the selected model. Note that this is often necessary for Ketos models but usually not a requirement for AnimalSpot models. 
@@ -73,11 +75,15 @@ If using an AnimalSpot or Ketos model then all transforms are automatically set 
 
 ## Running
 ### Real time
-I  real time the deep learning model runs autimtically when priocessing starts. A warning will appear if there are issues with the model and/or it cannot cope with real time speeds. 
+I  real time the deep learning model runs automatically when priocessing starts. A warning will appear if there are issues with the model and/or it cannot cope with real time speeds. 
 
 ### Viewer Mode
-
+The deep learning module can be re-run on _detector_ data (e.g. click or clip detections) in PAMGuard _viewer_ mode.Detections can be reclassified by selecting the _Settings > Raw Deep Learning Classifier > Reclassify detections_. Select the data range in the reprocessing dialog e.g. Loaded Data and select _Start_. Detections without a deep leanring annotation will have one added and detections with an exisiting annotation will have it overwritten. 
 
 ## Viewing and exporting results
+Output from the deep learning module can be view in PAMGuard viewer mode, or extracted from binary files using MATLAB or R. 
+
+### PAMGuard viewer mode
+
 
 
