@@ -108,7 +108,7 @@ Detections form continuous raw data are shown in the datagram in the same way as
 The Time base display FX is best way to view detailed data outputs from the deep learning algorithm. The time base display can display almost all data types in PAMGuard on a large variety of different data axis. For example, click detections can be displayed on an amplitude, bearing, ICI, waveform and/or frequency axis. Deep learning detections (i.e. data units which have been saved from raw data using the deep learning detector) can be displayed on the time base display in the same way as many other detections and in addition, there is a symbol manager options which allows the deep learning detections or other detections which have been classified by the deep learning module to be coloured by prediction class. This means that a manual analyst can quickly navigate to detections with high prediction values for a certain class. Hovering over or right clicking on a data unit in the time display and selecting the information button, will show the data unit’s metadata, including the prediction values for all output classes from the deep learning model. 
 
 <p align="center">
-  <img src = "resources/bat_deep_learning.png">
+  <img src = "resources/bat_time_base_display.png">
 </p>
 
 _An example click detection module output coloured by deep learning annotations. Click detections are annotated with the results from the deep learning module. The symbol manager in the time base display can be used to colour the clicks by the prediction for a selected class_
