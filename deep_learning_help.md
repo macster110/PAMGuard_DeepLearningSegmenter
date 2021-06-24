@@ -19,7 +19,7 @@ _A diagram of how the deep learning module works in PAMGuard. An input waveform 
 A generic model allows a user to load any model compatible with the djl (PyTorch (JIT), Tenserflow, ONXX)library and then manually set up a series of transforms using PAMGuard's transform library. It is recomended that users use an existing framework instead of a generic model as these models will automatically generate the required transforms. 
 
 ### AnimalSpot
-[ANIMAL-SPOT](https://github.com/ChristianBergler/ANIMAL-SPOT) is a deep learning based framework which was initially designed for [killer whale sound detection]((https://github.com/ChristianBergler/ORCA-SPOT)) in noise heavy underwater recordings (see [Bergler et al. 2019](https://www.nature.com/articles/s41598-019-47335-w). It has now been expanded to a be species independent framework for training acoustic deep learning models using pytorch and python. Imported AnimalSpot model will automatically set up their own data transforms and output classes. 
+[ANIMAL-SPOT](https://github.com/ChristianBergler/ANIMAL-SPOT) is a deep learning based framework which was initially designed for [killer whale sound detection]((https://github.com/ChristianBergler/ORCA-SPOT)) in noise heavy underwater recordings (see [Bergler et al. (2019)](https://www.nature.com/articles/s41598-019-47335-w)). It has now been expanded to a be species independent framework for training acoustic deep learning models using pytorch and python. Imported AnimalSpot model will automatically set up their own data transforms and output classes. 
 
 ### Ketos
 [Ketos](https://meridian.cs.dal.ca/2015/04/12/ketos/) is an acoustic deep learning framework based on Tensorflow and developed by Meridian. It has excellent resources and tutorials and pytorch libraries can be installed easily via pip. Imported Ketos model will automatically set up their own data transforms and output classes. 
@@ -65,16 +65,19 @@ Once the model has loaded there a some unique options depending on the currently
 A generic model must be set up via the Advanced menu button. 
 
 <p align="center">
-  <img width="700" height="630" src = "resources/deep_leanring_module_help.png">
+  <img width="700" height="700" src = "resources/advanced_settings_generic_1.png">
 </p>
 
-The _transforms_ tab in the advanced menu pane allows a user to set up a set of transforms. The + button adds a transforms and these can be dragged in order using the drag handles on the left of each transform. Each transform pane can be expanded to show transform specific settings. The bottoms of the advanced settings pane shows a preview of the data that will be input into the deep learning model, including the shape size. 
+The _Model Transforms_ tab in the advanced menu pane allows a user to set up a set of transforms. The _Add transfrom_ + button adds a transforms and these can be dragged in order using the drag handles on the left of each transform. Each transform has it's own settings pane which can be expanded to show transform specific settings. The bottoms of the advanced settings pane shows a preview of the data that will be input into the deep learning model, including the shape of the input data e.g. a 100x50 image. 
 
 
 <p align="center">
-  <img width="700" height="630" src = "resources/deep_leanring_module_help.png">
+  <img width="700" height="700" src = "resources/advanced_settings_generic_2.png">
 </p>
 
+The _Model Settings_ tab allows the model input shape and output shape/classes to be defined. Most models will have metadata on the input and output data  and these can be set by selecting the  _Use default model shape_ and _Use default model out_ switches respectively. Otherwise the user must define the input and output shape and the output classes manually
+
+The import and export buttons on the bottom of the advanced settings pane can be used to export and import settings for the generic model. This means that users do not have to manually set up transforms and input and output data whenever settings up a new PAMGuard data model and allow easier dsharing of classifiers amongst reserachers. Settings for the generic
 
 #### AnimalSpot and Ketos models
 
