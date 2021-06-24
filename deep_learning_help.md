@@ -97,3 +97,9 @@ Output from the deep learning module can be viewed in PAMGuard viewer mode, or e
 Detections form continous raw data are shown in the datagram in the same way as all data streams in PAMGuard. The Time base display FX is best way to view the data outputs from the deep learning algorithm. 
 
 
+## Common bugs and mistakes
+
+You should always have deep learning models in their own folder. Do not have any additonal jar files or other programming related things (like .dll files) in the same or sub folders. This has been known to cause issues with loading models which we have not got to the bottom of yet. 
+
+
+
