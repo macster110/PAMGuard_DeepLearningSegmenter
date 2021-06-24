@@ -3,7 +3,7 @@
 
 ## Overview
 
-PAMGuard's deep learning module allows users to deploy a large variety of deep learning models natively in PAMGuard. It is core module, fully integrated into PAMGuard's display and data management system and can be used in real time or for post processing data. It cna therfore be used as a classifier for almost anything and can integrate into multiple types of acoustic analysis workflows, for example post analysis analysis of recorder data or used as part of real time localisation workflow. 
+PAMGuard's deep learning module allows users to deploy a large variety of deep learning models natively in PAMGuard. It is core module, fully integrated into PAMGuard's display and data management system and can be used in real time or for post processing data. It can therfore be used as a classifier for almost any acoustic signal and can integrate into multiple types of acoustic analysis workflows, for example post analysis analysis of recorder data or used as part of real time localisation workflow. 
 
 ## How it works
 
@@ -33,16 +33,16 @@ The module settings are opened by selecting the  _Settings > Raw deep learning c
 <p align="center">
   <img width="700" height="630" src = "resources/deep_leanring_module_help.png">
 </p>
-_The main settings pane for the deep learning module with descriptions_
 
+_The main settings pane for the deep learning module with descriptions_
 
 ### Raw Sound Data
 
 The deep learning module accepts any raw data source i.e. any data source that contains raw waveform data.
 
-If the data is continous, e.g. from the Sound Acquisiiton module then deep leanring data units are saved to PAMGuard's datamanagement system if they pass a user defined prediciton threshold. The raw waveform data for segments whcih pass prediciton threshold is also saved. 
+If the data is continous, e.g. from the Sound Acquisiiton module then deep learning detections are saved to PAMGuard's datam anagement system if they pass a user defined prediciton threshold. The raw waveform data for segments whcih pass prediciton threshold is saved and the detection is annotated with the deep prediciton results. 
 
-If the data source has already produced data units, e.g. clicks or clips, then the deep learning results are saved as annotation attached the data unit. The data is segmented in exactly the same way as continous data and thus, depending on the lenght of raw data, there can be more than one prediciton per dat unit.
+If the data source is an existing detection data stream, e.g. clicks or clips, then the deep learning results are saved as annotation attached each detection. The data is segmented in exactly the same way as continous data and thus, depending on the lenght of raw data, there can be more than one prediciton per dat unit.
 
 Channel grouping controls are used to arrnage channels into groups. Channels in the same group are saved togethe for downstream processes. So for example if channels 0 and 2 and are in a group then the raw waveform data from both channel 0 and 2 will be saved and can be used in downstream processes, e.g. for localisation. 
 
@@ -68,12 +68,16 @@ A generic model must be set up via the Advanced menu button.
   <img width="700" height="700" src = "resources/advanced_settings_generic_1.png">
 </p>
 
+_Before a sound segment can be classifed it must be converted into a format suitable for the deep learning model. This is achieved  by a list of *transforms* which convert a raw sound data into an approprate format. Usually thias involves converting to a spectrogram image and then performing a series of noise reductions and interpoolation step. For the generic model users either have to manually add transforms and input the correct settings for each or load a transforms setting file .pgtr_
+
 The _Model Transforms_ tab in the advanced menu pane allows a user to set up a set of transforms. The _Add transfrom_ + button adds a transforms and these can be dragged in order using the drag handles on the left of each transform. Each transform has it's own settings pane which can be expanded to show transform specific settings. The bottoms of the advanced settings pane shows a preview of the data that will be input into the deep learning model, including the shape of the input data e.g. a 100x50 image. 
 
 
 <p align="center">
   <img width="700" height="700" src = "resources/advanced_settings_generic_2.png">
 </p>
+
+_The Model Settings tab allows the model inputs and outputs to be defined_
 
 The _Model Settings_ tab allows the model input shape and output shape/classes to be defined. Most models will have metadata on the input and output data  and these can be set by selecting the  _Use default model shape_ and _Use default model out_ switches respectively. Otherwise the user must define the input and output shape and the output classes manually
 
@@ -82,6 +86,12 @@ The import and export buttons on the bottom of the advanced settings pane can be
 #### AnimalSpot and Ketos models
 
 If using an AnimalSpot or Ketos model then all transforms are automatically set up. The transforms can be viewed and altered via the Advanced menu button but in the majority of cases these settings should not be used. It is advisiable to select "Use defualt segment length" to change the _Window length_ to the default for the selected model. Note that this is often necessary for Ketos models but usually not a requirement for AnimalSpot models. 
+
+<p align="center">
+  <img width="700" height="700" src = "resources/advanced_settings_animalspot_1.png">
+</p>
+
+_An AnimalSpot or Ketos model will automatically create a list of transoforms with the appropriate settings. These is no need to use the advanced pane but it is there in case users wish to change transform settings for some reason_
 
 ## Running
 ### Real time
@@ -94,12 +104,92 @@ The deep learning module can be re-run on _detector_ data (e.g. click or clip de
 Output from the deep learning module can be viewed in PAMGuard viewer mode, or extracted from binary files using MATLAB or R. 
 
 ### PAMGuard viewer mode
-Detections form continous raw data are shown in the datagram in the same way as all data streams in PAMGuard. The Time base display FX is best way to view the data outputs from the deep learning algorithm. 
+Detections form continous raw data are shown in the datagram in the same way as all data streams in PAMGuard.
 
+The Time base display FX is best way to view detailed data outputs from the deep learning algorithm. The time base display can display almsot all data types in PAMGuard on a large variety of different data axis. For example click detections can be displayed on an amplitude, bearing, ICI, waveform and/or frequency axis. Deep learning detections (i.e. data units which have been saved from raw data using the deep leanring detector) can be displayed on the time base display in the same way as many other detections and in additon, there is a symbol manager options wich allows the deep learning detections or other detections which have been classified by the deep learning module to be coloured by prediciton class. This means an manual analyst can quickly navigate to detections wiht high prediciton values for a certain class. Howeveing over or right clicking on a data unit in the time display and selecting the information button will show the dat units metadata, including the prediciton values for all output classes from the deep leanring model. 
+
+<p align="center">
+  <img width="900" height="550" src = "resources/bat_deep_learning.png">
+</p>
+
+_An example click detection module output coloured by deep learning annotations. Click detections are annotated with the results from the deep learning module. The symbol manager in the time base display can be used to colour the clicks by the prediciton for a selected class_
+
+Other displays also show outputs from the deep leanring module. Hovering over data units in the click display will, for example, show deep leanring prediiton values. The spectrgram will also show deep leanrign detections as translucent blue boxes (these must be selected in the right click menu). 
+
+## MATLAB 
+It is easy to export results from the deep learning module into MATLAB. 
+
+The easiest way to export to MATLAB is to select the desired units in the time base display, right click and select the MATLAB icon. Data units will be exported to a .mat file as list of structures which is then saved to the clipboard. This file can be saved and then dragged into MATLAB to open. 
+
+Where it is neceassry to further anlalyse large datasets produced by PAMGuard, there is a MATLAB-PAMGuard library which can directly import the binary files whihc store PAMGaurd detection data. The library is simple to use with the primary fucntion being loadPAMGuardBinaryFile.m. This will load any binary file type (e.g. clicks, whistles, deep learning detections) and return a list of data structures with the detection data. The structures include annotations where deep leanring predicitons are stored. 
+
+Here is a simple example loading up all the deep learning detections for a right whale classifier. 
+
+```matlab
+% the folder containing PAMGuard binary files
+folder = '/Users/me/right_whale_project_1/PAMBinary/'; 
+ 
+ %load all the detections in the folder
+dldetections = loadPamguardBinaryFolder(folder, 'Deep_Learning_Classifier_Raw_Deep_Learning_Classifier_DL_detection_*.pgdf');
+
+```
+The loaded detections can then be plotted by accessing the waveform data in each structure
+
+```matlab
+
+% plot all the spectrograms.
+clf
+tiledlayout(5,5)
+for i=1:length(dldetections)
+    
+    nexttile
+    
+    % generate the data for a spectrgram
+    [s, w, t] = spectrogram(dldetections(i).wave,512, 384,[],sR,'yaxis');
+    
+    % create the time and frequency matrices required to plot a surface 
+    [X, Y] = meshgrid(t,w);
+    % plot the surface (divide and multiply by 1000 to show milliseconds and kHz respectively)
+    surf(X*1000, Y/1000, 20*log10(abs(s))-140, 'EdgeColor', 'None')
+    view([0,90])
+ 
+    caxis([70, 140]-140)  
+    ylim([0,0.5]); 
+    xlabel('')
+    ylabel('')
+    
+    if (mod(i,5)==0)
+       c = colorbar;  
+       c.Label.String = 'Amplitude (dB)'; 
+    end
+ 
+    %x axis only on bottom plots
+    if (i>=20)
+       xlabel('Time (ms)') 
+    end
+    
+    %y axis only on left most plots
+    if (mod(i-1,5)==0)
+       ylabel('Frequency (kHz)') 
+    end
+```
+
+<p align="center">
+  <img width="900" height="550" src = "resources/right_whale-detection_MATLAB.png">
+</p>
+
+_Right whale detections from a deep learning model imported and then plotted in MATLAB_
+
+## R
+In the same way as MATLAB export, the PAMGuard time base display and export selected data units directly to an R struct which can be imported easily into R.. 
+
+R also has a well supported PAMGuard library with like for like functions compared to the MATLAB library. The PAMBinaries R library can be found [here](https://github.com/TaikiSan21/PamBinaries).
 
 ## Common bugs and mistakes
 
 You should always have deep learning models in their own folder. Do not have any additonal jar files or other programming related things (like .dll files) in the same or sub folders. This has been known to cause issues with loading models which we have not got to the bottom of yet. 
+
+
 
 
 
