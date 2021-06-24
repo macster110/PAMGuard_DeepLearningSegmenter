@@ -54,6 +54,10 @@ _An example the user interface for loading a model. The module allows a users to
 
 _An example of OrcaSpot (a now retired framework) working on some simulated data and explanations of the various GUI components. Here the output from the algorithm is being sent to a beam former which provides a bearing to the detected Orca call._
 
+## Availability
+
+The deep learning module is integrated as a core module and available from [PAMGuard release](www.pamguard.org) 2.01.06 onwards.
+
 ## Tutorials and help
 A detailed module help file is [here](https://github.com/macster110/PAMGuard_resources). 
 
