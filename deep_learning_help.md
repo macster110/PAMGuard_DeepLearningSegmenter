@@ -10,7 +10,7 @@ PAMGuard's deep learning module allows users to deploy a large variety of deep l
 The deep learning module accepts raw data from different types of data sources, e.g. from the Sound Acquisition module, clicks and clips. It segments data into equal sized chunks with a specified overlap. Each chunk is passed through a set of transforms which convert the data into a format which is accepted by the specified deep learning model. These transforms are either manually set up by the user or, if a specific type of framework has been used to train a deep learning model, then can be automatically set up by PAMGuard. Currently there are three implemented frameworks
 
 <p align="center">
-  <img width="900" height="380" src = "resources/deep_learning_module_process.png">
+  <img width="900" height="370" src = "resources/deep_learning_module_process.png">
 </p>
 
 _A diagram of how the deep learning module works in PAMGuard. An input waveform is segmented into chunks. A series of transforms are applied to each chunk creating the input for the deep learning model. The transformed chunks are sent to the model. The results from the model are saved and can be viewed in real time (e.g. mitigation) or in post processing (e.g. data from SoundTraps)._
