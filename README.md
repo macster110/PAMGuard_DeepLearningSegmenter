@@ -58,7 +58,7 @@ _An example of OrcaSpot (a now retired framework) working on some simulated data
 The deep learning module is integrated as a core module and available from [PAMGuard release](www.pamguard.org) 2.01.06 onwards.
 
 ## Tutorials and help
-A detailed module help file is [here](https://github.com/macster110/PAMGuard_resources). 
+A detailed module help file is [here](deep_learning_help.md). 
 
 Comprehensive tutorials can be found [here](https://github.com/macster110/PAMGuard_resources). 
 
