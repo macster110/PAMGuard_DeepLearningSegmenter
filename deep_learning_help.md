@@ -195,7 +195,7 @@ You should always have deep learning models in their own folder. Do not have any
 
 Pytorch models must be saved using jit to be compatible with PAMGuard. 
 
-
+Tensorflow models must be saved as .pb files to be opened in PAMGuard.  
 
 
 
