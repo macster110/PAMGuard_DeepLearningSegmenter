@@ -47,7 +47,7 @@ The module is straightforward to use. Go to _File ->Add Modules -> Classifiers -
   <img width="512" height="512" src = "resources/advanced_settings_animalspot_1.png">
 </p>
 
-_An example the user interface for loading a model. The module allows a users to select a model framework and then load a model file. The model will generate a list of transforms that convert the raw sound data to a suitbale input. Users have the option to edit transforms associated with a loaded model if necessary._
+_An example the user interface for loading a model. The module allows a users to select a model framework and then load a model file. The model will generate a list of transforms that convert the raw sound data to a suitable input. Users have the option to edit transforms associated with a loaded model if necessary._
 
 <center><img src="resources/OrcaSpot_help1.png" width="1024"></center>
 
