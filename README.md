@@ -73,4 +73,4 @@ The best way to develop a PAMGuard external plugin is to download the PAMGuard p
 ```
 Adding a new DeepLearning model requires a new class satisfying the interface ```DLClassifierModel``` in the _ deepLearningClassiifcation _ package. This then needs to be added to an array (```ArrayList<DLClassiferModel> dlModels```) in ```DLControl```.
 
-Note that the core deep leanring code is also in PAMGuard's [SVN repository](https://sourceforge.net/projects/pamguard/) (yes PAMGuard still uses SVN) but htis is updated less frequenctly than the git code.  
+Note that the core deep leanring code is also in PAMGuard's [SVN repository](https://sourceforge.net/projects/pamguard/) (yes PAMGuard still uses SVN) but this is updated less frequenctly than the git code.  
