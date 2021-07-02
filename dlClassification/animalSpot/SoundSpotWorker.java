@@ -38,18 +38,21 @@ public class SoundSpotWorker extends DLModelWorker<SoundSpotResult> {
 	 * Prepare the model 
 	 */
 	public void prepModel(StandardModelParams soundSpotParams, DLControl dlControl) {
-		ClassLoader origCL = Thread.currentThread().getContextClassLoader();
+		//ClassLoader origCL = Thread.currentThread().getContextClassLoader();
+		
+		System.out.println("prepModel: " + soundSpotParams.useDefaultTransfroms); 
+
 		try {
-			
-			// get the plugin class loader and set it as the context class loader
-			// NOTE THAT THIS IS REQUIRED TO MAKE THIS MODULE RUN AS A PLUGIN WHEN THE CLASS FILES
-			// ARE BUNDLED INTO A FATJAR, HOWEVER THIS WILL STOP THE PLUGIN FROM RUNNING AS A SEPARATE
-			// PROJECT IN ECLIPSE.  So while testing the code and debugging, make sure the 
-			if (DLControl.PLUGIN_BUILD) {
-				PluginClassloader newCL = PamModel.getPamModel().getClassLoader();
-				Thread.currentThread().setContextClassLoader(newCL);
-			}
-			
+
+			//			// get the plugin class loader and set it as the context class loader
+			//			// NOTE THAT THIS IS REQUIRED TO MAKE THIS MODULE RUN AS A PLUGIN WHEN THE CLASS FILES
+			//			// ARE BUNDLED INTO A FATJAR, HOWEVER THIS WILL STOP THE PLUGIN FROM RUNNING AS A SEPARATE
+			//			// PROJECT IN ECLIPSE.  So while testing the code and debugging, make sure the 
+			//			if (DLControl.PLUGIN_BUILD) {
+			//				PluginClassloader newCL = PamModel.getPamModel().getClassLoader();
+			//				Thread.currentThread().setContextClassLoader(newCL);
+			//			}
+
 			//first open the model and get the correct parameters. 
 			soundSpotModel = new AnimalSpotModel(soundSpotParams.modelPath); 
 		}
@@ -62,7 +65,17 @@ public class SoundSpotWorker extends DLModelWorker<SoundSpotResult> {
 			//create the DL parameters.
 			AnimalSpotParams dlParams = new AnimalSpotParams(soundSpotModel.getTransformsString());
 
-			setModelTransforms(model2DLTransforms(dlParams)); 
+			//only load new transforms if defaults are selected
+			if (getModelTransforms()==null || soundSpotParams.useDefaultTransfroms) {
+				//only set the transforms if they are null - otherwise handled elsewhere. 
+				setModelTransforms(model2DLTransforms(dlParams)); 
+				soundSpotParams.useDefaultTransfroms = true; 
+			}
+			else {
+				//use the old transforms. 
+				setModelTransforms(soundSpotParams.dlTransfroms); 
+			}
+			
 			soundSpotParams.defaultSegmentLen = dlParams.seglen; //the segment length in microseconds. 
 			soundSpotParams.numClasses = dlParams.classNames.length; 
 
@@ -97,8 +110,8 @@ public class SoundSpotWorker extends DLModelWorker<SoundSpotResult> {
 			e.printStackTrace();
 			//WarnOnce.showWarning(null, "Model Metadata Error", "There was an error extracting the metadata from the model.", WarnOnce.OK_OPTION); 
 		}
-		
-		Thread.currentThread().setContextClassLoader(origCL);
+
+		//Thread.currentThread().setContextClassLoader(origCL);
 	}
 
 
@@ -107,8 +120,8 @@ public class SoundSpotWorker extends DLModelWorker<SoundSpotResult> {
 	public float[] runModel(float[][][] transformedDataStack) {
 		return soundSpotModel.runModel(transformedDataStack);
 	}
-	
-	
+
+
 	@Override
 	public SoundSpotResult makeModelResult(float[]  prob, double time) {
 		SoundSpotResult soundSpotResult =  new SoundSpotResult(prob); 

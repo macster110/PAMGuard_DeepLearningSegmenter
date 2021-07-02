@@ -57,9 +57,10 @@ public class StandardModelParams implements Serializable, Cloneable {
 	public List<DLTransfromParams> dlTransfromParams = null; 
 	
 	/**
-	 * The DL custom transforms if the default transforms for the mdoel are not being used. 
+	 * The DL custom transforms if the default transforms for the model are not being used. 
 	 */
 	public transient ArrayList<DLTransform> dlTransfroms = null;
+	
 
 	/**
 	 * The default segment length of the model in milliseconds. 

@@ -248,13 +248,11 @@ public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 	@Override
 	public void prepModel() {
 		//System.out.println("PrepModel! !!!");
+		StandardModelParams oldParams = soundSpotParmas.clone();
 		getSoundSpotWorker().prepModel(soundSpotParmas, dlControl);
-		if (!soundSpotParmas.useDefaultTransfroms) {
-			//set custom transforms in the model. 
-			getSoundSpotWorker().setModelTransforms(soundSpotParmas.dlTransfroms);
-		}
 
-		if (	getSoundSpotWorker().getModel()==null) {
+
+		if (getSoundSpotWorker().getModel()==null) {
 			soundSpotWarning.setWarningMessage("There is no loaded classifier model. AnimalSpot disabled.");
 			WarningSystem.getWarningSystem().addWarning(soundSpotWarning);
 		}

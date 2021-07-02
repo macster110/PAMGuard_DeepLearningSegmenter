@@ -174,6 +174,13 @@ public abstract class StandardModelPane extends SettingsPane<StandardModelParams
 
 			pathLabel.setText("Loading model...");
 			
+			//whenever a new model is selected then the the paramters should be set to use defualt transforms again - this ensures
+			//that the new transforms are loaded up 
+			advSettingsPane.getParams(paramsClone); 
+			paramsClone.useDefaultTransfroms=true; 
+			advSettingsPane.setParams(paramsClone);
+			
+			
             // separate non-FX thread - load the model 
 			//on a separate thread so we can show a moving load 
 			//bar on the FX thread. Otherwise the GUI locks up  
@@ -393,11 +400,12 @@ public abstract class StandardModelPane extends SettingsPane<StandardModelParams
 		//		currParams.useCUDA = useCuda.isSelected(); 
 
 		//System.out.println("StandardModelParams 1: " + currParams); 
-		//System.out.println("StandardModelParams 2: " + this.getAdvSettingsPane().getParams(currParams)); 
+		
+		//System.out.println("StandardModelParams 2: " + currParams.useDefaultTransfroms); 
 
 		currParams = (StandardModelParams) this.getAdvSettingsPane().getParams(currParams);
-
-		currParams.useDefaultTransfroms = this.usedefaultSeg.isSelected(); 
+		
+		//System.out.println("StandardModelParams 2: " + currParams.useDefaultTransfroms); 
 
 		boolean[] speciesClass = new boolean[this.paramsClone.numClasses]; 
 
@@ -412,7 +420,7 @@ public abstract class StandardModelPane extends SettingsPane<StandardModelParams
 		//get class names from the paramClone as these may have been set by a loaded model
 		//instea of a use changing a control.
 		currParams.classNames = paramsClone.classNames; 
-
+		
 		return currParams;
 	}
 
