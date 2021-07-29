@@ -3,10 +3,6 @@ package rawDeepLearningClassifier.dlClassification.genericModel;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import org.jamdev.jdl4pam.transforms.DLTransform;
 import org.jamdev.jdl4pam.transforms.DLTransformsFactory;
 import org.jamdev.jdl4pam.transforms.DLTransfromParams;
@@ -16,17 +12,15 @@ import org.jamdev.jdl4pam.transforms.SimpleTransformParams;
 import PamController.PamControlledUnitSettings;
 import PamController.PamSettingManager;
 import PamController.PamSettings;
+import PamDetection.RawDataUnit;
+import PamUtils.PamArrayUtils;
 import PamUtils.PamCalendar;
 import rawDeepLearningClassifier.DLControl;
 import rawDeepLearningClassifier.dlClassification.DLClassName;
 import rawDeepLearningClassifier.dlClassification.DLClassiferModel;
 import rawDeepLearningClassifier.dlClassification.DLTaskThread;
 import rawDeepLearningClassifier.dlClassification.PredictionResult;
-import rawDeepLearningClassifier.dlClassification.animalSpot.SoundSpotResult;
-import rawDeepLearningClassifier.dlClassification.animalSpot.SoundSpotWorker;
 import rawDeepLearningClassifier.dlClassification.animalSpot.StandardModelParams;
-import rawDeepLearningClassifier.dlClassification.animalSpot.SoundSpotClassifier.TaskThread;
-import rawDeepLearningClassifier.layoutFX.DLCLassiferModelUI;
 import rawDeepLearningClassifier.segmenter.SegmenterProcess.GroupedRawData;
 import warnings.PamWarning;
 import warnings.WarningSystem;
@@ -356,6 +350,38 @@ public class GenericDLClassifier implements DLClassiferModel, PamSettings {
 			}
 		}
 		return  false;
+	}
+
+
+	@Override
+	public ArrayList<PamWarning> checkSettingsOK() {
+		return checkSettingsOK(genericModelParams, dlControl);
+	}
+	
+	public static ArrayList<PamWarning> checkSettingsOK(StandardModelParams genericModelParams, DLControl dlControl) {
+		
+			//TODO - check if model is null. 
+			//check that classifier is selected if continous files. 
+			//
+		ArrayList<PamWarning> warnings = new ArrayList<PamWarning>(); 
+		
+		File file = new File(genericModelParams.modelPath); 
+		if (genericModelParams.modelPath == null || !file.isFile()) {
+			warnings.add(new PamWarning("Generic classifier", "There is no model loaded - the classifier will not run", 2)); 
+			//if no model then this is ionly message needed for the generic classifier. 
+			return warnings; 
+		}
+		
+		//if continous data is selected and all classes are false then this is a potential mistake...
+		if (dlControl.getSettingsPane().getSelectedParentDataBlock().getUnitClass()  == RawDataUnit.class 
+				&& PamArrayUtils.isAllFalse(genericModelParams.binaryClassification)) {
+			warnings.add(new PamWarning("Generic classifier", "There are no prediction classes selected for classification. "
+					+ "Predicitons for each segment will be saved but there will be no detections generated", 1)); 
+		}
+
+			
+		return warnings;
+		
 	}
 
 

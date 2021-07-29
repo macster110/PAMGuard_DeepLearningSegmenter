@@ -87,8 +87,6 @@ public class SoundSpotWorker extends DLModelWorker<SoundSpotResult> {
 					soundSpotParams.binaryClassification[i] = true; //set default to true. 
 				}
 			}
-
-
 			//			if (dlParams.classNames!=null) {
 			//				for (int i = 0; i<dlParams.classNames.length; i++) {
 			//					System.out.println("Class name " + i + "  "  + dlParams.classNames[i]); 

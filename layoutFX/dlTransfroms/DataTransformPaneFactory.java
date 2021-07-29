@@ -51,8 +51,10 @@ public class DataTransformPaneFactory {
 			((SimpleTransformPane) settingsPane).setSpinnerMinMaxValues(0, 0.0, 1.0,   0.01);
 			break;
 		case SPEC2DB:
-			settingsPane = new LabelTransfromPane(dlTransfrom, DLTransformType.SPEC2DB.toString()); 
-			settingsPane.setPadding(new Insets(0,0,0,20));
+//			settingsPane = new LabelTransfromPane(dlTransfrom, DLTransformType.SPEC2DB.toString()); 
+//			settingsPane.setPadding(new Insets(0,0,0,20));
+			settingsPane = new SimpleTransformPane((SimpleTransform) dlTransfrom, new String[]{"Min. dB "}); 
+			((SimpleTransformPane) settingsPane).setSpinnerMinMaxValues(0, -300.0, 300.0,   1.);
 			break;
 		case SPECNORMALISEROWSUM:
 			settingsPane = new LabelTransfromPane(dlTransfrom, DLTransformType.SPECNORMALISEROWSUM.toString()); 

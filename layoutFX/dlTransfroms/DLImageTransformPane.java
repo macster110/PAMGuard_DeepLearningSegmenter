@@ -91,7 +91,8 @@ public class DLImageTransformPane  extends PamBorderPane {
 				waveTransForm = ((WaveTransform)  dlTransfrom);
 				
 				//change if the example sample rate is higher to if there is a large differenc in sample rates and decimation. 
-				if (exampleSound.getSampleRate()<waveTransForm.getParams()[0].floatValue() || exampleSound.getSampleRate()/waveTransForm.getParams()[0].floatValue()>4) {
+				if (exampleSound.getSampleRate()<waveTransForm.getParams()[0].floatValue() 
+						|| exampleSound.getSampleRate()/waveTransForm.getParams()[0].floatValue()>4) {
 					waveTransForm.setParams(new Number[] {exampleSound.getSampleRate()}); //set the correct samplerate
 					dlTransformPane.getDLTransformPanes().get(transforms.indexOf(dlTransfrom)).setParams(waveTransForm);
 				}

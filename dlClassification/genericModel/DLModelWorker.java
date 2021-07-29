@@ -11,7 +11,7 @@ import org.jamdev.jdl4pam.transforms.DLTransformsFactory;
 import org.jamdev.jdl4pam.utils.DLUtils;
 import org.jamdev.jpamutils.wavFiles.AudioData;
 
-
+import PamUtils.PamArrayUtils;
 import rawDeepLearningClassifier.DLControl;
 import rawDeepLearningClassifier.dlClassification.animalSpot.StandardModelParams;
 import rawDeepLearningClassifier.segmenter.SegmenterProcess.GroupedRawData;
@@ -53,7 +53,6 @@ public abstract class DLModelWorker<T> {
 	public synchronized ArrayList<T> runModel(ArrayList<GroupedRawData> rawDataUnits, float sampleRate, int iChan) {
 
 		try {
-
 			//the number of chunks. 
 			int numChunks = rawDataUnits.size(); 
 
@@ -78,27 +77,32 @@ public abstract class DLModelWorker<T> {
 				//set the sound in the first transform. 
 				((WaveTransform) modelTransforms.get(0)).setWaveData(soundData); 
 
-				//System.out.println("Model transforms:no. " + modelTransforms.size()+ "  " + soundData.getLengthInSeconds() + " Decimate Params: " + ((WaveTransform) modelTransforms.get(0)).getParams()[0]);
+//				System.out.println("Model transforms:no. " + modelTransforms.size()+ "  input sounds len: " + soundData.getLengthInSeconds() 
+//				+ " Decimate Params: " + ((WaveTransform) modelTransforms.get(0)).getParams()[0] + "max amplitude sound: " + PamArrayUtils.max(soundData.samples));
 
 				DLTransform transform = modelTransforms.get(0); 
 				for (int i =0; i<modelTransforms.size(); i++) {
 					transform = modelTransforms.get(i).transformData(transform); 
+//					//TEMP
+//					if (transform instanceof FreqTransform) {
+//						transformedData = ((FreqTransform) transform).getSpecTransfrom().getTransformedData(); 
+//						System.out.println("DLModelWorker: transform : " + modelTransforms.get(i).getDLTransformType() + " "+ i + transformedData.length + "  " + transformedData[0].length + " minmax: " + PamArrayUtils.minmax(transformedData)[0] + " " + PamArrayUtils.minmax(transformedData)[1]);
+//					}
 				}
 
 				//the transformed data
 				transformedData = ((FreqTransform) transform).getSpecTransfrom().getTransformedData(); 
 
-				//System.out.println("DLModelWorker: Input shape: " + transformedData.length + "  " + transformedData[0].length + PamCalendar.formatDBDateTime(rawDataUnits.get(j).getTimeMilliseconds(), true));
 
 				transformedDataStack[j] = DLUtils.toFloatArray(transformedData); 
 
 			}
 
-
 			//run the model. The output is the 
 			float[] output = null; 
 			long time1 = System.currentTimeMillis();
 			output = runModel(transformedDataStack); 
+			//System.out.println("Out: " + PamArrayUtils.array2String(output, 2, ","));
 			long time2 = System.currentTimeMillis();
 
 

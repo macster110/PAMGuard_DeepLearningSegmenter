@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import rawDeepLearningClassifier.DLControl;
 import rawDeepLearningClassifier.layoutFX.DLCLassiferModelUI;
 import rawDeepLearningClassifier.segmenter.SegmenterProcess.GroupedRawData;
+import warnings.PamWarning;
 
 /**
  * The classifier model. Each classifier must satisfy this interface.
@@ -73,7 +74,7 @@ public interface DLClassiferModel {
 
 	/**
 	 * Reference to the dlControl
-	 * @return
+	 * @return reference to the DL control. 
 	 */
 	public DLControl getDLControl();
 
@@ -81,5 +82,14 @@ public interface DLClassiferModel {
 	 * Check whether a model has been selected and can be loaded successfully. 
 	 */
 	public boolean checkModelOK();
+	
+	/**
+	 * Get warnings for the classifier model. This is called when the user confirms settings and 
+	 * used to return a warning dialog. 
+	 * @return a list of warnings. If the list is null or size() is zero then settings are OK. 
+	 */
+	public ArrayList<PamWarning> checkSettingsOK();
+	
+	
 
 }

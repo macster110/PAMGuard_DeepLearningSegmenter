@@ -13,6 +13,7 @@ import rawDeepLearningClassifier.dlClassification.DLClassName;
 import rawDeepLearningClassifier.dlClassification.DLClassiferModel;
 import rawDeepLearningClassifier.dlClassification.DLTaskThread;
 import rawDeepLearningClassifier.dlClassification.genericModel.DLModelWorker;
+import rawDeepLearningClassifier.dlClassification.genericModel.GenericDLClassifier;
 import rawDeepLearningClassifier.dlClassification.genericModel.GenericPrediction;
 import rawDeepLearningClassifier.layoutFX.DLCLassiferModelUI;
 import rawDeepLearningClassifier.layoutFX.RawDLSettingsPane;
@@ -379,6 +380,12 @@ public class SoundSpotClassifier implements DLClassiferModel, PamSettings {
 	@Override
 	public boolean checkModelOK() {
 		return getSoundSpotWorker().getModel()!=null;
+	}
+
+
+	@Override
+	public ArrayList<PamWarning> checkSettingsOK() {
+		return GenericDLClassifier.checkSettingsOK(soundSpotParmas, dlControl); 
 	}
 
 

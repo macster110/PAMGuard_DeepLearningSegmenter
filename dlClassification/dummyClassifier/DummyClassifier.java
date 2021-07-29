@@ -9,6 +9,7 @@ import rawDeepLearningClassifier.dlClassification.DLClassiferModel;
 import rawDeepLearningClassifier.dlClassification.PredictionResult;
 import rawDeepLearningClassifier.layoutFX.DLCLassiferModelUI;
 import rawDeepLearningClassifier.segmenter.SegmenterProcess.GroupedRawData;
+import warnings.PamWarning;
 
 /**
  * Classifier which returns a random results. Used for debugging and testing. 
@@ -80,6 +81,12 @@ public class DummyClassifier implements DLClassiferModel{
 	@Override
 	public boolean checkModelOK() {
 		return true;
+	}
+
+	@Override
+	public ArrayList<PamWarning> checkSettingsOK() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

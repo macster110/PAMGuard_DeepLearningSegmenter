@@ -403,7 +403,6 @@ public abstract class StandardModelPane extends SettingsPane<StandardModelParams
 		
 		//System.out.println("StandardModelParams 2: " + currParams.useDefaultTransfroms); 
 
-		currParams = (StandardModelParams) this.getAdvSettingsPane().getParams(currParams);
 		
 		//System.out.println("StandardModelParams 2: " + currParams.useDefaultTransfroms); 
 
@@ -417,9 +416,15 @@ public abstract class StandardModelPane extends SettingsPane<StandardModelParams
 
 		currParams.binaryClassification = speciesClass;
 		
+		
+		currParams = (StandardModelParams) this.getAdvSettingsPane().getParams(currParams);
+
+
 		//get class names from the paramClone as these may have been set by a loaded model
 		//instea of a use changing a control.
 		currParams.classNames = paramsClone.classNames; 
+		
+		currParams.useDefaultSegLen = usedefaultSeg.isSelected(); 
 		
 		return currParams;
 	}
@@ -443,7 +448,7 @@ public abstract class StandardModelPane extends SettingsPane<StandardModelParams
 
 		setClassNames(currParams);
 
-		usedefaultSeg.setSelected(currParams.useDefaultTransfroms); 
+		usedefaultSeg.setSelected(currParams.useDefaultSegLen); 
 		defaultSegmentLenChanged();
 
 		updatePathLabel(); 

@@ -287,5 +287,10 @@ public class KetosClassifier implements DLClassiferModel, PamSettings {
 		else ketosDLParams = new KetosDLParams(); 
 		return true;
 	}
+	
+	@Override
+	public ArrayList<PamWarning> checkSettingsOK() {
+		return GenericDLClassifier.checkSettingsOK(ketosDLParams, dlControl); 
+	}
 
 }

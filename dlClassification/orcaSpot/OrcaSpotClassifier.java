@@ -17,11 +17,12 @@ import rawDeepLearningClassifier.dlClassification.DLDetection;
 import rawDeepLearningClassifier.dlClassification.PredictionResult;
 import rawDeepLearningClassifier.layoutFX.DLCLassiferModelUI;
 import rawDeepLearningClassifier.segmenter.SegmenterProcess.GroupedRawData;
+import warnings.PamWarning;
 
 /**
  * Calls python.exe to run a python script and then returns a result. 
  * 
- * OrcaSpot has been replaced by SoundSpot - a more generic, faster and easier to setup and use version of the classifier. 
+ * OrcaSpot has been replaced by AnimalSpot - a more generic, faster and easier to setup and use version of the classifier. 
  * 
  * @author Jamie Macaulay
  *
@@ -340,6 +341,12 @@ public class OrcaSpotClassifier implements DLClassiferModel, PamSettings {
 	@Override
 	public boolean checkModelOK() {
 		return true;
+	}
+
+	@Override
+	public ArrayList<PamWarning> checkSettingsOK() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

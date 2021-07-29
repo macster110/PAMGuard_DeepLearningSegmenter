@@ -286,7 +286,7 @@ public class DLClassifyProcess extends PamInstantProcess {
 
 		//the model result may be null if the classifier uses a new thread. 
 		
-		System.out.println("New segment: parent UID: " + pamRawData.getParentDataUnit().getUID());
+		//System.out.println("New segment: parent UID: " + pamRawData.getParentDataUnit().getUID() + " Prediciton: " + modelResult.getPrediction()[4]);
 
 		//create a new data unit - always add to the model result section. 
 		DLDataUnit dlDataUnit = new DLDataUnit(pamRawData.getTimeMilliseconds(), pamRawData.getChannelBitmap(), 
@@ -345,7 +345,7 @@ public class DLClassifyProcess extends PamInstantProcess {
 				else {
 					//need to go by the parent data unit for merging data not the segments. 
 
-					//System.out.println("New model data " + pamRawData.getParentDataUnit().getUID() + " " + groupDataBuffer[i].size()); 
+				    //System.out.println("New model data " + pamRawData.getParentDataUnit().getUID() + " " + groupDataBuffer[i].size() + " " + modelResultDataBuffer[i].size()); 
 
 					if (pamRawData.getParentDataUnit()!=lastParentDataUnit[i]) {
 						//save any data
@@ -393,13 +393,17 @@ public class DLClassifyProcess extends PamInstantProcess {
 	 * 
 	 */
 	public void forceRunClassifier(PamDataUnit dataUnit) {
+		
+		
 		//first call run model to clear out the classification buffer if needs be
 		runModel(); 
 		classificationBuffer.clear(); 
 		
 		//need to implement multiple groups. 
 		for (int i=0; i<getSourceParams().countChannelGroups(); i++) {
-			  //System.out.println("Nummber segments " + modelResultDataBuffer[i].size() + " data unit len: " + dataUnit.getSampleDurationAsInt() + " samples");; 
+			
+			
+			//System.out.println("Nummber segments " + modelResultDataBuffer[i].size() + " data unit len: " + dataUnit.getSampleDurationAsInt() + " samples UID: " + dataUnit.getUID()); 
 			//			System.out.println("RawDataIn: chan: " + pamRawData.getChannelBitmap()+ "  " +
 			//			PamUtils.hasChannel(getSourceParams().getGroupChannels(i), pamRawData.getChannelBitmap()) + 
 			//			" grouped source: " +getSourceParams().getGroupChannels(i)); 

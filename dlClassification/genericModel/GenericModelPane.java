@@ -16,69 +16,78 @@ import rawDeepLearningClassifier.dlClassification.animalSpot.StandardModelParams
  *
  */
 public class GenericModelPane extends StandardModelPane  {
-	
+
 	/**
 	 * The extension filter for sound spot models. 
 	 */
 	private ArrayList<ExtensionFilter> extensionFilters;
-	
-	
+
+
 	private GenericAdvPane advPane;
 
 
 	private GenericDLClassifier genericDLClassifier;
-	
-	
-	
+
+
+
 	public GenericModelPane(GenericDLClassifier genericDLClassifier) {
 		super(genericDLClassifier);
-		
+
 		this.genericDLClassifier = genericDLClassifier;
-		
+
 		//must add an additional import settings button. 
 		extensionFilters = new ArrayList<ExtensionFilter>(); 
-		
+
 		//import the settings holder
 		extensionFilters.add(new ExtensionFilter("TensorFlow Model", "*.pb")); 
 		extensionFilters.add(new ExtensionFilter("Pytorch Model", 	"*.pk"));
-	
+
 		//this.getVBoxHolder().getChildren().add(2, new Label("Classifier Settings"));
 		usedefaultSeg.setDisable(true); 
 		defaultSegBox.setVisible(false);
 
 		setAdvSettingsPane(advPane = new GenericAdvPane(genericDLClassifier)); 
-		
+
 		advPane.setParams(genericDLClassifier.getGenericDLParams());
 	}
-	
-	
+
+
 	@Override
 	public void showAdvPane(PamButton advSettingsButton) {
 		//need to set this because the params are shared between two settings. 
 		//a little messy but meh
-		
+
 		//System.out.println("GenericModelPane - showAdvPane getParamsClone(): 1 " + getParamsClone());
 		//System.out.println("GenericModelPane - showAdvPane getParamsClone(): 2 " + getParams(getParamsClone()));
 
+		//set the params clone i.e. the temporary params class. 
 		this.setParamsClone(getParams(getParamsClone())); 
-		
-		
+
+
 		super.showAdvPane(advSettingsButton);
-		
+
 		//bit messy 
 		this.popOver.setOnHidden((event)->{
-		this.setParams(getParams(getParamsClone())); 
+			//need to set the class p
+			
+			//get all params updates from the adv pane.
+			StandardModelParams newParams = getParams(getParamsClone());
+			//			System.out.println("Set params: binary classification len" + newParams.binaryClassification.length); 
+			//			for (int i=0; i<newParams.binaryClassification.length; i++) {
+			//				System.out.println("Set params: binary classification[i] " + newParams.binaryClassification[i]);
+			//			}
+			this.setParams(newParams); 
 		});
-		
+
 	}
-	
+
 	@Override
 	public void setParams(StandardModelParams currParams) {
 		super.setParams(currParams);
 		//System.out.println("advSettingsButton - showAdvPane setParams(): 1 " + getParamsClone());
 	}
 
-	
+
 	@Override
 	public void newModelSelected(File file) {
 		this.setCurrentSelectedFile(file);
@@ -90,19 +99,17 @@ public class GenericModelPane extends StandardModelPane  {
 		//get the model transforms calculated from the model by SoundSpoyWorker and apply them to our temporary paramters clone. 
 		//getParamsClone().dlTransfroms = this.genericDLClassifier.getGenericDLWorker().getModelTransforms(); 
 		///set the advanced pane parameters. 
-		
-		
-		//now new paramters have been set in the prepModel functions so need to set new params now. 
-		
+
+		//now new parameters have been set in the prepModel functions so need to set new params now. 
+
 		getAdvSettingsPane().setParams(getParamsClone());
 	}
 
-	
+
 	@Override
 	public ArrayList<ExtensionFilter> getExtensionFilters() {
 		return extensionFilters;
 	}
 }
-	
-	
-	
+
+

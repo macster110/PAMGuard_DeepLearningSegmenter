@@ -21,6 +21,7 @@ import PamguardMVC.debug.Debug;
 import clickDetector.ClickDetection;
 import clipgenerator.ClipDataUnit;
 import rawDeepLearningClassifier.DLControl;
+import PamUtils.PamCalendar;
 
 
 /**
@@ -94,9 +95,12 @@ public class SegmenterProcess extends PamProcess {
 	}
 
 	/**
-	 * A list of data block class types which are compatible as parent data blocks for the PamProcess. This can return null, e.g. in the case of 
-	 * Acquisition process. 
-	 * @return a list of PamDataBlock sub class types which can be used as parent data blocks for the process. 
+	 * A list of data block class types which are compatible as parent data blocks
+	 * for the PamProcess. This can return null, e.g. in the case of Acquisition
+	 * process.
+	 * 
+	 * @return a list of PamDataBlock sub class types which can be used as parent
+	 *         data blocks for the process.
 	 */
 	@Override
 	public ArrayList getCompatibleDataUnits(){
@@ -260,15 +264,20 @@ public class SegmenterProcess extends PamProcess {
 
 
 	/**
-	 * Segment a single new raw data chunk. This is for a discrete data chunk i.e. the data is not a continuous time 
-	 * series of acoustic data but a clip of some kind of that should be passed a s single detection to a deep learning model. 
-	 * @param pamDataUnit - the PAM data unit containing the chunk of raw data. 
-	 * @param rawDataChunk - the raw chunk of data from the data unit. 
-	 * @param forceSave - all segments to be saved, even if the segment is not full e.g. for clicks detections. 
+	 * Segment a single new raw data chunk. This is for a discrete data chunk i.e.
+	 * the data is not a continuous time series of acoustic data but a clip of some
+	 * kind of that should be passed a s single detection to a deep learning model.
+	 * 
+	 * @param pamDataUnit  - the PAM data unit containing the chunk of raw data.
+	 * @param rawDataChunk - the raw chunk of data from the data unit.
+	 * @param forceSave    - all segments to be saved, even if the segment is not
+	 *                     full e.g. for clicks detections.
 	 */
 	private synchronized void newRawDataChunk(PamDataUnit pamDataUnit, double[][] rawDataChunk) {
 		//Note it is impoetant this is synchronized to prevent currentRawChunks=null being called and
 		//causing a null pointer exception in newRawData; 
+		
+		//System.out.println("----New raw data unit: " + pamDataUnit.getUID()); 
 
 		//reset for each click 
 		currentRawChunks=null; 
@@ -285,28 +294,56 @@ public class SegmenterProcess extends PamProcess {
 
 		int[] chans  = PamUtils.getChannelArray(pamDataUnit.getChannelBitmap()); 
 
-		PamArrayUtils.printArray(chans); 
+		//PamArrayUtils.printArray(chans); 
 
 		//pass the raw click data to the segmenter
 		for (int i=0;i<chans.length; i++) {
 			newRawData(pamDataUnit,
-					rawDataChunk[i], chans[i]);
+					rawDataChunk[i], chans[i], true);
+			
+			//the way that the newRawdata works is it waits for the next chunk and copies all relevent bits
+			//from previous chunks into segments. This is fine for continous data but means that chunks of data
+			//don't get their last hop...
 		}
 
 		//got to save the last chunk of raw data -even if the segment has not been filled. 
-		saveRawGroupData();
+		saveRawGroupData(true);
 	}
 
 
+	/**
+	 * Take a raw sound chunk of data and segment into discrete groups. This handles
+	 * much situations e.g. where the segment is much larger than the raw data or
+	 * where the segment is much small than each rawDataChunk returning multiple
+	 * segments.
+	 * 
+	 * @param unit         - the data unit which contains relevant metadata on time
+	 *                     etc.
+	 * @param rawDataChunk - the sound chunk to segment extracted form the data
+	 *                     unit.
+	 * @param iChan        - the channel that is being segmented
+	 */
+	public void newRawData(PamDataUnit unit, double[] rawDataChunk, int iChan) {
+		newRawData(unit, rawDataChunk, iChan, false); 
+	}
 
 	/**
-	 * Take a raw sound chunk of data and segment into discrete groups. This handles much situations e.g. where the segment is much larger than the raw
-	 * data or where the segment is much small than each rawDataChunk returning multiple segments. 
-	 * @param unit - the data unit which contains relevant metadata on time etc. 
-	 * @param rawDataChunk - the sound chunk to segment extracted form the data unit. 
-	 * @param iChan - the channel that is being segmented
+	 * Take a raw sound chunk of data and segment into discrete groups. This handles
+	 * much situations e.g. where the segment is much larger than the raw data or
+	 * where the segment is much small than each rawDataChunk returning multiple
+	 * segments.
+	 * 
+	 * @param unit         - the data unit which contains relevant metadata on time
+	 *                     etc.
+	 * @param rawDataChunk - the sound chunk to segment extracted form the data
+	 *                     unit.
+	 * @param iChan        - the channel that is being segmented
+	 * @param forceSave    - make sure that all data is passed into the buffers and
+	 *                     do not wait for the next data unit. This is used to make
+	 *                     sure that discrete chunks have their full number of
+	 *                     segments saved.
 	 */
-	public synchronized void newRawData(PamDataUnit unit, double[] rawDataChunk, int iChan) {
+	public synchronized void newRawData(PamDataUnit unit, double[] rawDataChunk, int iChan, boolean forcesave) {
 
 		long timeMilliseconds = unit.getTimeMilliseconds();
 		long startSampleTime = unit.getStartSample(); 
@@ -366,6 +403,9 @@ public class SegmenterProcess extends PamProcess {
 				//
 				//				currentRawChunks[i].rawDataPointer[groupChan]=currentRawChunks[i].rawDataPointer[groupChan] + copyLen; 
 
+				
+				//the overflow is the spill over in samples from the sound data chunk added to the segment i.e. if the chunk is greater than the segment
+				// then there is a spill over to the next segment which needs to be dealt with
 				int overFlow = currentRawChunks[i].copyRawData(rawDataChunk, 0 , rawDataChunk.length, groupChan);
 
 				//				System.out.println("Data holder size: " + currentRawChunks[i].rawDataPointer[groupChan]); 
@@ -375,16 +415,14 @@ public class SegmenterProcess extends PamProcess {
 				 * The overflow should be saved into the next chunk. But what id the raw sound data is very large and the overflow is 
 				 * in fact multiple segments. Need to iterate through the overflow data. 
 				 */
-
-				//System.out.println("Currnet chunk time: " +  PamCalendar.formatDBDateTime(currentRawChunks[i].getTimeMilliseconds(), true) + " Overflow: " + overFlow + " Raw len: " + rawDataChunk.length); 
-
-
-				if (overFlow>0) {
+				//System.out.println("Current chunk time: " +  PamCalendar.formatDBDateTime(currentRawChunks[i].getTimeMilliseconds(), true) + " Overflow: " + overFlow + " Raw len: " + rawDataChunk.length); 
+				if (overFlow>0 || forcesave) {
 
 					//how many new raw chunks do we need? 
 					if (nextRawChunks[i]==null) {
 						//need to figure out how many new raw chunks we may need. 
 						int nChunks = (int) Math.ceil(overFlow/(double) dlControl.getDLParams().sampleHop); 
+						nChunks = Math.max(nChunks, 1); //cannot be less than one (if forceSave is used then can be zero if no overflow)
 						nextRawChunks[i]=new GroupedRawData[nChunks]; 
 					}
 
@@ -433,7 +471,6 @@ public class SegmenterProcess extends PamProcess {
 
 						lastRawDataChunk = nextRawChunks[i][j]; 
 					}
-
 				}
 
 				//System.out.println("Should we save the raw data? : " + isRawGroupDataFull(currentRawChunks[i])); 
@@ -451,14 +488,21 @@ public class SegmenterProcess extends PamProcess {
 	}
 
 
+	/**
+	 * Save the current segmented raw data units to the segmenter data block.
+	 * @param forceSave - true to also save the remaining unfilled segment. 
+	 */
+	private void saveRawGroupData(boolean forceSave) {
+		for (int i=0; i<getSourceParams().countChannelGroups(); i++) {
+			saveRawGroupData(i, forceSave); 
+		}
+	}
 
 	/**
 	 * Save the current segmented raw data units to the segmenter data block.
 	 */
 	private void saveRawGroupData() {
-		for (int i=0; i<getSourceParams().countChannelGroups(); i++) {
-			saveRawGroupData(i); 
-		}
+		saveRawGroupData(false); 
 	}
 
 
@@ -467,6 +511,16 @@ public class SegmenterProcess extends PamProcess {
 	 * @param i - the group index. 
 	 */
 	private void saveRawGroupData(int i) {
+		saveRawGroupData(i, false); 
+	}
+
+
+	/**
+	 * Save the current segmented raw data units to the segmenter data block.
+	 * @param forceSave - true to also save the remaining unfilled segment. 
+	 * @param i - the group index. 
+	 */
+	private void saveRawGroupData(int i, boolean forceSave) {
 
 		if (currentRawChunks[i]==null) {
 			return; 
@@ -481,11 +535,14 @@ public class SegmenterProcess extends PamProcess {
 		this.segmenterDataBlock.addPamData(currentRawChunks[i]);
 
 		if (nextRawChunks[i]!=null) {
+			int n = nextRawChunks[i].length-1; 
+			
+			if (forceSave) n=n+1; //save the last data unit too. 
+			
 			//add all segments up to the last one. 
-			for (int j=0;j<nextRawChunks[i].length-1; j++) {
+			for (int j=0;j<n; j++) {
 				if (nextRawChunks[i][j]!=null) {
-					//System.out.println("Add raw chunks: " + nextRawChunks[i][j].getUID() + " raw data pointer: " +nextRawChunks[i][j].getRawDataPointer()[0]); 
-
+				//System.out.println("Segmenter process: Save next raw chunks: " + nextRawChunks[i][j].getUID() + " raw data pointer: " +nextRawChunks[i][j].getRawDataPointer()[0]); 
 					this.segmenterDataBlock.addPamData(packageSegmenterDataUnit(nextRawChunks[i][j]));
 				}
 			}

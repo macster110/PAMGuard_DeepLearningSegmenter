@@ -1,7 +1,10 @@
 package rawDeepLearningClassifier.layoutFX;
 
+import java.util.ArrayList;
+
 import PamController.SettingsPane;
 import PamDetection.RawDataUnit;
+import PamView.dialog.warn.WarnOnce;
 import PamguardMVC.PamDataBlock;
 import clickDetector.ClickDetection;
 import clipgenerator.ClipDataUnit;
@@ -13,6 +16,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.Tooltip;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import pamViewFX.PamGuiManagerFX;
@@ -26,6 +30,7 @@ import pamViewFX.fxNodes.utilityPanes.GroupedSourcePaneFX;
 import rawDeepLearningClassifier.DLControl;
 import rawDeepLearningClassifier.RawDLParams;
 import rawDeepLearningClassifier.dlClassification.DLClassiferModel;
+import warnings.PamWarning;
 
 /**
  * The settings pane. 
@@ -247,8 +252,8 @@ public class RawDLSettingsPane  extends SettingsPane<RawDLParams>{
 			return null;
 		}
 
-		sourcePane.getParams(currParams.groupedSourceParams); 
-
+		sourcePane.getParams(currParams.groupedSourceParams);
+		
 		currParams.modelSelection = dlModelBox.getSelectionModel().getSelectedIndex(); 
 
 		if (windowLength.getValue() == 0 || hopLength.getValue()==0){
@@ -266,11 +271,49 @@ public class RawDLSettingsPane  extends SettingsPane<RawDLParams>{
 		//update any changes
 		if (this.dlControl.getDLModels().get(dlModelBox.getSelectionModel().getSelectedIndex()).getModelUI()!=null){
 			this.dlControl.getDLModels().get(dlModelBox.getSelectionModel().getSelectedIndex()).getModelUI().getParams(); 
+			
+			//display any warnings from the settings. 
+			ArrayList<PamWarning> warnings = this.dlControl.getDLModels().get(dlModelBox.getSelectionModel().getSelectedIndex()).checkSettingsOK();
+			showWarnings(warnings); 
+			
+			for (int i=0; i<warnings.size(); i++) {
+				if (warnings.get(i).getWarnignLevel()>1) {
+					//Serious error. Do not close dialog. 
+					return null; 
+				}
+			}
 		}
+	
 
 		return currParams;
 	}
 
+	/**
+	 * Show a warning dialog. 
+	 */
+	public void showWarnings(ArrayList<PamWarning> dlWarnings) {
+		
+		if (dlWarnings==null || dlWarnings.size()<1) return; 
+		
+		String warnings ="";
+	
+		
+		boolean error = false; 
+		for (int i=0; i<dlWarnings.size(); i++) {
+			warnings += dlWarnings.get(i).getWarningMessage() + "\n\n";
+			if (dlWarnings.get(i).getWarnignLevel()>1) {
+				error=true; 
+			}
+		}
+		
+		final String warningsF = warnings; 
+		final boolean errorF = error; 
+		Platform.runLater(()->{
+			WarnOnce.showWarningFX(null,  "Deep Learning Settings Warning",  warningsF , errorF ? AlertType.ERROR : AlertType.WARNING);
+		});
+		
+		//user presses OK - these warnings are just a message - they do not prevent running the module.
+	}
 
 	@Override
 	public void setParams(RawDLParams currParams) {

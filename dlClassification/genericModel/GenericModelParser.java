@@ -120,7 +120,7 @@ public class GenericModelParser {
 		for (int i =0; i<params.numClasses ; i++) {
 
 			if ( params.classNames!=null) {
-				classNames+= params.classNames[i];
+				classNames+= params.classNames[i].className;
 			}
 			else {
 				classNames+= "Class "+i;

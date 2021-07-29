@@ -66,6 +66,13 @@ public class StandardModelParams implements Serializable, Cloneable {
 	 * The default segment length of the model in milliseconds. 
 	 */
 	public 	Double defaultSegmentLen = null;
+	
+	
+	/**
+	 * Use the default seg length
+	 */
+	public 	boolean useDefaultSegLen = false;
+
 
 	/**
 	 * The class names. e.g. porpoise, noise, bat

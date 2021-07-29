@@ -44,7 +44,6 @@ public class SoundSpotUI implements DLCLassiferModelUI {
 	public void getParams() {
 		StandardModelParams orcaSpotParams =  getSettingsPane().getParams(soundSpotClassifier.getSoundSpotParams()); 
 		soundSpotClassifier.setSoundSpotParams(orcaSpotParams.clone()); //be safe and clone.  
-		
 	}
 
 	@Override
