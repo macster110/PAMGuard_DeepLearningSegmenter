@@ -53,6 +53,10 @@ public class DataTransformPaneFactory {
 		case SPEC2DB:
 //			settingsPane = new LabelTransfromPane(dlTransfrom, DLTransformType.SPEC2DB.toString()); 
 //			settingsPane.setPadding(new Insets(0,0,0,20));
+			if (((SimpleTransform) dlTransfrom).getParams()==null) {
+				//need this because the min dB can boften be null depending in the metadata imported. 
+				((SimpleTransform) dlTransfrom).setParams(new Number[] {Double.valueOf(-100.)});
+			}
 			settingsPane = new SimpleTransformPane((SimpleTransform) dlTransfrom, new String[]{"Min. dB "}); 
 			((SimpleTransformPane) settingsPane).setSpinnerMinMaxValues(0, -300.0, 300.0,   1.);
 			break;

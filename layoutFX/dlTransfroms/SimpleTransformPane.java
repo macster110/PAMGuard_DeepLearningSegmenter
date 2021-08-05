@@ -119,7 +119,7 @@ public class SimpleTransformPane extends DLTransformPane {
 			}
 
 		}
-
+		
 		TitledPane titledPane = new TitledPane(simpleTransfrom.getDLTransformType().toString(), gridPane); 
 
 		//			PamBorderPane borderPane = new PamBorderPane(); 
