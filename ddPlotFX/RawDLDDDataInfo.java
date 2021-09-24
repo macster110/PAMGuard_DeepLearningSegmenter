@@ -3,7 +3,7 @@ package rawDeepLearningClassifier.ddPlotFX;
 
 import detectionPlotFX.data.DDDataInfo;
 import detectionPlotFX.layout.DetectionPlotDisplay;
-import detectionPlotFX.rawDDPlot.RawFFTPlot;
+import detectionPlotFX.rawDDPlot.RawHolderFFTPlot;
 import detectionPlotFX.rawDDPlot.RawSpectrumPlot;
 import detectionPlotFX.rawDDPlot.RawWaveformPlot;
 import rawDeepLearningClassifier.DLControl;
@@ -25,7 +25,7 @@ public class RawDLDDDataInfo extends DDDataInfo<DLDetection> {
 		//add the various click plots
 		super.addDetectionPlot(new RawWaveformPlot(displayPlot));
 		super.addDetectionPlot(new RawSpectrumPlot(displayPlot));
-		super.addDetectionPlot(new RawFFTPlot(displayPlot, displayPlot.getDetectionPlotProjector()));
+		super.addDetectionPlot(new RawHolderFFTPlot(displayPlot, displayPlot.getDetectionPlotProjector()));
 
 
 		super.setCurrentDetectionPlot(0);

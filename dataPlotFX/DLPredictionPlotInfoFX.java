@@ -265,7 +265,7 @@ public class DLPredictionPlotInfoFX extends TDDataInfoFX {
 	 * @param changeType - notification flag.
 	 */
 	public void notifyChange(int changeType) {
-		System.out.println("Prediction NOTIFYMODELCHANGED: "); 
+		//System.out.println("Prediction NOTIFYMODELCHANGED: "); 
 		switch (changeType) {
 
 		case PamController.CHANGED_PROCESS_SETTINGS:

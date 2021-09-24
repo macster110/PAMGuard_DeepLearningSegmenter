@@ -218,6 +218,22 @@ public class DLImageTransformPane  extends PamBorderPane {
 
 	}
 
+	/**
+	 * Set the index of the example sound. 
+	 * @param exampleSoundIndex
+	 */
+	public void setExampleSoundIndex(int exampleSoundIndex) {
+		dlTransfromImagePane.getSpeciesChoiceBox().getSelectionModel().select(exampleSoundIndex);
+	}
+
+	/**
+	 * Get the currently selected index of the example sound. 
+	 * @return the current selected index of the example sund. 
+	 */
+	public int getExampleSoundIndex() {
+		return 	dlTransfromImagePane.getSpeciesChoiceBox().getSelectionModel().getSelectedIndex();
+	}
+
 
 
 

@@ -437,8 +437,9 @@ public abstract class StandardModelPane extends SettingsPane<StandardModelParams
 
 		detectionSpinner.getValueFactory().setValue(Double.valueOf(currParams.threshold));
 
+		
 		//set the params on the advanced pane. 
-		this.getAdvSettingsPane().setParams(currParams);
+		this.getAdvSettingsPane().setParams(paramsClone);
 
 		if (paramsClone.modelPath!=null) {
 			currentSelectedFile = new File(paramsClone.modelPath);
@@ -457,7 +458,7 @@ public abstract class StandardModelPane extends SettingsPane<StandardModelParams
 
 	/**
 	 * Set the class names in the class name combo box. 
-	 * @param currParams
+	 * @param currParams - the current params
 	 */
 	private void setClassNames(StandardModelParams currParams) {
 		speciesIDBox.getItems().clear();

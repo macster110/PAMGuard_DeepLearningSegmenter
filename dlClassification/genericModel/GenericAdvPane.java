@@ -51,10 +51,10 @@ public class GenericAdvPane extends SettingsPane<GenericModelParams> {
 	 */
 	private GridPane classNameHolder; 
 
-	/**
-	 * The text field names.  
-	 */
-	private TextField[] classNameFields;
+//	/**
+//	 * The text field names.  
+//	 */
+//	private TextField[] classNameFields;
 
 	/**
 	 * The DL transform pane. 
@@ -277,11 +277,19 @@ public class GenericAdvPane extends SettingsPane<GenericModelParams> {
 		if (setParams) return; 
 		genericClassifier.getModelUI().getSettingsPane().setParams(this.getParams(currentInput));
 	}
-
+	
 	/**
 	 * Populate the class name fields. 
 	 */
 	public void populateClassNameFields(int nClass) {
+		populateClassNameFields(nClass, null); 
+	}
+
+
+	/**
+	 * Populate the class name fields. 
+	 */
+	public void populateClassNameFields(int nClass, GenericModelParams input) {
 
 		textFields = new TextField[nClass]; 
 
@@ -290,12 +298,14 @@ public class GenericAdvPane extends SettingsPane<GenericModelParams> {
 		for (int i = 0 ; i<nClass; i++) {
 			textFields[i] = new TextField(); 
 
-			if (classNameFields!=null && i<classNameFields.length) {
-				textFields[i].setText(classNameFields[i].getText()); 
+			if (input!=null && input.classNames!=null && i<input.classNames.length) {
+				textFields[i].setText(input.classNames[i].className); 
 			}
 			else {
 				textFields[i].setText(("Class " + i)); 
 			}
+			
+			
 			classNameHolder.add(new Label(("Class " + i)), 0, i);
 			classNameHolder.add(textFields[i], 1, i);
 		}
@@ -311,10 +321,13 @@ public class GenericAdvPane extends SettingsPane<GenericModelParams> {
 	@Override
 	public GenericModelParams getParams(GenericModelParams currParams) {
 
+//		System.out.println("Generic Adv Pane GET PARAMS:");
+
 		if (setParams) return null; 
 
 		//transfromPane.setTransforms(currParams.dlTransfroms);
 		currParams.dlTransfroms = transfromPane.getDLTransforms(); 
+		currParams.exampleSoundIndex = transfromPane.getExampleSoundIndex();
 
 		//System.out.println("Generic Adv Pane SET PARAMS: " + classNumber.getValue()); 
 
@@ -339,9 +352,34 @@ public class GenericAdvPane extends SettingsPane<GenericModelParams> {
 			}
 
 		}
+		
+		//set the model shape
+		Long[] outShape = new Long[outShapeSpinners.length]; 
+		for (int i=0; i<outShape.length; i++) {
+			//				System.out.println("Input shape: " + currentInput.shape[i].intValue()); 	
+			outShape[i]=Long.valueOf(outShapeSpinners[i].getValue()); 
+			//System.out.println("Input shape: V " + shapeSpinners[i].getValue().intValue()); 
+		}
+
+		Long[] inShape = new Long[shapeSpinners.length]; 
+		for (int i=0; i<inShape.length; i++) {
+			//				System.out.println("Input shape: " + currentInput.shape[i].intValue()); 	
+			inShape[i]=Long.valueOf(shapeSpinners[i].getValue()); 
+			//System.out.println("Input shape: V " + shapeSpinners[i].getValue().intValue()); 
+		}
+
+		
+		currParams.outputShape = outShape;
+		currParams.shape = inShape;
 
 
 		currParams.classNames = this.getDLControl().getClassNameManager().makeClassNames(classNames); 
+		
+//		System.out.println("GenericAdvPane: Class names");
+//		for (int i=0; i<currParams.classNames.length; i++) {
+//			System.out.println("Class " + i + " " + currParams.classNames[i].className);
+//		}
+
 		currParams.binaryClassification = binaryClassification; 
 
 		return currParams;
@@ -356,7 +394,12 @@ public class GenericAdvPane extends SettingsPane<GenericModelParams> {
 
 		this.currentInput = input.clone(); 
 
-//		System.out.println("Generic Adv Pane SET PARAMS: " +currentInput ); 
+		//System.out.println("Generic Adv Pane SET PARAMS: " +currentInput ); 
+		
+//		System.out.println("GenericAdvPane: Class names  " + currentInput.numClasses);
+//		for (int i=0; i<currentInput.classNames.length; i++) {
+//			System.out.println("Class " + i + " " +currentInput.classNames[i].className);
+//		}
 
 		if (input.defaultShape==null) {
 			defualtShapeSwitch.setSelected(false);
@@ -368,7 +411,10 @@ public class GenericAdvPane extends SettingsPane<GenericModelParams> {
 
 		//
 		classNumber.getValueFactory().setValue(currentInput.numClasses);
-		populateClassNameFields(currentInput.numClasses); 
+		
+		//populate the class names field. 
+		populateClassNameFields(currentInput.numClasses, input); 
+		
 
 		//set the model shape
 		if (currentInput.shape!=null) {
@@ -387,12 +433,14 @@ public class GenericAdvPane extends SettingsPane<GenericModelParams> {
 			}
 		}
 
-
 		//textFieldTest.setText(currentInput.shape[1].toString());
 		//System.out.println("Set transforms: " + currentInput.dlTransfroms.size()); 
-
-
+		transfromPane.setExampleSoundIndex(currentInput.exampleSoundIndex); 
 		transfromPane.setTransforms(currentInput.dlTransfroms);
+		
+//		for (int i=0; i<currentInput.classNames.length; i++) {
+//			System.out.println("Textfield: Class " + i + " " +textFields[i].getText());
+//		}
 
 		setParams=false; 
 

@@ -188,10 +188,11 @@ public class DLClassifyProcess extends PamInstantProcess {
 
 			classificationBuffer.add(rawDataUnit); 
 		}
-		//		System.out.println("New raw data in: chan: " + PamUtils.getSingleChannel(pamRawData.getChannelBitmap()) + 
-		//				" Size: " +  pamRawData.getSampleDuration() + " first sample: " + rawDataUnit.getRawData()[0][0]);
+//				System.out.println("New raw data in: chan: " + PamUtils.getSingleChannel(pamRawData.getChannelBitmap()) + 
+//						" Size: " +  pamRawData.getSampleDuration() + " first sample: " + rawDataUnit.getRawData()[0][0] 
+//								+ "Parent UID: " + rawDataUnit.getParentDataUnit().getUID());
 	}
-
+ 
 	/**
 	 * Run the model if the classification buffer is full. 
 	 */
@@ -253,7 +254,8 @@ public class DLClassifyProcess extends PamInstantProcess {
 		if (timeDiff>=this.dlControl.getDLParams().maxBufferTime) {
 			//		if (timeDiff>=this.dlControl.getDLParams().maxBufferTime) {
 
-			//we are overr the max buffer size. 
+			//we are over the max buffer size. 
+			System.out.println("DLClassifyProcess: warning:  buffer is over max time gap"); 
 			return true; 
 		}
 
@@ -386,10 +388,10 @@ public class DLClassifyProcess extends PamInstantProcess {
 	 * buffers are problematic because they are only cleared when the next data unit
 	 * is added. This function can be used to bypass the buffers. Add raw data to
 	 * the segmenter process and the buffers will fill. Then call this function to
-	 * run the deep learning algorohtm and save the detections as annotation to a
+	 * run the deep learning algorithm and save the detections as annotation to a
 	 * data unit.
 	 * 
-	 * @param dataUnit - the data unit to add prediciton annotations to
+	 * @param dataUnit - the data unit to add prediction annotations to
 	 * 
 	 */
 	public void forceRunClassifier(PamDataUnit dataUnit) {
@@ -403,10 +405,12 @@ public class DLClassifyProcess extends PamInstantProcess {
 		for (int i=0; i<getSourceParams().countChannelGroups(); i++) {
 			
 			
-			//System.out.println("Nummber segments " + modelResultDataBuffer[i].size() + " data unit len: " + dataUnit.getSampleDurationAsInt() + " samples UID: " + dataUnit.getUID()); 
-			//			System.out.println("RawDataIn: chan: " + pamRawData.getChannelBitmap()+ "  " +
-			//			PamUtils.hasChannel(getSourceParams().getGroupChannels(i), pamRawData.getChannelBitmap()) + 
-			//			" grouped source: " +getSourceParams().getGroupChannels(i)); 
+//			System.out.println("Nummber segments " + groupDataBuffer[i].size() + " data unit len: " + dataUnit.getSampleDurationAsInt() + " samples UID: " + dataUnit.getUID()); 
+//						System.out.println("RawDataIn: chan: " + dataUnit.getChannelBitmap()+ "  " +
+//						PamUtils.hasChannel(getSourceParams().getGroupChannels(i), dataUnit.getChannelBitmap()) + 
+//						" grouped source: " +getSourceParams().getGroupChannels(i)); 
+						
+						
 			if (PamUtils.hasChannel(getSourceParams().getGroupChannels(i), PamUtils.getSingleChannel(dataUnit.getChannelBitmap()))) {
 				if (groupDataBuffer[i].size()>0) {
 				  //System.out.println("Save click annotation to " + lastParentDataUnit[i].getUID()); 
@@ -478,10 +482,12 @@ public class DLClassifyProcess extends PamInstantProcess {
 
 
 	/**
-	 * Add a data annotation to an existing data unit from a number of model results and corresponding chunks of raw sound data. 
-	 * @param groupDataBuffer - the raw data chunks (these may overlap). 
-	 * @param modelResult - the model results. 
-	 * @return a DL detection with merged raw data. 
+	 * Add a data annotation to an existing data unit from a number of model results
+	 * and corresponding chunks of raw sound data.
+	 * 
+	 * @param groupDataBuffer - the raw data chunks (these may overlap).
+	 * @param modelResult     - the model results.
+	 * @return a DL detection with merged raw data.
 	 */
 	private void addDLAnnotation(PamDataUnit parentDataUnit, ArrayList<GroupedRawData> groupDataBuffer,
 			ArrayList<PredictionResult> modelResult) {

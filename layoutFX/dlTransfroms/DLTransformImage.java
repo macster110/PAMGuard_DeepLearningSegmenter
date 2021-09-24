@@ -199,6 +199,14 @@ public abstract class DLTransformImage extends PamBorderPane{
 
 	}
 
+	/**
+	 * Get the species choice box. 
+	 * @return - the species choice box. 
+	 */
+	public ChoiceBox<ExampleSoundType> getSpeciesChoiceBox() {
+		return speciesChoiceBox;
+	}
+
 
 	/**
 	 * Calculate the sample time bins. 

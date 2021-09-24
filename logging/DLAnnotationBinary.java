@@ -57,7 +57,7 @@ public class DLAnnotationBinary extends AnnotationBinaryHandler<DLAnnotation> {
 				ModelResultBinaryFactory.getPackedData(ba.getModelResults().get(i), dos, 	ModelResultBinaryFactory.getType(ba.getModelResults().get(i)));
 			}
 
-			AnnotationBinaryData abd = new AnnotationBinaryData(BinaryStore.CURRENT_FORMAT, (short) 1, 
+			AnnotationBinaryData abd = new AnnotationBinaryData(BinaryStore.getCurrentFileFormat(), (short) 1, 
 					super.getDataAnnotationType(), getDataAnnotationType().getShortIdCode(), bos.toByteArray());
 
 			return abd;

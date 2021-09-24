@@ -68,8 +68,12 @@ public class GenericModelParams extends StandardModelParams implements Cloneable
 
 	@Override
 	public GenericModelParams clone() {
+		//System.out.println("GenericModelParams: Clone params begin: " + this.classNames == null ? null : this.classNames[0].className); 
 		GenericModelParams newParams = null;
 		newParams = (GenericModelParams) super.clone();
+		
+		//System.out.println("GenericModelParams: Clone params end: " +  newParams.classNames ==null ? null :  newParams.classNames[0].className); 
+
 		//			if (newParams.spectrogramNoiseSettings == null) {
 		//				newParams.spectrogramNoiseSettings = new SpectrogramNoiseSettings();
 		//			}

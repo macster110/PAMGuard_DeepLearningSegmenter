@@ -72,6 +72,8 @@ public class GenericModelPane extends StandardModelPane  {
 			
 			//get all params updates from the adv pane.
 			StandardModelParams newParams = getParams(getParamsClone());
+			
+			//System.out.println("GenericModelPane: Adv pane set: " + ((GenericModelParams) newParams).classNames[0].className); 
 			//			System.out.println("Set params: binary classification len" + newParams.binaryClassification.length); 
 			//			for (int i=0; i<newParams.binaryClassification.length; i++) {
 			//				System.out.println("Set params: binary classification[i] " + newParams.binaryClassification[i]);
@@ -84,9 +86,7 @@ public class GenericModelPane extends StandardModelPane  {
 	@Override
 	public void setParams(StandardModelParams currParams) {
 		super.setParams(currParams);
-		//System.out.println("advSettingsButton - showAdvPane setParams(): 1 " + getParamsClone());
 	}
-
 
 	@Override
 	public void newModelSelected(File file) {
@@ -101,7 +101,6 @@ public class GenericModelPane extends StandardModelPane  {
 		///set the advanced pane parameters. 
 
 		//now new parameters have been set in the prepModel functions so need to set new params now. 
-
 		getAdvSettingsPane().setParams(getParamsClone());
 	}
 

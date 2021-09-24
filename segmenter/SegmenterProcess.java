@@ -301,8 +301,8 @@ public class SegmenterProcess extends PamProcess {
 			newRawData(pamDataUnit,
 					rawDataChunk[i], chans[i], true);
 			
-			//the way that the newRawdata works is it waits for the next chunk and copies all relevent bits
-			//from previous chunks into segments. This is fine for continous data but means that chunks of data
+			//the way that the newRawdata works is it waits for the next chunk and copies all relevant bits
+			//from previous chunks into segments. This is fine for continuous data but means that chunks of data
 			//don't get their last hop...
 		}
 
@@ -412,7 +412,7 @@ public class SegmenterProcess extends PamProcess {
 
 
 				/**
-				 * The overflow should be saved into the next chunk. But what id the raw sound data is very large and the overflow is 
+				 * The overflow should be saved into the next chunk. But what if the raw sound data is very large and the overflow is 
 				 * in fact multiple segments. Need to iterate through the overflow data. 
 				 */
 				//System.out.println("Current chunk time: " +  PamCalendar.formatDBDateTime(currentRawChunks[i].getTimeMilliseconds(), true) + " Overflow: " + overFlow + " Raw len: " + rawDataChunk.length); 
@@ -421,9 +421,16 @@ public class SegmenterProcess extends PamProcess {
 					//how many new raw chunks do we need? 
 					if (nextRawChunks[i]==null) {
 						//need to figure out how many new raw chunks we may need. 
-						int nChunks = (int) Math.ceil(overFlow/(double) dlControl.getDLParams().sampleHop); 
+						//for last zero padded segment to be included. 
+						//int nChunks = (int) Math.ceil((overFlow+dlControl.getDLParams().sampleHop)/(double) dlControl.getDLParams().sampleHop); 
+						
+						//segments which do not include any last zero padded segmen- zeros can confuse deep learning models so it may be better to keep use 
+						//this instead of zero padding end chunks. 
+						int nChunks = (int) Math.ceil((overFlow)/(double) dlControl.getDLParams().sampleHop); 
+
 						nChunks = Math.max(nChunks, 1); //cannot be less than one (if forceSave is used then can be zero if no overflow)
 						nextRawChunks[i]=new GroupedRawData[nChunks]; 
+						//System.out.println("Total data len: " + rawDataChunk.length + " overFlow: " + overFlow + " nChunks: " + nChunks); 
 					}
 
 					GroupedRawData lastRawDataChunk = currentRawChunks[i]; 
@@ -699,7 +706,7 @@ public class SegmenterProcess extends PamProcess {
 		 * @param srcPos - the raw source position
 		 * @param copyLen - the copy length. 
 		 * @groupChan - the channel (within the group)
-		 * @return overflow. 
+		 * @return overflow - the  number of raw data points  left at the end which were not copied. 
 		 */
 		public int copyRawData(Object src, int srcPos, int copyLen, int groupChan) {
 			//how much of the chunk should we copy? 

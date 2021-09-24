@@ -45,7 +45,7 @@ public class StandardModelParams implements Serializable, Cloneable {
 	public double threshold = 0.9; 
 
 	/*
-	 * the number of output classes. 
+	 * The number of output classes. 
 	 */
 	public int numClasses = 0; 
 	
@@ -69,7 +69,7 @@ public class StandardModelParams implements Serializable, Cloneable {
 	
 	
 	/**
-	 * Use the default seg length
+	 * Use the default segment length
 	 */
 	public 	boolean useDefaultSegLen = false;
 
@@ -83,6 +83,16 @@ public class StandardModelParams implements Serializable, Cloneable {
 	 * Which classes to apply binary classification to. 
 	 */
 	public boolean[] binaryClassification; 
+	
+	
+	/**
+	 * The index of the example sound which should be shown. 
+	 * <p>
+	 * Note: It is a little messy putting this here but otherwise would need
+	 * a while new settings class for the advanced UI which would need to be linked to this 
+	 * params class somehow and gets very complicated. 
+	 */
+	public int exampleSoundIndex = 0; 
 	
 	@Override
 	public StandardModelParams clone() {
