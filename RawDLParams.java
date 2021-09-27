@@ -63,6 +63,13 @@ public class RawDLParams implements Serializable, Cloneable {
 	 * data is sent to the deep learning classifier.
 	 */
 	public double maxBufferTime = 1000.0; // milliseconds
+	
+	
+	/**
+	 * True to use the data selector to pre-filter detections 
+	 * (but only if the input is a detection data block)
+	 */
+	public boolean useDataSelector = false; 
 
 	/**
 	 * Uuuruggh. Spent a lot of time thinking about this. Different models have

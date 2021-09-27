@@ -180,8 +180,12 @@ public class SegmenterProcess extends PamProcess {
 	 */
 	@Override
 	public void newData(PamObservable obs, PamDataUnit pamRawData) {
+		
+		if (!dlControl.getDLParams().useDataSelector || dlControl.getDataSelector().scoreData(pamRawData)>0) {	
+
 		if (obs == getParentDataBlock()) {
 			newData(pamRawData); 
+		}
 		}
 	}
 

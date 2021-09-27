@@ -19,6 +19,7 @@ import PamView.PamSidePanel;
 import PamView.WrapperControlledGUISwing;
 import PamguardMVC.PamDataBlock;
 import PamguardMVC.PamRawDataBlock;
+import PamguardMVC.dataSelector.DataSelector;
 import ai.djl.engine.Engine;
 import dataPlotsFX.data.TDDataProviderRegisterFX;
 import detectionPlotFX.data.DDPlotRegister;
@@ -173,6 +174,11 @@ public class DLControl extends PamControlledUnit implements PamSettings {
 	private DLOfflineProcess dlOfflineProcess;
 
 	private DLClassNameManager dlClassNameManager;
+
+	/**
+	 * The current data selector. 
+	 */
+	private DataSelector dataSelector;
 
 	/**
 	 * Constructor for the DL Control.
@@ -492,5 +498,34 @@ public class DLControl extends PamControlledUnit implements PamSettings {
 	public DLAnnotationType getAnnotationType() {
 		return this.dlClassifyProcess.getDLAnnotionType();
 	}
+
+		/**
+	 * The current data selector. 
+	 * @return the current data selector. 
+	 */
+	public DataSelector getDataSelector() {
+		return dataSelector;
+	}
+	
+	
+	/**
+	 * Get the data selector. 
+	 * @param source - the source data block 
+	 * @return the data selector.
+	 */
+	public void createDataSelector(PamDataBlock<?> source) {
+		if (dataSelector==null || dataSelector.getPamDataBlock()!=source) {
+			//create the data selector
+			//System.out.println("Data selector: " + dataSelector); 
+			if (source!=null) {
+				dataSelector=source.getDataSelectCreator().getDataSelector(this.getUnitName() +"_clicks", false, null);
+				//System.out.println("Data selector: " + dataSelector); 
+			}
+			else {
+				dataSelector=null; 
+			}
+		}
+	}
+
 
 }

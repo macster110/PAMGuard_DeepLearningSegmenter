@@ -2,14 +2,18 @@ package rawDeepLearningClassifier.layoutFX;
 
 import java.util.ArrayList;
 
+import org.controlsfx.control.PopOver;
+
 import PamController.SettingsPane;
 import PamDetection.RawDataUnit;
 import PamView.dialog.warn.WarnOnce;
 import PamguardMVC.PamDataBlock;
+import PamguardMVC.dataSelector.NullDataSelectorCreator;
 import clickDetector.ClickDetection;
 import clipgenerator.ClipDataUnit;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -17,16 +21,20 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import pamViewFX.PamGuiManagerFX;
 import pamViewFX.fxGlyphs.PamGlyphDude;
 import pamViewFX.fxNodes.PamBorderPane;
+import pamViewFX.fxNodes.PamButton;
 import pamViewFX.fxNodes.PamGridPane;
+import pamViewFX.fxNodes.PamHBox;
 import pamViewFX.fxNodes.PamSpinner;
 import pamViewFX.fxNodes.PamVBox;
 import pamViewFX.fxNodes.pamDialogFX.PamDialogFX;
 import pamViewFX.fxNodes.utilityPanes.GroupedSourcePaneFX;
+import pamViewFX.fxNodes.utilityPanes.PamToggleSwitch;
 import rawDeepLearningClassifier.DLControl;
 import rawDeepLearningClassifier.RawDLParams;
 import rawDeepLearningClassifier.dlClassification.DLClassiferModel;
@@ -81,6 +89,26 @@ public class RawDLSettingsPane  extends SettingsPane<RawDLParams>{
 	 */
 	private PamSpinner<Integer>  reMergeSeg;
 
+	/**
+	 * Enables or disables the data selector
+	 */
+	private PamToggleSwitch dataSelectorCheckBox;
+
+	/**
+	 * Show the advance settings. 
+	 */
+	private PamButton dataSelectorButton;
+
+	/**
+	 * Pop over
+	 */
+	private PopOver popOver;
+
+	/**
+	 * Pane which holds the data selector. 
+	 */
+	private HBox dataSelectorPane;
+
 	public RawDLSettingsPane(DLControl dlControl){
 		super(null); 
 		this.dlControl=dlControl; 
@@ -123,6 +151,17 @@ public class RawDLSettingsPane  extends SettingsPane<RawDLParams>{
 		vBox.getChildren().add(sourcePane);
 		sourcePane.prefWidthProperty().bind(vBox.widthProperty());
 		sourcePane.setMaxWidth(Double.MAX_VALUE);
+		
+		sourcePane.getDataBlockBox().setOnAction((action)->{
+			//need to create a data selector if one exists. 
+			this.dlControl.createDataSelector(getSelectedParentDataBlock()); 
+			//enable the controls to show a data selector or not. 
+			enableControls(); 
+		});
+		
+		//create the detection
+		vBox.getChildren().add(createDataSelectorPane());
+
 
 		// the segmentation params
 		Label label = new Label("Segmentation"); 
@@ -203,6 +242,68 @@ public class RawDLSettingsPane  extends SettingsPane<RawDLParams>{
 
 		return vBox; 
 	}
+	
+	
+	/**
+	 * Create the data selector. 
+	 * @return the data selector. 
+	 */
+	private Pane createDataSelectorPane() {
+		dataSelectorPane = new PamHBox();
+		dataSelectorPane.setSpacing(5);
+		dataSelectorPane.setAlignment(Pos.CENTER_LEFT);
+		
+		dataSelectorCheckBox = new PamToggleSwitch("Detection Selector"); 
+		dataSelectorCheckBox.selectedProperty().addListener((obsval, oldval, newval)->{
+			enableControls(); 
+		});
+		dataSelectorButton = new PamButton();
+//		dataSelectorButton.setGraphic(PamGlyphDude.createPamGlyph(MaterialIcon.SETTINGS, PamGuiManagerFX.iconSize));
+		dataSelectorButton.setGraphic(PamGlyphDude.createPamIcon("mdi2c-cog", PamGuiManagerFX.iconSize));
+		dataSelectorButton.setOnAction((action)->{
+			showAdvPane();
+		});
+		dataSelectorPane.getChildren().addAll(dataSelectorCheckBox, dataSelectorButton);
+		return dataSelectorPane; 
+	}
+	
+	
+	/**
+	 * Creates pane allowing the user to change fine scale things such as error limits. 
+	 * @return the pop over pane. 
+	 */
+	public void showAdvPane() {
+
+		popOver = new PopOver(); 
+		PamBorderPane holder = new PamBorderPane(dlControl.getDataSelector().getDialogPaneFX().getContentNode()); 
+		holder.setPadding(new Insets(5,5,5,5));
+		popOver.setContentNode(holder);
+
+
+		popOver.showingProperty().addListener((obs, old, newval)->{
+			if (newval) {
+				dlControl.getDataSelector().getDialogPaneFX().setParams(true);
+			}
+		});
+
+		popOver.show(dataSelectorButton);
+	} 
+	
+	/**
+	 * Enable the controls. 
+	 */
+	private void enableControls() {
+		this.dataSelectorPane.setVisible(true);
+		//only show the data selector box for detection data. 
+		if (sourcePane.getSource().getDataSelectCreator() instanceof NullDataSelectorCreator) {
+			//^bit messy but cannot think of a better way to do it. 
+			this.dataSelectorPane.setVisible(false);
+		}
+		
+		dataSelectorButton.setDisable(!dataSelectorCheckBox.isSelected());
+	}
+	
+
 
 	/**
 	 * Get the segment length spinner. 
@@ -283,6 +384,11 @@ public class RawDLSettingsPane  extends SettingsPane<RawDLParams>{
 				}
 			}
 		}
+		
+		currParams.useDataSelector = dataSelectorCheckBox.isSelected(); 
+		if (dlControl.getDataSelector()!=null) {
+			dlControl.getDataSelector().getDialogPaneFX().getParams(true); 
+		}
 	
 
 		return currParams;
@@ -320,6 +426,8 @@ public class RawDLSettingsPane  extends SettingsPane<RawDLParams>{
 
 		sourcePane.setParams(currParams.groupedSourceParams);
 		sourcePane.sourceChanged();
+		
+		dlControl.createDataSelector(sourcePane.getSource());
 
 		dlModelBox.getSelectionModel().select(currParams.modelSelection);
 
@@ -328,8 +436,13 @@ public class RawDLSettingsPane  extends SettingsPane<RawDLParams>{
 		hopLength.getValueFactory().setValue(currParams.sampleHop);
 
 		reMergeSeg.getValueFactory().setValue(currParams.maxMergeHops);
+		
+		dataSelectorCheckBox.setSelected(currParams.useDataSelector);
 
 		setClassifierPane(); 
+		
+		enableControls(); 
+
 	}
 
 
