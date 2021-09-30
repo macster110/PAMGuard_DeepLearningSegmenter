@@ -181,12 +181,12 @@ public class SegmenterProcess extends PamProcess {
 	@Override
 	public void newData(PamObservable obs, PamDataUnit pamRawData) {
 		
-		if (!dlControl.getDLParams().useDataSelector || dlControl.getDataSelector().scoreData(pamRawData)>0) {	
+		//if raw data then the dl data selector will be null and should always score data as O. 
+		
 
-		if (obs == getParentDataBlock()) {
-			newData(pamRawData); 
-		}
-		}
+			if (obs == getParentDataBlock()) {
+				newData(pamRawData); 
+			}
 	}
 
 
@@ -195,16 +195,21 @@ public class SegmenterProcess extends PamProcess {
 	 * (non-Javadoc)
 	 */
 	public void newData(PamDataUnit pamRawData) {
-		//System.out.println("New data for segmenter: " + pamRawData); 
-		if (pamRawData instanceof RawDataUnit) {
-			newRawDataUnit(pamRawData); 
+
+		if (!dlControl.getDLParams().useDataSelector || dlControl.getDataSelector().scoreData(pamRawData)>0) {	
+
+			//System.out.println("New data for segmenter: " + pamRawData); 
+			if (pamRawData instanceof RawDataUnit) {
+				newRawDataUnit(pamRawData); 
+			}
+			else if (pamRawData instanceof ClickDetection) {
+				newClickData( pamRawData);
+			}
+			else if (pamRawData instanceof ClipDataUnit)  {
+				newClipData(pamRawData);
+			}
 		}
-		else if (pamRawData instanceof ClickDetection) {
-			newClickData( pamRawData);
-		}
-		else if (pamRawData instanceof ClipDataUnit)  {
-			newClipData(pamRawData);
-		}
+
 	}
 
 
