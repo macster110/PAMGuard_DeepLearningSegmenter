@@ -190,6 +190,9 @@ In the same way as MATLAB export, the PAMGuard time base display and export sele
 R also has a well supported PAMGuard library with like for like functions compared to the MATLAB library. The PAMBinaries R library can be found [here](https://github.com/TaikiSan21/PamBinaries).
 
 ## Common bugs and mistakes
+The first time you use the module and/or load a different type of model e.g. a tensorflow or pytorch model, you must be connected to the internet. 
+
+You must install the correct version of CUDA for hardware acceleration using an Nvidea GPU. See the currently supported CUDA versions on the Pytorch and Tensorflow websites. 
 
 You should always have deep learning models in their own folder. Do not have any additional jar files or other programming related things (like .dll files) in the same or sub folders. This has been known to cause issues with loading models which we have not got to the bottom of yet. 
 
