@@ -43,6 +43,8 @@ public class KetosModelPane extends StandardModelPane {
 		//get the model transforms calculated from the model by SoundSpoyWorker and apply them to our temporary params clone. 
 //		System.out.println("Ketos transforms 1: " +  this.ketosClassifier.getKetosWorker().getModelTransforms());
 		getParamsClone().dlTransfroms = this.ketosClassifier.getKetosWorker().getModelTransforms(); 
+		
+		//System.out.println("Ketos: " + getParamsClone().dlTransfroms.size());
 		///set the advanced pane parameters. 
 		getAdvSettingsPane().setParams(getParamsClone());
 		

@@ -206,6 +206,8 @@ public class SimpleTransformPane extends DLTransformPane {
 
 		SimpleTransform simpleTransform = (SimpleTransform) input;
 		
+		//System.out.println("Transform type: " + simpleTransform.getDLTransformType() + " " + simpleTransform.getParams().length + "  " + spinners.size());
+		
 		for (int i=0; i<spinners.size(); i++) {
 			
 			//spinners.get(i).getValueFactory().setValue(simpleTransform.getParams()[i] ); 

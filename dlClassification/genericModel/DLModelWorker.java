@@ -83,7 +83,8 @@ public abstract class DLModelWorker<T> {
 				DLTransform transform = modelTransforms.get(0); 
 				for (int i =0; i<modelTransforms.size(); i++) {
 					transform = modelTransforms.get(i).transformData(transform); 
-//					//TEMP
+					
+////					//TEMP
 //					if (transform instanceof FreqTransform) {
 //						transformedData = ((FreqTransform) transform).getSpecTransfrom().getTransformedData(); 
 //						System.out.println("DLModelWorker: transform : " + modelTransforms.get(i).getDLTransformType() + " "+ i + transformedData.length + "  " + transformedData[0].length + " minmax: " + PamArrayUtils.minmax(transformedData)[0] + " " + PamArrayUtils.minmax(transformedData)[1]);

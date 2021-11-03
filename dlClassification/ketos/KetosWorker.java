@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import org.jamdev.jdl4pam.ketos.KetosModel;
 import org.jamdev.jdl4pam.ketos.KetosParams;
 import org.jamdev.jdl4pam.transforms.DLTransform;
+import org.jamdev.jdl4pam.transforms.DLTransform.DLTransformType;
 import org.jamdev.jdl4pam.transforms.DLTransformsFactory;
 import org.jamdev.jdl4pam.transforms.jsonfile.DLTransformsParser;
 
@@ -66,16 +67,30 @@ public class KetosWorker extends DLModelWorker<KetosResult> {
 
 			//read the JSON string from the the file. 
 			String jsonString  = DLTransformsParser.readJSONString(new File(ketosModel.getAudioReprFile()));
-
+			
 			//convert the JSON string to a parameters object. 
 			KetosParams ketosParams = new KetosParams(jsonString); 			
 
-			//			System.out.println(ketosParams.toString());
 
+
+			///HACK here for now to fix an issue with dB and Ketos transforms having zero length somehow...
+			for (int i=0; i<ketosParams.dlTransforms.size(); i++) {
+				if (ketosParams.dlTransforms.get(i).dltransfromType == DLTransformType.SPEC2DB) {
+					ketosParams.dlTransforms.get(i).params = null; 
+					//System.out.println("Set dB transform to null: " + ketosParams.dlTransforms.get(i).params);
+				}
+			}
+		
 			//generate the transforms from the KetosParams objectts. 
 			ArrayList<DLTransform> transforms =	DLTransformsFactory.makeDLTransforms(ketosParams.dlTransforms); 
+			
+			///HACK here for now to fix an issue with dB and Ketos transforms having zero length somehow...
+			for (int i=0; i<ketosParams.dlTransforms.size(); i++) {
+				System.out.println(ketosParams.dlTransforms.get(i)); 
+			}
 
 			//System.out.println("Ketos transforms: " + transforms); 
+			
 
 			//set the transforms. 
 			setModelTransforms(transforms); 

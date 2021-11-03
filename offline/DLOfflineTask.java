@@ -47,6 +47,12 @@ public class DLOfflineTask extends OfflineTask<PamDataUnit<?,?>>{
 				
 		//force click data save
 		dlControl.getDLClassifyProcess().forceRunClassifier(dataUnit);
+		
+		//must be called or can result in memory leak. 
+		dlControl.getSegmenter().getSegmenterDataBlock().clearAll();
+
+		//must be called or can result in memory leak. 
+		dlControl.getDLClassifyProcess().getDLPredictionDataBlock().clearAll();
 
 		/**
 		 * So the issue here is that the classification is not on the same thread...
