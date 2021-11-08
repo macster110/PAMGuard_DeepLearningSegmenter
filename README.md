@@ -61,4 +61,4 @@ A detailed module help file is [here](deep_learning_help.md).
 Comprehensive tutorials can be found [here](https://github.com/macster110/PAMGuard_resources). 
 
 ## Development Environment
-The best way to further develop the DeepLearning module is to download the PAMGuard project [(instruction here for Eclipse)](https://www.pamguard.org/15_SourceCode.html) (use the  Maven branch); the module is the located in the _rawDeepLearningClassifer_ package. 
+The best way to further develop the DeepLearning module is to download the PAMGuard project [(instruction here for Eclipse)](https://www.pamguard.org/15_SourceCode.html) (use the  NOAA branch); the module is the located in the _rawDeepLearningClassifer_ package. 
