@@ -61,14 +61,4 @@ A detailed module help file is [here](deep_learning_help.md).
 Comprehensive tutorials can be found [here](https://github.com/macster110/PAMGuard_resources). 
 
 ## Development Environment
-The best way to develop a PAMGuard external plugin is to download the PAMGuard project [(instruction here for Eclipse)](https://www.pamguard.org/15_SourceCode.html) (use the  Maven branch) and copy and past this repository in as a package in the main src folder. Then, in PamModel.java around line 753 in the classifiers group add
-
-```Java
-		mi = PamModuleInfo.registerControlledUnit("rawDeepLearningClassifer.DLControl", "Deep Learning Segmenter");
-		mi.addDependency(new PamDependency(RawDataUnit.class, "Acquisition.AcquisitionControl"));
-		mi.setToolTipText("Classifies sections of raw acoustic data based on an imported deep learning classifier");
-		mi.setModulesMenuGroup(classifierGroup);
-```
-Adding a new DeepLearning model requires a new class satisfying the interface ```DLClassifierModel``` in the _ deepLearningClassiifcation _ package. This then needs to be added to an array (```ArrayList<DLClassiferModel> dlModels```) in ```DLControl```.
-
-Note that the core deep leanring code is also in PAMGuard's [SVN repository](https://sourceforge.net/projects/pamguard/) (yes PAMGuard still uses SVN) but this is updated less frequenctly than the git code.  
+The best way to further develop the DeepLearning module is to download the PAMGuard project [(instruction here for Eclipse)](https://www.pamguard.org/15_SourceCode.html) (use the  Maven branch); the module is the located in the _rawDeepLearningClassifer_ package. 
