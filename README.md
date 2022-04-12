@@ -1,3 +1,5 @@
+## This is now a PAMGuard core module. The updated latest source code can be found [here](https://github.com/PAMGuard/PAMGuard/tree/main/src/rawDeepLearningClassifier). 
+
 # PAMGuard_DeepLearningSegmenter
 The Deep Learning Segment PAMGuard module acquires incoming chunks of raw sound data and sends to a deep learning model for classification in real time. Results become part of the PAMGuard processing chain and so can be further classified, saved as raw wav clips, localised, annotated etc. 
 
